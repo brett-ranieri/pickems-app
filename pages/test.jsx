@@ -6,6 +6,16 @@ const TestPage = () => {
 		console.log(await teams.json());
 	};
 
+	const hitEspn = async () => {
+		let apiUrl = "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard";
+		const reply = await fetch(apiUrl);
+		let data = await reply.json();
+		// console.log(data);
+		let events = data.events;
+		let teamsOnBye = data.week.teamsOnBye;
+		console.log(teamsOnBye);
+	};
+
 	const postTeam = async () => {
 		const teams = await fetch(`http://localhost:3000/api/teams`, {
 			method: "POST",
@@ -18,6 +28,7 @@ const TestPage = () => {
 
 	useEffect(() => {
 		getTeams();
+		hitEspn();
 	}, []);
 
 	return (
