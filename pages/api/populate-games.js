@@ -26,13 +26,14 @@ export default async function populateGames(req, res) {
 				homeId: competitors[0].id,
 				awayTeam: competitors[1].team.displayName,
 				awayId: competitors[1].id,
+				date: event.date,
 			};
 			games.push(game);
 		});
 
 		games.forEach(async function (game) {
 			results = await client.query(
-				`insert into public.games(id, week, home_team, home_id, away_team, away_id) values('${game.id}', '${game.week}', '${game.homeTeam}', '${game.homeId}', '${game.awayTeam}', '${game.awayId}') returning *`
+				`insert into public.games(id, week, home_team, home_id, away_team, away_id, date) values('${game.id}', '${game.week}', '${game.homeTeam}', '${game.homeId}', '${game.awayTeam}', '${game.awayId}', '${game.date}') returning *`
 			);
 		});
 

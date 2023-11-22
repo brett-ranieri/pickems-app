@@ -13,7 +13,7 @@ const TestPage = () => {
 		// console.log(data);
 		let events = data.events;
 		let teamsOnBye = data.week.teamsOnBye;
-		console.log(teamsOnBye);
+		console.log(events);
 	};
 
 	const postTeam = async () => {
