@@ -15,7 +15,7 @@ export default async function populateTeams(req, res) {
 		let data = await reply.json();
 		// console.log(data);
 		let events = data.events;
-		let teamsOnBye = data.week.teamsOnBye;
+		// let teamsOnBye = data.week.teamsOnBye;
 
 		// map data
 		events.forEach(function (event) {
@@ -48,19 +48,19 @@ export default async function populateTeams(req, res) {
 		});
 
 		// get any teams on bye
-		teamsOnBye.forEach(function (team) {
-			let newTeam = {
-				id: team.id,
-				intId: parseInt(team.id),
-				displayName: team.displayName,
-				color: team.color,
-				alternateColor: team.alternateColor,
-				logo: team.logo,
-				name: team.name,
-				abbreviation: team.abbreviation,
-			};
-			teams.push(newTeam);
-		});
+		// teamsOnBye.forEach(function (team) {
+		// 	let newTeam = {
+		// 		id: team.id,
+		// 		intId: parseInt(team.id),
+		// 		displayName: team.displayName,
+		// 		color: team.color,
+		// 		alternateColor: team.alternateColor,
+		// 		logo: team.logo,
+		// 		name: team.name,
+		// 		abbreviation: team.abbreviation,
+		// 	};
+		// 	teams.push(newTeam);
+		// });
 		// console.log(teams);
 
 		//for each loop to add each team to database
