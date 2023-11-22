@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 const TestPage = () => {
+	const [games, setGames] = useState([]);
 	const getTeams = async () => {
 		const teams = await fetch(`http://localhost:3000/api/teams`);
 		console.log(await teams.json());
@@ -8,7 +9,8 @@ const TestPage = () => {
 
 	const getGames = async () => {
 		const games = await fetch(`http://localhost:3000/api/games`);
-		console.log(await games.json());
+		let upcomingGames = await games.json();
+		setGames(upcomingGames);
 	};
 
 	const hitEspn = async () => {
@@ -37,9 +39,16 @@ const TestPage = () => {
 		// hitEspn();
 	}, []);
 
+	console.log(games);
+	const renGameData = games.map(function (game) {
+		return <p>{game.id}</p>;
+	});
+
 	return (
 		<>
-			<p>Hello world</p>;{/* <button onClick={() => postTeam()}>Click me!</button> */}
+			<p>Hello world</p>
+			{/* <button onClick={() => postTeam()}>Click me!</button> */}
+			<p>{renGameData}</p>
 		</>
 	);
 };
