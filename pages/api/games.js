@@ -9,11 +9,15 @@ export default async function games(req, res) {
 	}
 	try {
 		let results;
+		console.log("before call");
 		results = await client.query("select * from public.games");
-
+		console.log("another change");
 		res.json(results.rows);
 		// console.log(results);
 	} catch (err) {
 		console.log(err);
 	}
+	// finally {
+	// 	client.end();
+	// }
 }

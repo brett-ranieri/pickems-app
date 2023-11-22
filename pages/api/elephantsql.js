@@ -15,7 +15,7 @@ client.connect(function (err) {
 		}
 		console.log(result.rows[0].theTime);
 		// >> output: 2018-08-23T14:02:57.117Z
-		client.end();
+		// client.end();
 	});
 });
 

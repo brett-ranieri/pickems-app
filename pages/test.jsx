@@ -8,8 +8,10 @@ const TestPage = () => {
 	};
 
 	const getGames = async () => {
+		console.log("hello??");
 		const games = await fetch(`http://localhost:3000/api/games`);
 		let upcomingGames = await games.json();
+		console.log(upcomingGames);
 		setGames(upcomingGames);
 	};
 
@@ -34,6 +36,7 @@ const TestPage = () => {
 	};
 
 	useEffect(() => {
+		console.log("running useeffect");
 		// getTeams();
 		getGames();
 		// hitEspn();
@@ -47,7 +50,7 @@ const TestPage = () => {
 	return (
 		<>
 			<p>Hello world</p>
-			{/* <button onClick={() => postTeam()}>Click me!</button> */}
+			<button onClick={() => getTeams()}>Click me!</button>
 			<p>{renGameData}</p>
 		</>
 	);
