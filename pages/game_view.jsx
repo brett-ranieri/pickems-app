@@ -43,21 +43,6 @@ const GameViewPage = () => {
 		// }
 	};
 
-	// const awayClicked = async (game) => {
-	// 	if (buttonStyle === "notSelected" || buttonStyle === "") {
-	// 		console.log("one", game.away_id);
-	// 		setButtonStyle("selected");
-	// 		let pick = {
-	// 			id: game.away_id,
-	// 			team: game.away_team,
-	// 		};
-	// 		setPicks([...picks, pick]);
-	// 	} else {
-	// 		console.log("two");
-	// 		setButtonStyle("notSelected");
-	// 	}
-	// };
-
 	const renGameData = games.map(function (game) {
 		return (
 			<div key={game.id}>
@@ -83,14 +68,11 @@ const GameViewPage = () => {
 	function logResults() {
 		console.log("submitted");
 		console.log(picks);
-		console.log(teams);
 	}
 
 	return (
 		<>
 			<p>This is the game view page</p>
-			{/* <button onClick={() => getTeams()}>Click me!</button> */}
-
 			{renGameData}
 			<button
 				type='submit'
