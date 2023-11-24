@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { TeamCard } from "./team_card";
 
 const GameViewPage = () => {
+	const [teams, setTeams] = useState([]);
 	const [games, setGames] = useState([]);
 	const [buttonStyle, setButtonStyle] = useState("");
 	const [picks, setPicks] = useState([]);
@@ -13,11 +15,16 @@ const GameViewPage = () => {
 		setGames(upcomingGames);
 	};
 
+	const getTeams = async () => {
+		const results = await fetch(`http://localhost:3000/api/teams`);
+		let teams = await results.json();
+		setTeams(teams);
+	};
+
 	useEffect(() => {
 		console.log("running useeffect");
-		// getTeams();
+		getTeams();
 		getGames();
-		// hitEspn();
 	}, []);
 
 	const homeClicked = async (game) => {
@@ -53,21 +60,15 @@ const GameViewPage = () => {
 	const renGameData = games.map(function (game) {
 		return (
 			<div key={game.id}>
-				<div
-					className={buttonStyle}
-					onClick={() => homeClicked(game)}
-					key={game.home_id}
-				>
-					{game.home_team}
-				</div>
+				<TeamCard
+					teamId={game.home_id}
+					teams={teams}
+				/>
 				<div>vs.</div>
-				<div
-					className={buttonStyle}
-					onClick={() => awayClicked(game)}
-					key={game.away_id}
-				>
-					{game.away_team}
-				</div>
+				<TeamCard
+					teamId={game.away_id}
+					teams={teams}
+				/>
 				<br />
 				<br />
 			</div>
@@ -77,6 +78,7 @@ const GameViewPage = () => {
 	function logResults() {
 		console.log("submitted");
 		console.log(picks);
+		console.log(teams);
 	}
 
 	return (
