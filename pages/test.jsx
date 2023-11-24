@@ -35,6 +35,17 @@ const TestPage = () => {
 		console.log(await teams.json());
 	};
 
+	function logResults() {
+		console.log("submitted");
+		let picksForm = document.getElementById("userPicks");
+		picksForm.addEventListener("submit", (e) => {
+			e.preventDefault();
+		});
+		let picks = [];
+
+		console.log(picksForm);
+	}
+
 	useEffect(() => {
 		console.log("running useeffect");
 		// getTeams();
@@ -44,14 +55,46 @@ const TestPage = () => {
 
 	console.log(games);
 	const renGameData = games.map(function (game) {
-		return <p>{game.id}</p>;
+		return (
+			<div key={game.id}>
+				<input
+					type='radio'
+					id='home'
+					key={game.home_id}
+					name={game.id}
+					value={game.home_id}
+				/>
+				<label for='home'>{game.home_team} vs. </label>
+				<label for='away'>{game.away_team}</label>
+				<input
+					type='radio'
+					id='away'
+					key={game.away_id}
+					name={game.id}
+					value={game.away_id}
+				/>
+				<br />
+				<br />
+			</div>
+		);
 	});
 
 	return (
 		<>
-			<p>Hello world</p>
-			<button onClick={() => getTeams()}>Click me!</button>
-			<p>{renGameData}</p>
+			<p>Pickems App!</p>
+			{/* <button onClick={() => getTeams()}>Click me!</button> */}
+			<form
+				action=''
+				id='userPicks'
+			>
+				{renGameData}
+				<button
+					type='submit'
+					onClick={() => logResults()}
+				>
+					Submit
+				</button>
+			</form>
 		</>
 	);
 };
