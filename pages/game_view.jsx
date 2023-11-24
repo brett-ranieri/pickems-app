@@ -4,7 +4,7 @@ import { TeamCard } from "./team_card";
 const GameViewPage = () => {
 	const [teams, setTeams] = useState([]);
 	const [games, setGames] = useState([]);
-	const [buttonStyle, setButtonStyle] = useState("");
+	// const [buttonStyle, setButtonStyle] = useState("notSelected");
 	const [picks, setPicks] = useState([]);
 
 	const getGames = async () => {
@@ -27,35 +27,36 @@ const GameViewPage = () => {
 		getGames();
 	}, []);
 
-	const homeClicked = async (game) => {
-		if (buttonStyle === "notSelected" || buttonStyle === "") {
-			setButtonStyle("selected");
-			console.log("one", game.home_id);
-			let pick = {
-				id: game.home_id,
-				team: game.home_team,
-			};
-			setPicks([...picks, pick]);
-		} else {
-			console.log("two");
-			setButtonStyle("notSelected");
-		}
+	const clicked = async (id, gameId) => {
+		// if (buttonStyle === "notSelected") {
+		// 	setButtonStyle("selected");
+		// 	console.log("one", game.home_id);
+		let pick = {
+			winner: id,
+			id: gameId,
+		};
+		console.log(pick);
+		setPicks([...picks, pick]);
+		// } else {
+		// 	console.log("two");
+		// 	setButtonStyle("notSelected");
+		// }
 	};
 
-	const awayClicked = async (game) => {
-		if (buttonStyle === "notSelected" || buttonStyle === "") {
-			console.log("one", game.away_id);
-			setButtonStyle("selected");
-			let pick = {
-				id: game.away_id,
-				team: game.away_team,
-			};
-			setPicks([...picks, pick]);
-		} else {
-			console.log("two");
-			setButtonStyle("notSelected");
-		}
-	};
+	// const awayClicked = async (game) => {
+	// 	if (buttonStyle === "notSelected" || buttonStyle === "") {
+	// 		console.log("one", game.away_id);
+	// 		setButtonStyle("selected");
+	// 		let pick = {
+	// 			id: game.away_id,
+	// 			team: game.away_team,
+	// 		};
+	// 		setPicks([...picks, pick]);
+	// 	} else {
+	// 		console.log("two");
+	// 		setButtonStyle("notSelected");
+	// 	}
+	// };
 
 	const renGameData = games.map(function (game) {
 		return (
@@ -63,11 +64,15 @@ const GameViewPage = () => {
 				<TeamCard
 					teamId={game.home_id}
 					teams={teams}
+					clicked={clicked}
+					gameId={game.id}
 				/>
 				<div>vs.</div>
 				<TeamCard
 					teamId={game.away_id}
 					teams={teams}
+					clicked={clicked}
+					gameId={game.id}
 				/>
 				<br />
 				<br />
