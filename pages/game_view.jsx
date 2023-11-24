@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 
 const GameViewPage = () => {
 	const [games, setGames] = useState([]);
-	const [buttonStyle, setButtonStyle] = useState("notSelected");
+	const [buttonStyle, setButtonStyle] = useState("");
+	const [picks, setPicks] = useState([]);
 
 	const getGames = async () => {
 		console.log("hello??");
@@ -19,13 +20,33 @@ const GameViewPage = () => {
 		// hitEspn();
 	}, []);
 
-	const clicked = async (game) => {
-		if (buttonStyle === "notSelected") {
+	const homeClicked = async (game) => {
+		if (buttonStyle === "notSelected" || buttonStyle === "") {
 			setButtonStyle("selected");
-			console.log(buttonStyle);
+			console.log("one", game.home_id);
+			let pick = {
+				id: game.home_id,
+				team: game.home_team,
+			};
+			setPicks([...picks, pick]);
 		} else {
+			console.log("two");
 			setButtonStyle("notSelected");
-			console.log(buttonStyle);
+		}
+	};
+
+	const awayClicked = async (game) => {
+		if (buttonStyle === "notSelected" || buttonStyle === "") {
+			console.log("one", game.away_id);
+			setButtonStyle("selected");
+			let pick = {
+				id: game.away_id,
+				team: game.away_team,
+			};
+			setPicks([...picks, pick]);
+		} else {
+			console.log("two");
+			setButtonStyle("notSelected");
 		}
 	};
 
@@ -34,7 +55,7 @@ const GameViewPage = () => {
 			<div key={game.id}>
 				<div
 					className={buttonStyle}
-					onClick={clicked}
+					onClick={() => homeClicked(game)}
 					key={game.home_id}
 				>
 					{game.home_team}
@@ -42,7 +63,7 @@ const GameViewPage = () => {
 				<div>vs.</div>
 				<div
 					className={buttonStyle}
-					onClick={() => clicked(game)}
+					onClick={() => awayClicked(game)}
 					key={game.away_id}
 				>
 					{game.away_team}
@@ -55,6 +76,7 @@ const GameViewPage = () => {
 
 	function logResults() {
 		console.log("submitted");
+		console.log(picks);
 	}
 
 	return (
