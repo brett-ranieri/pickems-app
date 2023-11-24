@@ -45,8 +45,7 @@ const GameViewPage = () => {
 		// it can cause an infinite loop. so better to spread the `prev` state in the callback
 		setPicks((prev) => [...prev, pick]);
 
-		// instead of setting `picks` directly you'll need to set a `tempPicks` variable and use a .map 
-		// to replace the pick that is duplicated if the user picks on the same game again
+		// TODO: use the .filter to get array, then spread back into state with new pick
 
 		// } else {
 		// 	console.log("two");
