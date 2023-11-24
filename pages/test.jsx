@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
 
 const TestPage = () => {
-	const [games, setGames] = useState([]);
+	// const [games, setGames] = useState([]);
 	const getTeams = async () => {
 		const teams = await fetch(`http://localhost:3000/api/teams`);
 		console.log(await teams.json());
 	};
 
-	const getGames = async () => {
-		console.log("hello??");
-		const games = await fetch(`http://localhost:3000/api/games`);
-		let upcomingGames = await games.json();
-		console.log(upcomingGames);
-		setGames(upcomingGames);
-	};
+	// const getGames = async () => {
+	// 	console.log("hello??");
+	// 	const games = await fetch(`http://localhost:3000/api/games`);
+	// 	let upcomingGames = await games.json();
+	// 	console.log(upcomingGames);
+	// 	setGames(upcomingGames);
+	// };
 
 	const hitEspn = async () => {
 		let apiUrl = "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard";
@@ -37,13 +37,6 @@ const TestPage = () => {
 
 	function logResults() {
 		console.log("submitted");
-		let picksForm = document.getElementById("userPicks");
-		picksForm.addEventListener("submit", (e) => {
-			e.preventDefault();
-		});
-		let picks = [];
-
-		console.log(picksForm);
 	}
 
 	useEffect(() => {
@@ -54,30 +47,6 @@ const TestPage = () => {
 	}, []);
 
 	console.log(games);
-	const renGameData = games.map(function (game) {
-		return (
-			<div key={game.id}>
-				<input
-					type='radio'
-					id='home'
-					key={game.home_id}
-					name={game.id}
-					value={game.home_id}
-				/>
-				<label for='home'>{game.home_team} vs. </label>
-				<label for='away'>{game.away_team}</label>
-				<input
-					type='radio'
-					id='away'
-					key={game.away_id}
-					name={game.id}
-					value={game.away_id}
-				/>
-				<br />
-				<br />
-			</div>
-		);
-	});
 
 	return (
 		<>
