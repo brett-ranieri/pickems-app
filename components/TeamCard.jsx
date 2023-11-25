@@ -12,3 +12,7 @@ export const TeamCard = ({ teamId, teams, clicked, gameId }) => {
 	// console.log(thisTeam);
 	return <div onClick={() => clicked(thisTeam?.id, gameId)}>{thisTeam?.name}</div>;
 };
+
+// tailwind color syntax: declare outside of the style prop
+// const bgColor = `bg-[#${team.color}]`
+// in the div: style={`${bgColor} mt-2`}
