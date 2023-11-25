@@ -39,6 +39,7 @@ const GameViewPage = () => {
 			winner: id,
 			id: gameId,
 		};
+		console.log(pick);
 		// have to do callback to spread prev state into current state update
 		// you're not supposed to directly reference the state from inside the `setState`, like `...picks`
 		// it can cause an infinite loop. so better to spread the `prev` state in the callback
@@ -64,19 +65,16 @@ const GameViewPage = () => {
 			{/* // didn't need to declare this map outside the default return, can map right here inside {} */}
 			{games.map((game) => (
 				<div key={game.id}>
-					{/* // refactor these to only pass `team`, `clicked`, and `game` */}
 					<TeamCard
-						teamId={game.home_id}
-						teams={teams}
+						team={teams?.find((t) => t.id === game.home_id)}
 						clicked={clicked}
-						gameId={game.id}
+						game={game}
 					/>
 					<div>vs.</div>
 					<TeamCard
-						teamId={game.away_id}
-						teams={teams}
+						team={teams?.find((t) => t.id === game.away_id)}
 						clicked={clicked}
-						gameId={game.id}
+						game={game}
 					/>
 					<br />
 					<br />
