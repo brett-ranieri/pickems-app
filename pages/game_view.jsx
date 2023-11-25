@@ -44,6 +44,9 @@ const GameViewPage = () => {
 		// you're not supposed to directly reference the state from inside the `setState`, like `...picks`
 		// it can cause an infinite loop. so better to spread the `prev` state in the callback
 		setPicks((prev) => [...prev, pick]);
+
+		// TODO: use the .filter to get array, then spread back into state with new pick
+
 		// } else {
 		// 	console.log("two");
 		// 	setButtonStyle("notSelected");
