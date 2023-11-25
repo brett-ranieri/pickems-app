@@ -30,7 +30,7 @@ const GameViewPage = () => {
 		getTeams();
 		getGames();
 	}, []);
-	console.log(teams);
+
 	const clicked = async (id, gameId) => {
 		// if (buttonStyle === "notSelected") {
 		// 	setButtonStyle("selected");
@@ -39,13 +39,13 @@ const GameViewPage = () => {
 			winner: id,
 			id: gameId,
 		};
-		console.log(pick);
 		// have to do callback to spread prev state into current state update
 		// you're not supposed to directly reference the state from inside the `setState`, like `...picks`
 		// it can cause an infinite loop. so better to spread the `prev` state in the callback
-		setPicks((prev) => [...prev, pick]);
-
-		// TODO: use the .filter to get array, then spread back into state with new pick
+		// setPicks((prev) => [...prev, pick]);
+		// use filter to get array without winner just clicked, spread back into state and include new pick
+		const tempPicks = picks?.filter((pick) => pick.id !== gameId);
+		setPicks([...tempPicks, pick]);
 
 		// } else {
 		// 	console.log("two");
