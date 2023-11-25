@@ -30,7 +30,7 @@ const GameViewPage = () => {
 		getTeams();
 		getGames();
 	}, []);
-
+	console.log(teams);
 	const clicked = async (id, gameId) => {
 		// if (buttonStyle === "notSelected") {
 		// 	setButtonStyle("selected");
@@ -59,7 +59,7 @@ const GameViewPage = () => {
 		<>
 			<p>This is the game view page</p>
 			{/* // didn't need to declare this map outside the default return, can map right here inside {} */}
-			{games.map((game) => 
+			{games.map((game) => (
 				<div key={game.id}>
 					{/* // refactor these to only pass `team`, `clicked`, and `game` */}
 					<TeamCard
@@ -78,7 +78,7 @@ const GameViewPage = () => {
 					<br />
 					<br />
 				</div>
-			)}
+			))}
 			<button
 				type='submit'
 				onClick={() => logResults()}
