@@ -36,7 +36,7 @@ const GameViewPage = () => {
 		// 	setButtonStyle("selected");
 		// 	console.log("one", game.home_id);
 		const pick = {
-			winner: id,
+			choosenTeam: id,
 			id: gameId,
 		};
 		console.log(pick);
@@ -69,12 +69,14 @@ const GameViewPage = () => {
 						team={teams?.find((t) => t.id === game.home_id)}
 						clicked={clicked}
 						game={game}
+						picks={picks}
 					/>
 					<div>vs.</div>
 					<TeamCard
 						team={teams?.find((t) => t.id === game.away_id)}
 						clicked={clicked}
 						game={game}
+						picks={picks}
 					/>
 					<br />
 					<br />
