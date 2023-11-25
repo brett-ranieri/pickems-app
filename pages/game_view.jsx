@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { TeamCard } from "./team_card";
+// moved TeamCard to new `/components/` folder, shouldn't be in the `pages` directory
+// import automatically updated (thanks vs code!)
+// also changed the name from `team_card` to `TeamCard` to fit React naming conventions
+import { TeamCard } from "../components/TeamCard";
 
 const GameViewPage = () => {
 	const [teams, setTeams] = useState([]);
@@ -9,15 +12,16 @@ const GameViewPage = () => {
 
 	const getGames = async () => {
 		console.log("hello??");
-		let results = await fetch(`http://localhost:3000/api/games`);
-		let upcomingGames = await results.json();
+		// if you're not changing a variable, _always_ declare as a `const`
+		const results = await fetch(`http://localhost:3000/api/games`);
+		const upcomingGames = await results.json();
 		console.log(upcomingGames);
 		setGames(upcomingGames);
 	};
 
 	const getTeams = async () => {
 		const results = await fetch(`http://localhost:3000/api/teams`);
-		let teams = await results.json();
+		const teams = await results.json();
 		setTeams(teams);
 	};
 
@@ -31,39 +35,23 @@ const GameViewPage = () => {
 		// if (buttonStyle === "notSelected") {
 		// 	setButtonStyle("selected");
 		// 	console.log("one", game.home_id);
-		let pick = {
+		const pick = {
 			winner: id,
 			id: gameId,
 		};
 		console.log(pick);
-		setPicks([...picks, pick]);
+		// have to do callback to spread prev state into current state update
+		// you're not supposed to directly reference the state from inside the `setState`, like `...picks`
+		// it can cause an infinite loop. so better to spread the `prev` state in the callback
+		setPicks((prev) => [...prev, pick]);
+
+		// TODO: use the .filter to get array, then spread back into state with new pick
+
 		// } else {
 		// 	console.log("two");
 		// 	setButtonStyle("notSelected");
 		// }
 	};
-
-	const renGameData = games.map(function (game) {
-		return (
-			<div key={game.id}>
-				<TeamCard
-					teamId={game.home_id}
-					teams={teams}
-					clicked={clicked}
-					gameId={game.id}
-				/>
-				<div>vs.</div>
-				<TeamCard
-					teamId={game.away_id}
-					teams={teams}
-					clicked={clicked}
-					gameId={game.id}
-				/>
-				<br />
-				<br />
-			</div>
-		);
-	});
 
 	function logResults() {
 		console.log("submitted");
@@ -73,7 +61,27 @@ const GameViewPage = () => {
 	return (
 		<>
 			<p>This is the game view page</p>
-			{renGameData}
+			{/* // didn't need to declare this map outside the default return, can map right here inside {} */}
+			{games.map((game) => 
+				<div key={game.id}>
+					{/* // refactor these to only pass `team`, `clicked`, and `game` */}
+					<TeamCard
+						teamId={game.home_id}
+						teams={teams}
+						clicked={clicked}
+						gameId={game.id}
+					/>
+					<div>vs.</div>
+					<TeamCard
+						teamId={game.away_id}
+						teams={teams}
+						clicked={clicked}
+						gameId={game.id}
+					/>
+					<br />
+					<br />
+				</div>
+			)}
 			<button
 				type='submit'
 				onClick={() => logResults()}
