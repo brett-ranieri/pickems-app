@@ -61,7 +61,7 @@ const GameViewPage = () => {
 
 	return (
 		<>
-			<p>This is the game view page</p>
+			<p className='text-3xl font-bold'>This is the game view page</p>
 			{/* // didn't need to declare this map outside the default return, can map right here inside {} */}
 			{games.map((game) => (
 				<div key={game.id}>
