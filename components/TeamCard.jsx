@@ -11,12 +11,12 @@ export const TeamCard = ({ team, clicked, game, picks }) => {
 	// tried adding second function to onClick
 	// thought was maybe running checkPick onClick would update faster than useEffect
 	// did not work as hoped, still seeing delay on logs
-	const clicking = async () => {
-		clicked(team.id, game.id);
-		checkPick();
-	};
+	// const clicking = async () => {
+	// 	clicked(team.id, game.id);
+	// 	checkPick();
+	// };
 
-	const checkPick = () => {
+	const checkPick = async () => {
 		if (picks.filter((pick) => pick.id === game.id).length > 0) {
 			const pick = picks.filter((pick) => pick.id === game.id);
 			const choosenTeam = pick[0].choosenTeam;
@@ -40,7 +40,7 @@ export const TeamCard = ({ team, clicked, game, picks }) => {
 	// optional chaining on `teams` and `thisTeam` in case it doesn't exist yet when component tries to initially render
 	// let thisTeam = teams?.find((t) => t.id === teamId);
 	// console.log(thisTeam);
-	return <div onClick={() => clicking()}>{team?.name}</div>;
+	return <div onClick={() => clicked(team.id, game.id)}>{team?.name}</div>;
 };
 
 // tailwind color syntax: declare outside of the style prop
