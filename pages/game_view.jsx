@@ -46,13 +46,22 @@ const GameViewPage = () => {
 		// picks table: wants to be a reference table. so no primary key. 
 		// columns will be user_id, game_id, chosen_team
 
-		// pass a post request to the endpoint with a json body, right here
+		// pass a post request to the endpoint with a json body, right here, just like this
 		const postPicksRes = await fetch(`http://localhost:3000/api/picks`, 
 			{method: 'POST', body: JSON.stringify(picks)}
 		);
+		// in the endpoint, you'll be able to log req.method as 'POST' and req.body will be your data
+		// because its already JSON and you're not parsing it, instead of the JSON.stringify(data) like the example
+		// you should be able to just put `req.body` in the parameters array after the query
+		// (if that doesn't work try parsing it and stringifying it again im maybe 90% confident)
+
 		// you probably want to use a json_populate_recordset in your query 
-		// to post all the picks at once
+		// to post all the picks at once (see PR write up for example of query)
+		// when you set up your picks object in `clicked`, make the keys the same as the table column headers
 		
+		// when you're successful you'll be able to console.log(await postPicksRes.json())
+		// and it'll be the array of picks you just posted because of the returning * in the query
+		// assuming you do a res.send at the end of the post method in the endpoint
 	}
 
 	console.log(picks)
