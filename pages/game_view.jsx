@@ -59,6 +59,8 @@ const GameViewPage = () => {
 		console.log(picks);
 	}
 
+	console.log(picks)
+
 	return (
 		<>
 			<p className='text-3xl font-bold mb-4'>This is the game view page</p>
