@@ -61,25 +61,26 @@ const GameViewPage = () => {
 
 	return (
 		<>
-			<p className='text-3xl font-bold'>This is the game view page</p>
+			<p className='text-3xl font-bold mb-4'>This is the game view page</p>
 			{/* // didn't need to declare this map outside the default return, can map right here inside {} */}
 			{games.map((game) => (
-				<div key={game.id}>
+				<div
+					key={game.id}
+					className='flex flex-row justify-around mb-6'
+				>
 					<TeamCard
 						team={teams?.find((t) => t.id === game.home_id)}
 						clicked={clicked}
 						game={game}
 						picks={picks}
 					/>
-					<div>vs.</div>
+					<div className='mt-4'>vs.</div>
 					<TeamCard
 						team={teams?.find((t) => t.id === game.away_id)}
 						clicked={clicked}
 						game={game}
 						picks={picks}
 					/>
-					<br />
-					<br />
 				</div>
 			))}
 			<button
