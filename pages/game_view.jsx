@@ -40,9 +40,19 @@ const GameViewPage = () => {
 
 	// you should call it handleSubmit
 	// also you should do them all as arrow functions its 2023
-	function logResults() {
+	const logResults = async () => {
 		console.log("submitted");
 		console.log(picks);
+		// picks table: wants to be a reference table. so no primary key. 
+		// columns will be user_id, game_id, chosen_team
+
+		// pass a post request to the endpoint with a json body, right here
+		const postPicksRes = await fetch(`http://localhost:3000/api/picks`, 
+			{method: 'POST', body: JSON.stringify(picks)}
+		);
+		// you probably want to use a json_populate_recordset in your query 
+		// to post all the picks at once
+		
 	}
 
 	console.log(picks)
