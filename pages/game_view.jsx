@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from "react";
-// moved TeamCard to new `/components/` folder, shouldn't be in the `pages` directory
-// import automatically updated (thanks vs code!)
-// also changed the name from `team_card` to `TeamCard` to fit React naming conventions
 import { TeamCard } from "../components/TeamCard";
 
 const GameViewPage = () => {
 	const [teams, setTeams] = useState([]);
 	const [games, setGames] = useState([]);
-	// const [buttonStyle, setButtonStyle] = useState("notSelected");
 	const [picks, setPicks] = useState([]);
 
 	const getGames = async () => {
@@ -32,28 +28,18 @@ const GameViewPage = () => {
 	}, []);
 
 	const clicked = async (id, gameId) => {
-		// if (buttonStyle === "notSelected") {
-		// 	setButtonStyle("selected");
-		// 	console.log("one", game.home_id);
 		const pick = {
 			choosenTeam: id,
 			id: gameId,
 		};
 		console.log(pick);
-		// have to do callback to spread prev state into current state update
-		// you're not supposed to directly reference the state from inside the `setState`, like `...picks`
-		// it can cause an infinite loop. so better to spread the `prev` state in the callback
-		// setPicks((prev) => [...prev, pick]);
-		// use filter to get array without winner just clicked, spread back into state and include new pick
+		
 		const tempPicks = picks?.filter((pick) => pick.id !== gameId);
 		setPicks([...tempPicks, pick]);
-
-		// } else {
-		// 	console.log("two");
-		// 	setButtonStyle("notSelected");
-		// }
 	};
 
+	// you should call it handleSubmit
+	// also you should do them all as arrow functions its 2023
 	function logResults() {
 		console.log("submitted");
 		console.log(picks);
