@@ -29,42 +29,38 @@ const GameViewPage = () => {
 
 	const clicked = async (id, gameId) => {
 		const pick = {
-			choosenTeam: id,
-			id: gameId,
+			user_id: 4,
+			chosen_team: id,
+			game_id: gameId,
 		};
 		console.log(pick);
-		
-		const tempPicks = picks?.filter((pick) => pick.id !== gameId);
+
+		const tempPicks = picks?.filter((pick) => pick.game_id !== gameId);
 		setPicks([...tempPicks, pick]);
 	};
 
-	// you should call it handleSubmit
-	// also you should do them all as arrow functions its 2023
-	const logResults = async () => {
+	const handleSubmit = async () => {
 		console.log("submitted");
-		console.log(picks);
-		// picks table: wants to be a reference table. so no primary key. 
-		// columns will be user_id, game_id, chosen_team
 
-		// pass a post request to the endpoint with a json body, right here, just like this
-		const postPicksRes = await fetch(`http://localhost:3000/api/picks`, 
-			{method: 'POST', body: JSON.stringify(picks)}
-		);
+		// post request to endpoint, body is stringified picks
+		const postPicksRes = await fetch(`http://localhost:3000/api/submit-picks`, {
+			method: "POST",
+			body: JSON.stringify(picks),
+		});
 		// in the endpoint, you'll be able to log req.method as 'POST' and req.body will be your data
 		// because its already JSON and you're not parsing it, instead of the JSON.stringify(data) like the example
 		// you should be able to just put `req.body` in the parameters array after the query
 		// (if that doesn't work try parsing it and stringifying it again im maybe 90% confident)
 
-		// you probably want to use a json_populate_recordset in your query 
+		// you probably want to use a json_populate_recordset in your query
 		// to post all the picks at once (see PR write up for example of query)
 		// when you set up your picks object in `clicked`, make the keys the same as the table column headers
-		
+
 		// when you're successful you'll be able to console.log(await postPicksRes.json())
 		// and it'll be the array of picks you just posted because of the returning * in the query
 		// assuming you do a res.send at the end of the post method in the endpoint
-	}
-
-	console.log(picks)
+		console.log(await postPicksRes.json());
+	};
 
 	return (
 		<>
@@ -92,7 +88,7 @@ const GameViewPage = () => {
 			))}
 			<button
 				type='submit'
-				onClick={() => logResults()}
+				onClick={() => handleSubmit()}
 			>
 				Submit
 			</button>
