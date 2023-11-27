@@ -12,7 +12,9 @@ export default async function games(req, res) {
 		console.log("before call");
 		results = await client.query("select * from public.games");
 		console.log("another change");
-		res.json(results.rows);
+		// this is just a different syntax for the same thing, res.send vs res.json
+		res.status(200).send(results.rows)
+		// res.json(results.rows);
 		// console.log(results);
 	} catch (err) {
 		console.log(err);

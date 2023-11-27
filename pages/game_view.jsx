@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from "react";
-// moved TeamCard to new `/components/` folder, shouldn't be in the `pages` directory
-// import automatically updated (thanks vs code!)
-// also changed the name from `team_card` to `TeamCard` to fit React naming conventions
 import { TeamCard } from "../components/TeamCard";
 
 const GameViewPage = () => {
 	const [teams, setTeams] = useState([]);
 	const [games, setGames] = useState([]);
-	// const [buttonStyle, setButtonStyle] = useState("notSelected");
 	const [picks, setPicks] = useState([]);
 
 	const getGames = async () => {
@@ -32,32 +28,43 @@ const GameViewPage = () => {
 	}, []);
 
 	const clicked = async (id, gameId) => {
-		// if (buttonStyle === "notSelected") {
-		// 	setButtonStyle("selected");
-		// 	console.log("one", game.home_id);
 		const pick = {
 			choosenTeam: id,
 			id: gameId,
 		};
 		console.log(pick);
-		// have to do callback to spread prev state into current state update
-		// you're not supposed to directly reference the state from inside the `setState`, like `...picks`
-		// it can cause an infinite loop. so better to spread the `prev` state in the callback
-		// setPicks((prev) => [...prev, pick]);
-		// use filter to get array without winner just clicked, spread back into state and include new pick
+		
 		const tempPicks = picks?.filter((pick) => pick.id !== gameId);
 		setPicks([...tempPicks, pick]);
-
-		// } else {
-		// 	console.log("two");
-		// 	setButtonStyle("notSelected");
-		// }
 	};
 
-	function logResults() {
+	// you should call it handleSubmit
+	// also you should do them all as arrow functions its 2023
+	const logResults = async () => {
 		console.log("submitted");
 		console.log(picks);
+		// picks table: wants to be a reference table. so no primary key. 
+		// columns will be user_id, game_id, chosen_team
+
+		// pass a post request to the endpoint with a json body, right here, just like this
+		const postPicksRes = await fetch(`http://localhost:3000/api/picks`, 
+			{method: 'POST', body: JSON.stringify(picks)}
+		);
+		// in the endpoint, you'll be able to log req.method as 'POST' and req.body will be your data
+		// because its already JSON and you're not parsing it, instead of the JSON.stringify(data) like the example
+		// you should be able to just put `req.body` in the parameters array after the query
+		// (if that doesn't work try parsing it and stringifying it again im maybe 90% confident)
+
+		// you probably want to use a json_populate_recordset in your query 
+		// to post all the picks at once (see PR write up for example of query)
+		// when you set up your picks object in `clicked`, make the keys the same as the table column headers
+		
+		// when you're successful you'll be able to console.log(await postPicksRes.json())
+		// and it'll be the array of picks you just posted because of the returning * in the query
+		// assuming you do a res.send at the end of the post method in the endpoint
 	}
+
+	console.log(picks)
 
 	return (
 		<>
