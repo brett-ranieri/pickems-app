@@ -5,6 +5,7 @@ const GameViewPage = () => {
 	const [teams, setTeams] = useState([]);
 	const [games, setGames] = useState([]);
 	const [picks, setPicks] = useState([]);
+	const [isSubmitted, setIsSubmitted] = useState(false);
 
 	const getGames = async () => {
 		console.log("hello??");
@@ -29,7 +30,7 @@ const GameViewPage = () => {
 
 	const clicked = async (id, gameId) => {
 		const pick = {
-			user_id: 4,
+			user_id: 5,
 			chosen_team: id,
 			game_id: gameId,
 		};
@@ -40,6 +41,7 @@ const GameViewPage = () => {
 	};
 
 	const handleSubmit = async () => {
+		setIsSubmitted(true);
 		console.log("submitted");
 
 		// post request to endpoint, body is stringified picks
@@ -61,6 +63,7 @@ const GameViewPage = () => {
 		// assuming you do a res.send at the end of the post method in the endpoint
 		console.log(await postPicksRes.json());
 	};
+	console.log(isSubmitted);
 
 	return (
 		<>
@@ -86,12 +89,23 @@ const GameViewPage = () => {
 					/>
 				</div>
 			))}
-			<button
-				type='submit'
-				onClick={() => handleSubmit()}
-			>
-				Submit
-			</button>
+			{isSubmitted ? (
+				<button
+					className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-8 mt-2 ml-8'
+					type='submit'
+					onClick={() => handleSubmit()}
+				>
+					Update
+				</button>
+			) : (
+				<button
+					className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-8 mt-2 ml-8'
+					type='submit'
+					onClick={() => handleSubmit()}
+				>
+					Submit
+				</button>
+			)}
 		</>
 	);
 };
