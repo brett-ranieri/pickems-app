@@ -42,11 +42,11 @@ const TestPage = () => {
 	useEffect(() => {
 		console.log("running useeffect");
 		// getTeams();
-		getGames();
-		// hitEspn();
+		// getGames();
+		hitEspn();
 	}, []);
 
-	console.log(games);
+	// console.log(games);
 
 	return (
 		<>
@@ -56,7 +56,7 @@ const TestPage = () => {
 				action=''
 				id='userPicks'
 			>
-				{renGameData}
+				{/* {renGameData} */}
 				<button
 					type='submit'
 					onClick={() => logResults()}

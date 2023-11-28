@@ -28,6 +28,8 @@ const GameViewPage = () => {
 		getGames();
 	}, []);
 
+	console.log(games);
+
 	const clicked = async (id, gameId) => {
 		const pick = {
 			user_id: 5,
