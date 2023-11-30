@@ -30,8 +30,9 @@ const GameViewPage = () => {
 			setPicks(userPicks);
 			setIsSubmitted(userPicks);
 		} else {
-			// setting both states to an empty array here appears to have
-			// fixed intial render bug from last commit
+			// I THOUGHT:
+			// setting both states to an empty array here
+			// fixed intial render bug...i was wrong...
 			setPicks([]);
 			setIsSubmitted([]);
 		}
@@ -56,6 +57,27 @@ const GameViewPage = () => {
 	const handleSubmit = async () => {
 		if (isSubmitted.length) {
 			console.log("picks already made");
+			let updatedPicks = [];
+			const comparePicks = (pick) => {
+				isSubmitted.forEach(function (submittedPick) {
+					if (pick.game_id === submittedPick.game_id) {
+						if (pick.chosen_team !== submittedPick.chosen_team) {
+							updatedPicks.push(pick);
+						}
+					}
+				});
+			};
+			picks.forEach(comparePicks);
+			console.log(updatedPicks);
+			const postPicksRes = await fetch(`http://localhost:3000/api/submit-picks`, {
+				method: "PUT",
+				body: JSON.stringify(updatedPicks),
+			});
+			// this is NOT working as anticipated
+			if (postPicksRes) {
+				console.log("something else happened");
+				setIsSubmitted(picks);
+			}
 		} else {
 			// post request to endpoint, body is stringified picks
 			const postPicksRes = await fetch(`http://localhost:3000/api/submit-picks`, {
@@ -67,6 +89,7 @@ const GameViewPage = () => {
 				console.log("something happened");
 				// moved into this if statement to ensure that post was successful
 				// before setting picks to isSubmitted...did I do that right?
+				// I DID NOT!
 				setIsSubmitted(picks);
 			}
 		}
