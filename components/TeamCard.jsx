@@ -22,8 +22,6 @@ export const TeamCard = ({ team, clicked, game, picks }) => {
 		checkPick();
 	}, [picks]);
 
-	console.log(isPicked);
-
 	return (
 		<>
 			{isPicked === null ? (

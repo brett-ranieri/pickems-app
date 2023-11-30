@@ -5,7 +5,7 @@ const GameViewPage = () => {
 	const [teams, setTeams] = useState([]);
 	const [games, setGames] = useState([]);
 	const [picks, setPicks] = useState([]);
-	const [isSubmitted, setIsSubmitted] = useState(false);
+	const [isSubmitted, setIsSubmitted] = useState([]);
 
 	const getGames = async () => {
 		const results = await fetch(`http://localhost:3000/api/games`);
@@ -22,13 +22,7 @@ const GameViewPage = () => {
 	const getPicks = async () => {
 		const results = await fetch(`http://localhost:3000/api/picks`);
 		const prevPicks = await results.json();
-		console.log("PP: ", prevPicks);
-		setPrevPicks(prevPicks);
-	};
-
-	const setPrevPicks = async (prevPicks) => {
-		// manually setting user below
-		const user = 2;
+		const user = 6;
 		const userPicks = prevPicks.filter((pick) => {
 			return pick.user_id === user;
 		});
@@ -36,9 +30,13 @@ const GameViewPage = () => {
 			console.log(user);
 			console.log(userPicks);
 			setPicks(userPicks);
-			setIsSubmitted(true);
+			setIsSubmitted(userPicks);
 		} else {
 			console.log("no picks yet");
+			// setting both states to an empty array here appears to have
+			// fixed intial render bug from last commit
+			setPicks([]);
+			setIsSubmitted([]);
 		}
 	};
 
@@ -50,7 +48,7 @@ const GameViewPage = () => {
 
 	const clicked = async (id, gameId) => {
 		const pick = {
-			user_id: 5,
+			user_id: 6,
 			chosen_team: id,
 			game_id: gameId,
 		};
@@ -60,7 +58,7 @@ const GameViewPage = () => {
 
 	const handleSubmit = async () => {
 		// should this actually be at the end of the fetch? only changing if submit was successful?
-		setIsSubmitted(true);
+		setIsSubmitted(picks);
 		// post request to endpoint, body is stringified picks
 		const postPicksRes = await fetch(`http://localhost:3000/api/submit-picks`, {
 			method: "POST",
@@ -70,6 +68,7 @@ const GameViewPage = () => {
 		console.log(await postPicksRes.json());
 	};
 
+	console.log("IS: ", isSubmitted);
 	return (
 		<>
 			<p className='text-3xl font-bold mb-4'>This is the game view page</p>
@@ -93,7 +92,7 @@ const GameViewPage = () => {
 					/>
 				</div>
 			))}
-			{isSubmitted ? (
+			{isSubmitted.length ? (
 				<button
 					className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-8 mt-2 ml-8'
 					type='submit'
