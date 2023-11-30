@@ -22,17 +22,14 @@ const GameViewPage = () => {
 	const getPicks = async () => {
 		const results = await fetch(`http://localhost:3000/api/picks`);
 		const prevPicks = await results.json();
-		const user = 6;
+		const user = 7;
 		const userPicks = prevPicks.filter((pick) => {
 			return pick.user_id === user;
 		});
 		if (userPicks.length) {
-			console.log(user);
-			console.log(userPicks);
 			setPicks(userPicks);
 			setIsSubmitted(userPicks);
 		} else {
-			console.log("no picks yet");
 			// setting both states to an empty array here appears to have
 			// fixed intial render bug from last commit
 			setPicks([]);
@@ -48,7 +45,7 @@ const GameViewPage = () => {
 
 	const clicked = async (id, gameId) => {
 		const pick = {
-			user_id: 6,
+			user_id: 7,
 			chosen_team: id,
 			game_id: gameId,
 		};
@@ -57,18 +54,24 @@ const GameViewPage = () => {
 	};
 
 	const handleSubmit = async () => {
-		// should this actually be at the end of the fetch? only changing if submit was successful?
-		setIsSubmitted(picks);
-		// post request to endpoint, body is stringified picks
-		const postPicksRes = await fetch(`http://localhost:3000/api/submit-picks`, {
-			method: "POST",
-			//by stringifying here, don't need to in the endpoint
-			body: JSON.stringify(picks),
-		});
-		console.log(await postPicksRes.json());
+		if (isSubmitted.length) {
+			console.log("picks already made");
+		} else {
+			// post request to endpoint, body is stringified picks
+			const postPicksRes = await fetch(`http://localhost:3000/api/submit-picks`, {
+				method: "POST",
+				//by stringifying here, don't need to in the endpoint
+				body: JSON.stringify(picks),
+			});
+			if (postPicksRes) {
+				console.log("something happened");
+				// moved into this if statement to ensure that post was successful
+				// before setting picks to isSubmitted...did I do that right?
+				setIsSubmitted(picks);
+			}
+		}
 	};
 
-	console.log("IS: ", isSubmitted);
 	return (
 		<>
 			<p className='text-3xl font-bold mb-4'>This is the game view page</p>
