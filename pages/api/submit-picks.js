@@ -33,9 +33,11 @@ export default async function submitPicks(req, res) {
 			// moved return up into this if statement because it wants results.rows
 			res.json(results.rows);
 		} else if (req.method === "PUT") {
+			console.log(req.body);
 			const updatedPicks = JSON.parse(req.body);
 			// is it bad form to parse here and not stringify again before query?
 			updatedPicks.forEach(async function (updatedPick) {
+				console.log(updatedPick);
 				results = await client.query(
 					`update public.picks set chosen_team = '${updatedPick.chosen_team}' where game_id = '${updatedPick.game_id}' and user_id = '${updatedPick.user_id}' returning *`
 				);

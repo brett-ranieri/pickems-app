@@ -22,7 +22,7 @@ const GameViewPage = () => {
 	const getPicks = async () => {
 		const results = await fetch(`http://localhost:3000/api/picks`);
 		const prevPicks = await results.json();
-		const user = 7;
+		const user = 9;
 		const userPicks = prevPicks.filter((pick) => {
 			return pick.user_id === user;
 		});
@@ -33,6 +33,10 @@ const GameViewPage = () => {
 			// I THOUGHT:
 			// setting both states to an empty array here
 			// fixed intial render bug...i was wrong...
+			//
+			// Noticed that it is only occuring for games that have had a pick
+			// submitted to the database. If no pick has been submitted for a game
+			// it is rendering correctly on initial load
 			setPicks([]);
 			setIsSubmitted([]);
 		}
@@ -46,7 +50,7 @@ const GameViewPage = () => {
 
 	const clicked = async (id, gameId) => {
 		const pick = {
-			user_id: 7,
+			user_id: 9,
 			chosen_team: id,
 			game_id: gameId,
 		};
@@ -57,8 +61,9 @@ const GameViewPage = () => {
 	const handleSubmit = async () => {
 		if (isSubmitted.length) {
 			console.log("picks already made");
-			let updatedPicks = [];
-			const comparePicks = (pick) => {
+
+			const comparePicks = async (pick) => {
+				let updatedPicks = [];
 				isSubmitted.forEach(function (submittedPick) {
 					if (pick.game_id === submittedPick.game_id) {
 						if (pick.chosen_team !== submittedPick.chosen_team) {
@@ -66,23 +71,61 @@ const GameViewPage = () => {
 						}
 					}
 				});
+				if (updatedPicks.length) {
+					const postPicksRes = await fetch(`http://localhost:3000/api/submit-picks`, {
+						method: "PUT",
+						body: JSON.stringify(updatedPicks),
+					});
+					// this is NOT working as anticipated
+					if (postPicksRes) {
+						console.log("something else happened");
+						setIsSubmitted(picks);
+					}
+				}
 			};
+
+			const checkForGame = async (pick) => {
+				// needed to POST data returned from this checkForGame, not PUT,
+				// so i seperated function from comparePicks to allow for different fetch methods
+				//
+				// are some variables, like declaring updatedPicks in both functions
+				// a bit redundant?
+				// kept them seperate because each function needs to run independantly
+				// of the other, but both need to be populated simultaneously AND if the
+				// results of either function were sent to the wrong fetch it would
+				// mess up the data...
+				//
+				// you mentioned an insert/update query though...is this a use case
+				// for something like that?
+				let updatedPicks = [];
+				console.log("checking...", pick.game_id);
+				const submissionCheck = isSubmitted.some((obj) => obj.game_id === pick.game_id);
+				// originally used .includes but all cases were returning false
+				// switching to .some and declaring simple arrow func did the trick!
+				console.log(submissionCheck);
+				if (!submissionCheck) {
+					console.log(pick);
+					updatedPicks.push(pick);
+				}
+				if (updatedPicks.length) {
+					const postPicksRes = await fetch(`http://localhost:3000/api/submit-picks`, {
+						method: "POST",
+						body: JSON.stringify(updatedPicks),
+					});
+					// this is NOT working as anticipated
+					if (postPicksRes) {
+						console.log("more somethings happened");
+						setIsSubmitted(picks);
+					}
+				}
+			};
+
 			picks.forEach(comparePicks);
-			console.log(updatedPicks);
-			const postPicksRes = await fetch(`http://localhost:3000/api/submit-picks`, {
-				method: "PUT",
-				body: JSON.stringify(updatedPicks),
-			});
-			// this is NOT working as anticipated
-			if (postPicksRes) {
-				console.log("something else happened");
-				setIsSubmitted(picks);
-			}
+			picks.forEach(checkForGame);
+			console.log("IS: ", isSubmitted);
 		} else {
-			// post request to endpoint, body is stringified picks
 			const postPicksRes = await fetch(`http://localhost:3000/api/submit-picks`, {
 				method: "POST",
-				//by stringifying here, don't need to in the endpoint
 				body: JSON.stringify(picks),
 			});
 			if (postPicksRes) {
