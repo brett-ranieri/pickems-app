@@ -68,13 +68,6 @@ const ScoreViewPage = () => {
 			<p>Scoring View</p>
 			<div>{user}</div>
 			<div>{score}</div>
-			<button
-				className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-8 mt-2 ml-8'
-				// type='submit'
-				onClick={() => getScore()}
-			>
-				Total?
-			</button>
 		</>
 	);
 };
