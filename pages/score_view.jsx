@@ -111,10 +111,8 @@ const ScoreViewPage = () => {
 					className='flex flex-row justify-around mb-6'
 				>
 					<ScoreCard
-						// variable naming is getting weird here...
-						user={score.user}
-						name={score.name}
-						score={score.score}
+						// if you're passing more than one property of an object as a prop, pass the whole thing!
+						score={score}
 					/>
 				</div>
 			))}

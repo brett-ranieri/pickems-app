@@ -1,11 +1,11 @@
 import React from "react";
 
-export const ScoreCard = ({ user, name, score }) => {
+export const ScoreCard = ({ score }) => {
 	return (
 		<>
-			<div>{user}</div>
-			<div>{name}</div>
-			<div>{score}</div>
+			<div>{score.user}</div>
+			<div>{score.name}</div>
+			<div>{score.score}</div>
 		</>
 	);
 };
