@@ -62,18 +62,11 @@ const ScoreViewPage = () => {
 		const userPicks = allPicks.filter((pick) => {
 			return pick.user_id === user.id;
 		});
-		const checkForWinner = async (pick) => {
-			const gameMatch = async (game) => {
-				if (game.id === pick.game_id) {
-					// log below allows me to check that scores are accurate
-					// console.log(game.id, game.winner, pick.chosen_team);
-					if (game.winner === pick.chosen_team) {
-						score++;
-					}
-				}
-			};
-			games.forEach(gameMatch);
-		};
+		const checkForWinner = (pick) => {
+			if (pick.winner === pick.chosen_team) {
+				score++;
+			}
+		}		
 		if (userPicks.length) {
 			userPicks.forEach(checkForWinner);
 		}

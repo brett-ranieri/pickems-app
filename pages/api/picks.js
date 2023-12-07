@@ -9,7 +9,17 @@ export default async function picks(req, res) {
 	}
 	try {
 		let results;
-		results = await client.query("select * from public.picks");
+		results = await client.query(
+		`SELECT
+			p.user_id,
+			p.chosen_team,
+			p.game_id,
+			g.week,
+			g.winner
+		FROM
+			public.picks p
+			JOIN public.games g ON p.game_id = g.id
+		`);
 		res.status(200).send(results.rows);
 	} catch (err) {
 		console.log(err);
