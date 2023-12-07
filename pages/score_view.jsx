@@ -73,7 +73,8 @@ const ScoreViewPage = () => {
 
 	// re-factored all previous functions to all run in a loop
 	const getUserScore = async (user) => {
-		let tally = [];
+		// instantiate score as 0
+		let score = 0;
 		// console.log("2: ", allPicks);
 		const userPicks = allPicks.filter((pick) => {
 			return pick.user_id === user.id;
@@ -84,7 +85,7 @@ const ScoreViewPage = () => {
 					// log below allows me to check that scores are accurate
 					// console.log(game.id, game.winner, pick.chosen_team);
 					if (game.winner === pick.chosen_team) {
-						tally.push(1);
+						score++;
 					}
 				}
 			};
@@ -92,21 +93,9 @@ const ScoreViewPage = () => {
 		};
 		if (userPicks.length) {
 			userPicks.forEach(checkForWinner);
-			const getScore = () => {
-				let sum = 0;
-				tally.forEach((item) => {
-					sum += item;
-				});
-				return sum;
-			};
-			// there a better way to do this?
-			// defining function then calling in diff variable feels clunky...
-			const score = getScore();
-			allScores.push({ user: user.id, name: user.name, score: score });
-		} else {
-			const score = 0;
-			allScores.push({ user: user.id, name: user.name, score: score });
 		}
+		allScores.push({ user: user.id, name: user.name, score: score });
+		
 		// console.log(user.id, tally);
 	};
 	users.forEach(getUserScore);
