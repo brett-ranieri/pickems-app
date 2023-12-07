@@ -40,7 +40,8 @@ const ScoreViewPage = () => {
 		console.log("called");
 		// can manually change userId here
 		const userId = 2;
-		const activeUser = users.filter((user) => {
+		// a find returns an object. if you must return an array, and are only using the first item, get the object with [0] immediately
+		const activeUser = users.find((user) => {
 			return user.id === userId;
 		});
 		console.log(activeUser);
@@ -121,7 +122,7 @@ const ScoreViewPage = () => {
         was returning undefined and chased a bunch of different ways
         to call functions and define variables before thinking of
         having it wait for user to return true before rendering */}
-				{user ? <p>Active User: {user[0].name}</p> : null}
+				<p>Active User: {user?.name}</p>
 				{picks.map((pick) => (
 					<div key={pick.chosen_team}>
 						{pick.game_id}, {pick.chosen_team}
