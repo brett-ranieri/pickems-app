@@ -39,32 +39,14 @@ const ScoreViewPage = () => {
 	const setUserInfo = async () => {
 		console.log("called");
 		// can manually change userId here
-		const userId = 1;
+		const userId = 2;
 		const activeUser = users.filter((user) => {
 			return user.id === userId;
 		});
 		console.log(activeUser);
 		setUser(activeUser);
 
-		// needed to add fetch below to fix an undefined issue...but doesnt feel right
-		// there has to be a way to use the allPicks state here and
-		// not running a second fetch to the api...
-
-		// had same code as getUserScore and was trying to filter
-		// allPicks state, but no matter where I tried to call setUserInfo
-		// allPicks was just empty array when called, only way I have found to
-		// consistently populate so far is this...but there must be another way
-		// it works for getUserScore consistently so I know I'm missing
-		// something...
-		const results = await fetch(`http://localhost:3000/api/picks`);
-		const allPicks = await results.json();
-
-		// is it bad coding practice to copy/paste this bit here
-		// feels like it, but also think I need the function below
-		// to run repeatedly in the loop, so keeping seperate to not
-		// overlap and/or break something
-		// console.log("1: ", allPicks);
-		const userPicks = await allPicks.filter((pick) => {
+		const userPicks = allPicks.filter((pick) => {
 			return pick.user_id === userId;
 		});
 		console.log(userPicks);
@@ -109,8 +91,16 @@ const ScoreViewPage = () => {
 	useEffect(() => {
 		getGames();
 		getAllPicks();
-		setUserInfo();
 	}, []);
+
+	// this useEffect is the solution to the getUserInfo race condition
+	// listen for allPicks and wait until its truthy (so you know the state has been set)
+	// before making the call to setUserInfo()
+	useEffect(() => {
+		if (allPicks.length) {
+			setUserInfo()
+		}
+	}, [allPicks])
 
 	return (
 		<>
