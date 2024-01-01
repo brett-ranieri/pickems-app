@@ -4,7 +4,8 @@ import { ScoreCard } from "../components/ScoreCard";
 	// you need to figure out how to group things by property into an array of arrays, in javascript
 	// so games right now is an array of objects. each object has a `week` property. 
 	// you need to group them into an array of objects where its like 
-	// [{week: 1, games: [{week 1 game 1}{week 1 game 2}...]}, {week: 2, games: [{week 2 game 1}{week 2 game 2}...]}]
+	// [{week: 1, games: [{week 1 game 1}, {week 1 game 2}...]}, {week: 2, games: [{week 2 game 1}, {week 2 game 2}...]}]
+	// dont have to do this part right now, can happen in a later version after the playoffs deadline
 
 const ScoreViewPage = () => {
 	const [games, setGames] = useState([]);
