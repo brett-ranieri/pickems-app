@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { ScoreCard } from "../components/ScoreCard";
 
+	// you need to figure out how to group things by property into an array of arrays, in javascript
+	// so games right now is an array of objects. each object has a `week` property. 
+	// you need to group them into an array of objects where its like 
+	// [{week: 1, games: [{week 1 game 1}, {week 1 game 2}...]}, {week: 2, games: [{week 2 game 1}, {week 2 game 2}...]}]
+	// dont have to do this part right now, can happen in a later version after the playoffs deadline
+
 const ScoreViewPage = () => {
 	const [games, setGames] = useState([]);
 	const [picks, setPicks] = useState([]);
@@ -39,32 +45,15 @@ const ScoreViewPage = () => {
 	const setUserInfo = async () => {
 		console.log("called");
 		// can manually change userId here
-		const userId = 1;
-		const activeUser = users.filter((user) => {
+		const userId = 2;
+		// a find returns an object. if you must return an array, and are only using the first item, get the object with [0] immediately
+		const activeUser = users.find((user) => {
 			return user.id === userId;
 		});
 		console.log(activeUser);
 		setUser(activeUser);
 
-		// needed to add fetch below to fix an undefined issue...but doesnt feel right
-		// there has to be a way to use the allPicks state here and
-		// not running a second fetch to the api...
-
-		// had same code as getUserScore and was trying to filter
-		// allPicks state, but no matter where I tried to call setUserInfo
-		// allPicks was just empty array when called, only way I have found to
-		// consistently populate so far is this...but there must be another way
-		// it works for getUserScore consistently so I know I'm missing
-		// something...
-		const results = await fetch(`http://localhost:3000/api/picks`);
-		const allPicks = await results.json();
-
-		// is it bad coding practice to copy/paste this bit here
-		// feels like it, but also think I need the function below
-		// to run repeatedly in the loop, so keeping seperate to not
-		// overlap and/or break something
-		// console.log("1: ", allPicks);
-		const userPicks = await allPicks.filter((pick) => {
+		const userPicks = allPicks.filter((pick) => {
 			return pick.user_id === userId;
 		});
 		console.log(userPicks);
@@ -73,40 +62,22 @@ const ScoreViewPage = () => {
 
 	// re-factored all previous functions to all run in a loop
 	const getUserScore = async (user) => {
-		let tally = [];
+		// instantiate score as 0
+		let score = 0;
 		// console.log("2: ", allPicks);
 		const userPicks = allPicks.filter((pick) => {
 			return pick.user_id === user.id;
 		});
-		const checkForWinner = async (pick) => {
-			const gameMatch = async (game) => {
-				if (game.id === pick.game_id) {
-					// log below allows me to check that scores are accurate
-					// console.log(game.id, game.winner, pick.chosen_team);
-					if (game.winner === pick.chosen_team) {
-						tally.push(1);
-					}
-				}
-			};
-			games.forEach(gameMatch);
-		};
+		const checkForWinner = (pick) => {
+			if (pick.winner === pick.chosen_team) {
+				score++;
+			}
+		}		
 		if (userPicks.length) {
 			userPicks.forEach(checkForWinner);
-			const getScore = () => {
-				let sum = 0;
-				tally.forEach((item) => {
-					sum += item;
-				});
-				return sum;
-			};
-			// there a better way to do this?
-			// defining function then calling in diff variable feels clunky...
-			const score = getScore();
-			allScores.push({ user: user.id, name: user.name, score: score });
-		} else {
-			const score = 0;
-			allScores.push({ user: user.id, name: user.name, score: score });
 		}
+		allScores.push({ user: user.id, name: user.name, score: score });
+		
 		// console.log(user.id, tally);
 	};
 	users.forEach(getUserScore);
@@ -120,8 +91,16 @@ const ScoreViewPage = () => {
 	useEffect(() => {
 		getGames();
 		getAllPicks();
-		setUserInfo();
 	}, []);
+
+	// this useEffect is the solution to the getUserInfo race condition
+	// listen for allPicks and wait until its truthy (so you know the state has been set)
+	// before making the call to setUserInfo()
+	useEffect(() => {
+		if (allPicks.length) {
+			setUserInfo()
+		}
+	}, [allPicks])
 
 	return (
 		<>
@@ -132,10 +111,8 @@ const ScoreViewPage = () => {
 					className='flex flex-row justify-around mb-6'
 				>
 					<ScoreCard
-						// variable naming is getting weird here...
-						user={score.user}
-						name={score.name}
-						score={score.score}
+						// if you're passing more than one property of an object as a prop, pass the whole thing!
+						score={score}
 					/>
 				</div>
 			))}
@@ -144,7 +121,7 @@ const ScoreViewPage = () => {
         was returning undefined and chased a bunch of different ways
         to call functions and define variables before thinking of
         having it wait for user to return true before rendering */}
-				{user ? <p>Active User: {user[0].name}</p> : null}
+				<p>Active User: {user?.name}</p>
 				{picks.map((pick) => (
 					<div key={pick.chosen_team}>
 						{pick.game_id}, {pick.chosen_team}
