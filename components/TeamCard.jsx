@@ -22,11 +22,9 @@ export const TeamCard = ({ team, clicked, game, picks }) => {
 		checkPick();
 	}, [picks]);
 
-	// is there a better way to specify the return when isPicked is null????
-
-	if (isPicked === null) {
-		return (
-			<>
+	return (
+		<>
+			{isPicked === null ? (
 				<div
 					className='w-80 h-10 mt-4 font-bold flex items-center justify-center rounded hover:cursor-pointer bg-gray-200'
 					// seemed easier to do outside of tailwind, found solution here:
@@ -36,13 +34,7 @@ export const TeamCard = ({ team, clicked, game, picks }) => {
 				>
 					{team?.name}
 				</div>
-			</>
-		);
-	}
-
-	return (
-		<>
-			{isPicked ? (
+			) : isPicked ? (
 				<div
 					className='w-80 h-10 mt-4 font-bold flex items-center justify-center rounded hover:cursor-pointer border-black border-slate-600 border-4'
 					// seemed easier to do outside of tailwind, found solution here:

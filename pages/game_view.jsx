@@ -5,14 +5,11 @@ const GameViewPage = () => {
 	const [teams, setTeams] = useState([]);
 	const [games, setGames] = useState([]);
 	const [picks, setPicks] = useState([]);
-	const [isSubmitted, setIsSubmitted] = useState(false);
+	const [isSubmitted, setIsSubmitted] = useState([]);
 
 	const getGames = async () => {
-		console.log("hello??");
-		// if you're not changing a variable, _always_ declare as a `const`
 		const results = await fetch(`http://localhost:3000/api/games`);
 		const upcomingGames = await results.json();
-		console.log(upcomingGames);
 		setGames(upcomingGames);
 	};
 
@@ -22,55 +19,128 @@ const GameViewPage = () => {
 		setTeams(teams);
 	};
 
+	const getPicks = async () => {
+		const results = await fetch(`http://localhost:3000/api/picks`);
+		const prevPicks = await results.json();
+		const user = 9;
+		const userPicks = prevPicks.filter((pick) => {
+			return pick.user_id === user;
+		});
+		if (userPicks.length) {
+			setPicks(userPicks);
+			setIsSubmitted(userPicks);
+		} else {
+			// I THOUGHT:
+			// setting both states to an empty array here
+			// fixed intial render bug...i was wrong...
+			//
+			// Noticed that it is only occuring for games that have had a pick
+			// submitted to the database. If no pick has been submitted for a game
+			// it is rendering correctly on initial load
+			setPicks([]);
+			setIsSubmitted([]);
+		}
+	};
+
 	useEffect(() => {
-		console.log("running useeffect");
 		getTeams();
 		getGames();
+		getPicks();
 	}, []);
-
-	console.log(games);
 
 	const clicked = async (id, gameId) => {
 		const pick = {
-			user_id: 5,
+			user_id: 9,
 			chosen_team: id,
 			game_id: gameId,
 		};
-		console.log(pick);
-
 		const tempPicks = picks?.filter((pick) => pick.game_id !== gameId);
 		setPicks([...tempPicks, pick]);
 	};
 
 	const handleSubmit = async () => {
-		setIsSubmitted(true);
-		console.log("submitted");
+		if (isSubmitted.length) {
+			console.log("picks already made");
 
-		// post request to endpoint, body is stringified picks
-		const postPicksRes = await fetch(`http://localhost:3000/api/submit-picks`, {
-			method: "POST",
-			body: JSON.stringify(picks),
-		});
-		// in the endpoint, you'll be able to log req.method as 'POST' and req.body will be your data
-		// because its already JSON and you're not parsing it, instead of the JSON.stringify(data) like the example
-		// you should be able to just put `req.body` in the parameters array after the query
-		// (if that doesn't work try parsing it and stringifying it again im maybe 90% confident)
+			const comparePicks = async (pick) => {
+				let updatedPicks = [];
+				isSubmitted.forEach(function (submittedPick) {
+					if (pick.game_id === submittedPick.game_id) {
+						if (pick.chosen_team !== submittedPick.chosen_team) {
+							updatedPicks.push(pick);
+						}
+					}
+				});
+				if (updatedPicks.length) {
+					const postPicksRes = await fetch(`http://localhost:3000/api/submit-picks`, {
+						method: "PUT",
+						body: JSON.stringify(updatedPicks),
+					});
+					// this is NOT working as anticipated
+					if (postPicksRes) {
+						console.log("something else happened");
+						setIsSubmitted(picks);
+					}
+				}
+			};
 
-		// you probably want to use a json_populate_recordset in your query
-		// to post all the picks at once (see PR write up for example of query)
-		// when you set up your picks object in `clicked`, make the keys the same as the table column headers
+			const checkForGame = async (pick) => {
+				// needed to POST data returned from this checkForGame, not PUT,
+				// so i seperated function from comparePicks to allow for different fetch methods
+				//
+				// are some variables, like declaring updatedPicks in both functions
+				// a bit redundant?
+				// kept them seperate because each function needs to run independantly
+				// of the other, but both need to be populated simultaneously AND if the
+				// results of either function were sent to the wrong fetch it would
+				// mess up the data...
+				//
+				// you mentioned an insert/update query though...is this a use case
+				// for something like that?
+				let updatedPicks = [];
+				console.log("checking...", pick.game_id);
+				const submissionCheck = isSubmitted.some((obj) => obj.game_id === pick.game_id);
+				// originally used .includes but all cases were returning false
+				// switching to .some and declaring simple arrow func did the trick!
+				console.log(submissionCheck);
+				if (!submissionCheck) {
+					console.log(pick);
+					updatedPicks.push(pick);
+				}
+				if (updatedPicks.length) {
+					const postPicksRes = await fetch(`http://localhost:3000/api/submit-picks`, {
+						method: "POST",
+						body: JSON.stringify(updatedPicks),
+					});
+					// this is NOT working as anticipated
+					if (postPicksRes) {
+						console.log("more somethings happened");
+						setIsSubmitted(picks);
+					}
+				}
+			};
 
-		// when you're successful you'll be able to console.log(await postPicksRes.json())
-		// and it'll be the array of picks you just posted because of the returning * in the query
-		// assuming you do a res.send at the end of the post method in the endpoint
-		console.log(await postPicksRes.json());
+			picks.forEach(comparePicks);
+			picks.forEach(checkForGame);
+			console.log("IS: ", isSubmitted);
+		} else {
+			const postPicksRes = await fetch(`http://localhost:3000/api/submit-picks`, {
+				method: "POST",
+				body: JSON.stringify(picks),
+			});
+			if (postPicksRes) {
+				console.log("something happened");
+				// moved into this if statement to ensure that post was successful
+				// before setting picks to isSubmitted...did I do that right?
+				// I DID NOT!
+				setIsSubmitted(picks);
+			}
+		}
 	};
-	console.log(isSubmitted);
 
 	return (
 		<>
 			<p className='text-3xl font-bold mb-4'>This is the game view page</p>
-			{/* // didn't need to declare this map outside the default return, can map right here inside {} */}
 			{games.map((game) => (
 				<div
 					key={game.id}
@@ -91,7 +161,7 @@ const GameViewPage = () => {
 					/>
 				</div>
 			))}
-			{isSubmitted ? (
+			{isSubmitted.length ? (
 				<button
 					className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-8 mt-2 ml-8'
 					type='submit'
