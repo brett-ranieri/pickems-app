@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { TeamCard } from "../components/TeamCard";
+import Link from "next/link";
 
 const GameViewPage = () => {
 	const [teams, setTeams] = useState([]);
@@ -8,6 +9,11 @@ const GameViewPage = () => {
 	const [isSubmitted, setIsSubmitted] = useState([]);
 
 	const getGames = async () => {
+		// here, for this page, you need to pass an optional query param (there's a ? involved) to the games endpoint
+		// call it something like `current`, it can be a boolean, true for this page
+		// then in the games endpoint, use javascript inside the query (probably hard to find example of)
+		// to make a call for only the games for the current week if the current query param is passed
+		// (this is gonna be tricky sql) - its something like find max value of the week column in a subquery to only get games for that week
 		const results = await fetch(`http://localhost:3000/api/games`);
 		const upcomingGames = await results.json();
 		setGames(upcomingGames);
@@ -22,7 +28,7 @@ const GameViewPage = () => {
 	const getPicks = async () => {
 		const results = await fetch(`http://localhost:3000/api/picks`);
 		const prevPicks = await results.json();
-		const user = 9;
+		const user = 4;
 		const userPicks = prevPicks.filter((pick) => {
 			return pick.user_id === user;
 		});
@@ -50,7 +56,7 @@ const GameViewPage = () => {
 
 	const clicked = async (id, gameId) => {
 		const pick = {
-			user_id: 9,
+			user_id: 4,
 			chosen_team: id,
 			game_id: gameId,
 		};
@@ -141,6 +147,15 @@ const GameViewPage = () => {
 	return (
 		<>
 			<p className='text-3xl font-bold mb-4'>This is the game view page</p>
+			<Link
+				href='/score_view'
+				passHref
+			>
+				<button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-8 mt-2 ml-8'>
+					Check the scores!
+				</button>
+			</Link>
+
 			{games.map((game) => (
 				<div
 					key={game.id}
