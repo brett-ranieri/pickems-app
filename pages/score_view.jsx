@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { ScoreCard } from "../components/ScoreCard";
 
-	// you need to figure out how to group things by property into an array of arrays, in javascript
-	// so games right now is an array of objects. each object has a `week` property. 
-	// you need to group them into an array of objects where its like 
-	// [{week: 1, games: [{week 1 game 1}, {week 1 game 2}...]}, {week: 2, games: [{week 2 game 1}, {week 2 game 2}...]}]
-	// dont have to do this part right now, can happen in a later version after the playoffs deadline
+// you need to figure out how to group things by property into an array of arrays, in javascript
+// so games right now is an array of objects. each object has a `week` property.
+// you need to group them into an array of objects where its like
+// [{week: 1, games: [{week 1 game 1}, {week 1 game 2}...]}, {week: 2, games: [{week 2 game 1}, {week 2 game 2}...]}]
+// dont have to do this part right now, can happen in a later version after the playoffs deadline
 
 const ScoreViewPage = () => {
 	const [games, setGames] = useState([]);
@@ -45,7 +45,7 @@ const ScoreViewPage = () => {
 	const setUserInfo = async () => {
 		console.log("called");
 		// can manually change userId here
-		const userId = 2;
+		const userId = 4;
 		// a find returns an object. if you must return an array, and are only using the first item, get the object with [0] immediately
 		const activeUser = users.find((user) => {
 			return user.id === userId;
@@ -72,12 +72,12 @@ const ScoreViewPage = () => {
 			if (pick.winner === pick.chosen_team) {
 				score++;
 			}
-		}		
+		};
 		if (userPicks.length) {
 			userPicks.forEach(checkForWinner);
 		}
 		allScores.push({ user: user.id, name: user.name, score: score });
-		
+
 		// console.log(user.id, tally);
 	};
 	users.forEach(getUserScore);
@@ -98,21 +98,22 @@ const ScoreViewPage = () => {
 	// before making the call to setUserInfo()
 	useEffect(() => {
 		if (allPicks.length) {
-			setUserInfo()
+			setUserInfo();
 		}
-	}, [allPicks])
+	}, [allPicks]);
 
 	return (
-		<>
-			<p>Scoring View</p>
+		<div className='bg-slate-400 h-full'>
+			<p className='text-3xl font-bold m-8'>Overall Scores:</p>
 			{allScores.map((score) => (
 				<div
 					key={score.user}
-					className='flex flex-row justify-around mb-6'
+					// className='flex flex-row justify-around text-center mb-6'
 				>
 					<ScoreCard
 						// if you're passing more than one property of an object as a prop, pass the whole thing!
 						score={score}
+						user={user}
 					/>
 				</div>
 			))}
@@ -121,14 +122,14 @@ const ScoreViewPage = () => {
         was returning undefined and chased a bunch of different ways
         to call functions and define variables before thinking of
         having it wait for user to return true before rendering */}
-				<p>Active User: {user?.name}</p>
+				{/* <p>Active User: {user?.name}</p>
 				{picks.map((pick) => (
 					<div key={pick.chosen_team}>
 						{pick.game_id}, {pick.chosen_team}
 					</div>
-				))}
+				))} */}
 			</div>
-		</>
+		</div>
 	);
 };
 
