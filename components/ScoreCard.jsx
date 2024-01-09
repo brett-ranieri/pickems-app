@@ -4,7 +4,7 @@ export const ScoreCard = ({ score, user }) => {
 	const [current, setCurrent] = useState(false);
 
 	const checkCurrent = (score, user) => {
-		console.log("tried");
+		// console.log("tried");
 		if (user.id === score.user) {
 			setCurrent(true);
 		}
@@ -18,7 +18,7 @@ export const ScoreCard = ({ score, user }) => {
 		}
 	}, [user]);
 
-	console.log(current);
+	// console.log(current);
 	return (
 		<>
 			{current ? (

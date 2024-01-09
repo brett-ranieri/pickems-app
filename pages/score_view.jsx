@@ -43,20 +43,20 @@ const ScoreViewPage = () => {
 	};
 
 	const setUserInfo = async () => {
-		console.log("called");
+		// console.log("called");
 		// can manually change userId here
 		const userId = 4;
 		// a find returns an object. if you must return an array, and are only using the first item, get the object with [0] immediately
 		const activeUser = users.find((user) => {
 			return user.id === userId;
 		});
-		console.log(activeUser);
+		// console.log(activeUser);
 		setUser(activeUser);
 
 		const userPicks = allPicks.filter((pick) => {
 			return pick.user_id === userId;
 		});
-		console.log(userPicks);
+		// console.log(userPicks);
 		setPicks(userPicks);
 	};
 
@@ -85,8 +85,8 @@ const ScoreViewPage = () => {
 	// setUserInfo(); - calling here creates infinite loop...
 	// console.log(allPicks);
 	// console.log(allScores);
-	console.log("User: ", user);
-	console.log("Picks: ", picks);
+	// console.log("User: ", user);
+	// console.log("Picks: ", picks);
 
 	useEffect(() => {
 		getGames();
@@ -101,6 +101,9 @@ const ScoreViewPage = () => {
 			setUserInfo();
 		}
 	}, [allPicks]);
+
+	//sort scores in descending order
+	allScores.sort((a, b) => parseInt(b.score) - parseInt(a.score));
 
 	return (
 		<div className='bg-slate-400 h-full'>
