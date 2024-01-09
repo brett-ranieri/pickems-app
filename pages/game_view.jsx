@@ -7,6 +7,25 @@ const GameViewPage = () => {
 	const [games, setGames] = useState([]);
 	const [picks, setPicks] = useState([]);
 	const [isSubmitted, setIsSubmitted] = useState([]);
+	const [user, setUser] = useState("Select a User");
+
+	// test Users table
+	const users = [
+		{ id: 1, name: "Allison" },
+		{ id: 2, name: "Brett" },
+		{ id: 3, name: "Maurice" },
+		{ id: 4, name: "Biers" },
+		{ id: 5, name: "Benny" },
+		{ id: 6, name: "Flo" },
+		{ id: 7, name: "Ferdinand" },
+		{ id: 8, name: "Taylor" },
+		{ id: 9, name: "Travis" },
+		{ id: 10, name: "Donna" },
+	];
+
+	const handleUserChange = (e) => {
+		setUser(e.target.value);
+	};
 
 	const getGames = async () => {
 		// here, for this page, you need to pass an optional query param (there's a ? involved) to the games endpoint
@@ -28,7 +47,7 @@ const GameViewPage = () => {
 	const getPicks = async () => {
 		const results = await fetch(`http://localhost:3000/api/picks`);
 		const prevPicks = await results.json();
-		const user = 4;
+		// const user = 4;
 		const userPicks = prevPicks.filter((pick) => {
 			return pick.user_id === user;
 		});
@@ -147,6 +166,16 @@ const GameViewPage = () => {
 	return (
 		<>
 			<p className='text-3xl font-bold mb-4'>This is the game view page</p>
+			<select onChange={handleUserChange}>
+				<option value='Select a User'> -- Select a User -- </option>
+				{/* Mapping through each fruit object in our fruits array
+          and returning an option element with the appropriate attributes / values.
+         */}
+				{users.map((user) => (
+					<option value={user.id}>{user.name}</option>
+				))}
+			</select>
+
 			<Link
 				href='/score_view'
 				passHref
