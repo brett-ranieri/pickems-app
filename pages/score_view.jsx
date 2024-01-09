@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ScoreCard } from "../components/ScoreCard";
+import Link from "next/link";
 
 // you need to figure out how to group things by property into an array of arrays, in javascript
 // so games right now is an array of objects. each object has a `week` property.
@@ -83,7 +84,7 @@ const ScoreViewPage = () => {
 	users.forEach(getUserScore);
 
 	// setUserInfo(); - calling here creates infinite loop...
-	// console.log(allPicks);
+	console.log(allPicks);
 	// console.log(allScores);
 	// console.log("User: ", user);
 	// console.log("Picks: ", picks);
@@ -120,6 +121,14 @@ const ScoreViewPage = () => {
 					/>
 				</div>
 			))}
+			<Link
+				href='/game_view'
+				passHref
+			>
+				<button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-8 mt-2 ml-8'>
+					Make some picks!
+				</button>
+			</Link>
 			<div>
 				{/* had a tough time with rendering the username...
         was returning undefined and chased a bunch of different ways

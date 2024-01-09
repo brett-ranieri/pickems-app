@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { TeamCard } from "../components/TeamCard";
+import Link from "next/link";
 
 const GameViewPage = () => {
 	const [teams, setTeams] = useState([]);
@@ -27,7 +28,7 @@ const GameViewPage = () => {
 	const getPicks = async () => {
 		const results = await fetch(`http://localhost:3000/api/picks`);
 		const prevPicks = await results.json();
-		const user = 9;
+		const user = 4;
 		const userPicks = prevPicks.filter((pick) => {
 			return pick.user_id === user;
 		});
@@ -55,7 +56,7 @@ const GameViewPage = () => {
 
 	const clicked = async (id, gameId) => {
 		const pick = {
-			user_id: 9,
+			user_id: 4,
 			chosen_team: id,
 			game_id: gameId,
 		};
@@ -146,6 +147,15 @@ const GameViewPage = () => {
 	return (
 		<>
 			<p className='text-3xl font-bold mb-4'>This is the game view page</p>
+			<Link
+				href='/score_view'
+				passHref
+			>
+				<button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-8 mt-2 ml-8'>
+					Check the scores!
+				</button>
+			</Link>
+
 			{games.map((game) => (
 				<div
 					key={game.id}
