@@ -44,10 +44,10 @@ const GameViewPage = () => {
 		setTeams(teams);
 	};
 
-	const getPicks = async () => {
+	const getPicks = async (user) => {
+		console.log("user", user);
 		const results = await fetch(`http://localhost:3000/api/picks`);
 		const prevPicks = await results.json();
-		// const user = 4;
 		const userPicks = prevPicks.filter((pick) => {
 			return pick.user_id === user;
 		});
@@ -55,13 +55,6 @@ const GameViewPage = () => {
 			setPicks(userPicks);
 			setIsSubmitted(userPicks);
 		} else {
-			// I THOUGHT:
-			// setting both states to an empty array here
-			// fixed intial render bug...i was wrong...
-			//
-			// Noticed that it is only occuring for games that have had a pick
-			// submitted to the database. If no pick has been submitted for a game
-			// it is rendering correctly on initial load
 			setPicks([]);
 			setIsSubmitted([]);
 		}
@@ -70,12 +63,18 @@ const GameViewPage = () => {
 	useEffect(() => {
 		getTeams();
 		getGames();
-		getPicks();
 	}, []);
+
+	// add useEffect listening to user to update whenever dropdown changed
+	useEffect(() => {
+		//need to parseInt because value from dropdown is returning as string
+		const intUser = parseInt(user);
+		getPicks(intUser);
+	}, [user]);
 
 	const clicked = async (id, gameId) => {
 		const pick = {
-			user_id: 4,
+			user_id: user,
 			chosen_team: id,
 			game_id: gameId,
 		};
@@ -168,9 +167,6 @@ const GameViewPage = () => {
 			<p className='text-3xl font-bold mb-4'>This is the game view page</p>
 			<select onChange={handleUserChange}>
 				<option value='Select a User'> -- Select a User -- </option>
-				{/* Mapping through each fruit object in our fruits array
-          and returning an option element with the appropriate attributes / values.
-         */}
 				{users.map((user) => (
 					<option value={user.id}>{user.name}</option>
 				))}
