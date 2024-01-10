@@ -5,7 +5,7 @@ import { ScoreView } from "../components/ScoreView";
 const MainViewPage = () => {
 	const [teams, setTeams] = useState([]);
 	const [games, setGames] = useState([]);
-	const [view, setView] = useState("game");
+	const [view, setView] = useState(true);
 	const [picks, setPicks] = useState([]);
 	const [isSubmitted, setIsSubmitted] = useState([]);
 	const [user, setUser] = useState({});
@@ -31,10 +31,10 @@ const MainViewPage = () => {
 	};
 
 	const handleViewChange = () => {
-		if (view === "game") {
-			setView("score");
-		} else if (view === "score") {
-			setView("game");
+		if (view === true) {
+			setView(false);
+		} else {
+			setView(true);
 		}
 	};
 	// games fetch WITH query param
@@ -184,62 +184,69 @@ const MainViewPage = () => {
 
 	return (
 		<>
-			<p className='text-3xl font-bold mb-4'>This is the game view page</p>
-			<select onChange={handleUserChange}>
-				<option value='Select a User'> -- Select a User -- </option>
-				{users.map((user) => (
-					<option value={user.id}>{user.name}</option>
-				))}
-			</select>
+			{view ? (
+				<div>
+					<p className='text-3xl font-bold mb-4'>This is the game view page</p>
+					<select onChange={handleUserChange}>
+						<option value='Select a User'> -- Select a User -- </option>
+						{users.map((user) => (
+							<option value={user.id}>{user.name}</option>
+						))}
+					</select>
 
-			<button
-				className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-8 mt-2 ml-8'
-				onClick={() => handleViewChange()}
-			>
-				Check the scores!
-			</button>
+					<button
+						className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-8 mt-2 ml-8'
+						onClick={() => handleViewChange()}
+					>
+						Check the scores!
+					</button>
 
-			{games.map((game) => (
-				<div
-					key={game.id}
-					className='flex flex-row justify-around mb-6'
-				>
-					<TeamCard
-						team={teams?.find((t) => t.id === game.home_id)}
-						clicked={clicked}
-						game={game}
-						picks={picks}
-					/>
-					<div className='mt-4'>vs.</div>
-					<TeamCard
-						team={teams?.find((t) => t.id === game.away_id)}
-						clicked={clicked}
-						game={game}
-						picks={picks}
+					{games.map((game) => (
+						<div
+							key={game.id}
+							className='flex flex-row justify-around mb-6'
+						>
+							<TeamCard
+								team={teams?.find((t) => t.id === game.home_id)}
+								clicked={clicked}
+								game={game}
+								picks={picks}
+							/>
+							<div className='mt-4'>vs.</div>
+							<TeamCard
+								team={teams?.find((t) => t.id === game.away_id)}
+								clicked={clicked}
+								game={game}
+								picks={picks}
+							/>
+						</div>
+					))}
+					{isSubmitted.length ? (
+						<button
+							className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-8 mt-2 ml-8'
+							type='submit'
+							onClick={() => handleSubmit()}
+						>
+							Update
+						</button>
+					) : (
+						<button
+							className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-8 mt-2 ml-8'
+							type='submit'
+							onClick={() => handleSubmit()}
+						>
+							Submit
+						</button>
+					)}
+				</div>
+			) : (
+				<div>
+					<ScoreView
+						user={user}
+						handleViewChange={() => handleViewChange()}
 					/>
 				</div>
-			))}
-			{isSubmitted.length ? (
-				<button
-					className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-8 mt-2 ml-8'
-					type='submit'
-					onClick={() => handleSubmit()}
-				>
-					Update
-				</button>
-			) : (
-				<button
-					className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-8 mt-2 ml-8'
-					type='submit'
-					onClick={() => handleSubmit()}
-				>
-					Submit
-				</button>
 			)}
-			<ScoreView
-				user={user}
-				handleViewChange={() => handleViewChange()}
-			/>
 		</>
 	);
 };
