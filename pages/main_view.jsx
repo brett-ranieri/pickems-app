@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { TeamCard } from "../components/TeamCard";
+import { ScoreView } from "../components/ScoreView";
 // import Link from "next/link";
 
 const MainViewPage = () => {
@@ -232,6 +233,10 @@ const MainViewPage = () => {
 					Submit
 				</button>
 			)}
+			<ScoreView
+				user={user}
+				handleViewChange={() => handleViewChange()}
+			/>
 		</>
 	);
 };
