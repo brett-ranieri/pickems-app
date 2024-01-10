@@ -9,7 +9,7 @@ const MainViewPage = () => {
 	const [view, setView] = useState("game");
 	const [picks, setPicks] = useState([]);
 	const [isSubmitted, setIsSubmitted] = useState([]);
-	const [user, setUser] = useState("Select a User");
+	const [user, setUser] = useState({});
 
 	// test Users table
 	const users = [
@@ -26,7 +26,12 @@ const MainViewPage = () => {
 	];
 
 	const handleUserChange = (e) => {
-		setUser(e.target.value);
+		let value = parseInt(e.target.value);
+		console.log(value);
+		console.log(users);
+		let selectedUser = users.filter((user) => user.id === value);
+		console.log(selectedUser);
+		setUser(selectedUser);
 	};
 
 	const handleViewChange = () => {
@@ -38,11 +43,6 @@ const MainViewPage = () => {
 	};
 
 	const getGames = async () => {
-		// here, for this page, you need to pass an optional query param (there's a ? involved) to the games endpoint
-		// call it something like `current`, it can be a boolean, true for this page
-		// then in the games endpoint, use javascript inside the query (probably hard to find example of)
-		// to make a call for only the games for the current week if the current query param is passed
-		// (this is gonna be tricky sql) - its something like find max value of the week column in a subquery to only get games for that week
 		const results = await fetch(`http://localhost:3000/api/games?sent=true`);
 		const upcomingGames = await results.json();
 		setGames(upcomingGames);
@@ -79,9 +79,10 @@ const MainViewPage = () => {
 
 	// add useEffect listening to user to update whenever dropdown changed
 	useEffect(() => {
-		//need to parseInt because value from dropdown is returning as string
-		const intUser = parseInt(user);
-		getPicks(intUser);
+		// do you know why I needed to declare a variable here to access user by index?
+		let selected = user[0];
+		// undefined error would happen on initial load until adding conditional ?
+		getPicks(selected?.id);
 	}, [user]);
 
 	const clicked = async (id, gameId) => {
