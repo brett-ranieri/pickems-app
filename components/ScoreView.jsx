@@ -10,6 +10,7 @@ export const ScoreView = ({ user, handleViewChange }) => {
 	const [allPicks, setAllPicks] = useState([]);
 	let allScores = [];
 
+	console.log("SV:", user);
 	// test Users table
 	const users = [
 		{ id: 1, name: "Allison" },

@@ -4,9 +4,17 @@ export const ScoreCard = ({ score, user }) => {
 	const [current, setCurrent] = useState(false);
 
 	const checkCurrent = (score, user) => {
-		// console.log("tried");
-		if (user.id === score.user) {
+		console.log("tried");
+		// once again needed to declare variable to access, why??
+		let selected = user[0];
+		console.log(selected);
+		console.log(score);
+		if (selected.id === score.user) {
 			setCurrent(true);
+		}
+		//needed to add else statement to clear previously set users if toggled
+		else {
+			setCurrent(false);
 		}
 	};
 	// use same solution to race effect that I used in score_view...
