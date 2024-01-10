@@ -84,10 +84,11 @@ const ScoreViewPage = () => {
 	users.forEach(getUserScore);
 
 	// setUserInfo(); - calling here creates infinite loop...
-	console.log(allPicks);
+	// console.log(allPicks);
 	// console.log(allScores);
 	// console.log("User: ", user);
 	// console.log("Picks: ", picks);
+	console.log(games);
 
 	useEffect(() => {
 		getGames();
