@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { TeamCard } from "../components/TeamCard";
 import { ScoreView } from "../components/ScoreView";
-// import Link from "next/link";
 
 const MainViewPage = () => {
 	const [teams, setTeams] = useState([]);
@@ -26,11 +25,8 @@ const MainViewPage = () => {
 	];
 
 	const handleUserChange = (e) => {
-		let value = parseInt(e.target.value);
-		console.log(value);
-		console.log(users);
-		let selectedUser = users.filter((user) => user.id === value);
-		console.log(selectedUser);
+		const value = parseInt(e.target.value);
+		const selectedUser = users.filter((user) => user.id === value);
 		setUser(selectedUser);
 	};
 
@@ -41,14 +37,12 @@ const MainViewPage = () => {
 			setView("game");
 		}
 	};
-
+	// games fetch WITH query param
 	const getGames = async () => {
 		const results = await fetch(`http://localhost:3000/api/games?sent=true`);
 		const upcomingGames = await results.json();
 		setGames(upcomingGames);
 	};
-
-	console.log(games);
 
 	const getTeams = async () => {
 		const results = await fetch(`http://localhost:3000/api/teams`);
@@ -57,7 +51,6 @@ const MainViewPage = () => {
 	};
 
 	const getPicks = async (user) => {
-		console.log("user", user);
 		const results = await fetch(`http://localhost:3000/api/picks`);
 		const prevPicks = await results.json();
 		const userPicks = prevPicks.filter((pick) => {
@@ -80,8 +73,8 @@ const MainViewPage = () => {
 	// add useEffect listening to user to update whenever dropdown changed
 	useEffect(() => {
 		// do you know why I needed to declare a variable here to access user by index?
-		let selected = user[0];
-		// undefined error would happen on initial load until adding conditional ?
+		const selected = user[0];
+		// undefined error would happen on initial load until adding optional chaining
 		getPicks(selected?.id);
 	}, [user]);
 
@@ -122,6 +115,19 @@ const MainViewPage = () => {
 			};
 
 			const checkForGame = async (pick) => {
+				// leaving comments below in because I can't see where we talked about
+				// this in last code review
+
+				// ALSO: quick googling of 'too many connections' error brought me to:
+				// https://www.reddit.com/r/SQL/comments/608kbj/postgresql_too_many_connections/
+				// talks about creating a new connection for every row inserted being a problem
+				// possibly all connected??
+				// not seeing how, because connection will fail at times where picks are not being submitted
+				// before call logs (games.js)
+				// got got logs (teams.js)
+				// then too many connections error throws...so not convinced this reddit post
+				// is definitively what is causing my issue
+
 				// needed to POST data returned from this checkForGame, not PUT,
 				// so i seperated function from comparePicks to allow for different fetch methods
 				//
@@ -135,13 +141,11 @@ const MainViewPage = () => {
 				// you mentioned an insert/update query though...is this a use case
 				// for something like that?
 				let updatedPicks = [];
-				console.log("checking...", pick.game_id);
+				// console.log("checking...", pick.game_id);
 				const submissionCheck = isSubmitted.some((obj) => obj.game_id === pick.game_id);
-				// originally used .includes but all cases were returning false
-				// switching to .some and declaring simple arrow func did the trick!
-				console.log(submissionCheck);
+				// console.log(submissionCheck);
 				if (!submissionCheck) {
-					console.log(pick);
+					// console.log(pick);
 					updatedPicks.push(pick);
 				}
 				if (updatedPicks.length) {
@@ -167,6 +171,9 @@ const MainViewPage = () => {
 			});
 			if (postPicksRes) {
 				console.log("something happened");
+				// feels like more can be done here to ensure confirmation of successful
+				// pikc submission
+
 				// moved into this if statement to ensure that post was successful
 				// before setting picks to isSubmitted...did I do that right?
 				// I DID NOT!
@@ -185,17 +192,12 @@ const MainViewPage = () => {
 				))}
 			</select>
 
-			{/* <Link
-				href='/score_view'
-				passHref
-			> */}
 			<button
 				className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-8 mt-2 ml-8'
 				onClick={() => handleViewChange()}
 			>
 				Check the scores!
 			</button>
-			{/* </Link> */}
 
 			{games.map((game) => (
 				<div
