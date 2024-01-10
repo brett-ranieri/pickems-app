@@ -9,7 +9,8 @@ export const ScoreCard = ({ score, user }) => {
 		let selected = user[0];
 		console.log(selected);
 		console.log(score);
-		if (selected.id === score.user) {
+		// add optional chaining to fix undefined error on selected for initial load
+		if (selected?.id === score.user) {
 			setCurrent(true);
 		}
 		//needed to add else statement to clear previously set users if toggled
