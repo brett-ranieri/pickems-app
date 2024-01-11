@@ -80,7 +80,8 @@ const MainViewPage = () => {
 
 	const clicked = async (id, gameId) => {
 		const pick = {
-			user_id: user,
+			//needed to add an index here to be able to access object
+			user_id: user[0].id,
 			chosen_team: id,
 			game_id: gameId,
 		};
@@ -165,6 +166,8 @@ const MainViewPage = () => {
 			picks.forEach(checkForGame);
 			console.log("IS: ", isSubmitted);
 		} else {
+			console.log("no picks yet");
+			console.log(picks);
 			const postPicksRes = await fetch(`http://localhost:3000/api/submit-picks`, {
 				method: "POST",
 				body: JSON.stringify(picks),
