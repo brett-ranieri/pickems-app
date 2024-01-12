@@ -4,21 +4,27 @@ export const ScoreCard = ({ score, user }) => {
 	const [current, setCurrent] = useState(false);
 
 	const checkCurrent = (score, user) => {
-		// console.log("tried");
-		if (user.id === score.user) {
+		// once again needed to declare variable to access, why??
+		let selected = user[0];
+
+		// add optional chaining to fix undefined error on selected for initial load
+		if (selected?.id === score.user) {
 			setCurrent(true);
 		}
+		//needed to add else statement to clear previously set users if toggled
+		else {
+			setCurrent(false);
+		}
 	};
-	// use same solution to race effect that I used in score_view...
-	// have useEffect listen for user, if exists then run checkCurrent
 
+	// used same solution to race effect that I used in score_view...
+	// have useEffect listen for user, if exists then run checkCurrent
 	useEffect(() => {
 		if (user) {
 			checkCurrent(score, user);
 		}
 	}, [user]);
 
-	// console.log(current);
 	return (
 		<>
 			{current ? (

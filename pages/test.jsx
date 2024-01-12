@@ -19,10 +19,10 @@ const TestPage = () => {
 		let apiUrl = "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard";
 		const reply = await fetch(apiUrl);
 		let data = await reply.json();
-		// console.log(data);
+		console.log(data);
 		let events = data.events;
 		let teamsOnBye = data.week.teamsOnBye;
-		console.log(events);
+		// console.log(events);
 	};
 
 	const postTeam = async () => {

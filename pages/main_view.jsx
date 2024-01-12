@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { TeamCard } from "../components/TeamCard";
-import Link from "next/link";
+import { ScoreView } from "../components/ScoreView";
 
-const GameViewPage = () => {
+const MainViewPage = () => {
 	const [teams, setTeams] = useState([]);
 	const [games, setGames] = useState([]);
+	const [view, setView] = useState(true);
 	const [picks, setPicks] = useState([]);
 	const [isSubmitted, setIsSubmitted] = useState([]);
-	const [user, setUser] = useState("Select a User");
+	const [user, setUser] = useState({});
 
 	// test Users table
 	const users = [
@@ -24,21 +25,24 @@ const GameViewPage = () => {
 	];
 
 	const handleUserChange = (e) => {
-		setUser(e.target.value);
+		const value = parseInt(e.target.value);
+		const selectedUser = users.filter((user) => user.id === value);
+		setUser(selectedUser);
 	};
 
+	const handleViewChange = () => {
+		if (view === true) {
+			setView(false);
+		} else {
+			setView(true);
+		}
+	};
+	// games fetch WITH query param
 	const getGames = async () => {
-		// here, for this page, you need to pass an optional query param (there's a ? involved) to the games endpoint
-		// call it something like `current`, it can be a boolean, true for this page
-		// then in the games endpoint, use javascript inside the query (probably hard to find example of)
-		// to make a call for only the games for the current week if the current query param is passed
-		// (this is gonna be tricky sql) - its something like find max value of the week column in a subquery to only get games for that week
 		const results = await fetch(`http://localhost:3000/api/games?sent=true`);
 		const upcomingGames = await results.json();
 		setGames(upcomingGames);
 	};
-
-	console.log(games);
 
 	const getTeams = async () => {
 		const results = await fetch(`http://localhost:3000/api/teams`);
@@ -47,7 +51,6 @@ const GameViewPage = () => {
 	};
 
 	const getPicks = async (user) => {
-		console.log("user", user);
 		const results = await fetch(`http://localhost:3000/api/picks`);
 		const prevPicks = await results.json();
 		const userPicks = prevPicks.filter((pick) => {
@@ -69,14 +72,16 @@ const GameViewPage = () => {
 
 	// add useEffect listening to user to update whenever dropdown changed
 	useEffect(() => {
-		//need to parseInt because value from dropdown is returning as string
-		const intUser = parseInt(user);
-		getPicks(intUser);
+		// do you know why I needed to declare a variable here to access user by index?
+		const selected = user[0];
+		// undefined error would happen on initial load until adding optional chaining
+		getPicks(selected?.id);
 	}, [user]);
 
 	const clicked = async (id, gameId) => {
 		const pick = {
-			user_id: user,
+			//needed to add an index here to be able to access object
+			user_id: user[0].id,
 			chosen_team: id,
 			game_id: gameId,
 		};
@@ -111,6 +116,19 @@ const GameViewPage = () => {
 			};
 
 			const checkForGame = async (pick) => {
+				// leaving comments below in because I can't see where we talked about
+				// this in last code review
+
+				// ALSO: quick googling of 'too many connections' error brought me to:
+				// https://www.reddit.com/r/SQL/comments/608kbj/postgresql_too_many_connections/
+				// talks about creating a new connection for every row inserted being a problem
+				// possibly all connected??
+				// not seeing how, because connection will fail at times where picks are not being submitted
+				// before call logs (games.js)
+				// got got logs (teams.js)
+				// then too many connections error throws...so not convinced this reddit post
+				// is definitively what is causing my issue
+
 				// needed to POST data returned from this checkForGame, not PUT,
 				// so i seperated function from comparePicks to allow for different fetch methods
 				//
@@ -124,13 +142,11 @@ const GameViewPage = () => {
 				// you mentioned an insert/update query though...is this a use case
 				// for something like that?
 				let updatedPicks = [];
-				console.log("checking...", pick.game_id);
+				// console.log("checking...", pick.game_id);
 				const submissionCheck = isSubmitted.some((obj) => obj.game_id === pick.game_id);
-				// originally used .includes but all cases were returning false
-				// switching to .some and declaring simple arrow func did the trick!
-				console.log(submissionCheck);
+				// console.log(submissionCheck);
 				if (!submissionCheck) {
-					console.log(pick);
+					// console.log(pick);
 					updatedPicks.push(pick);
 				}
 				if (updatedPicks.length) {
@@ -150,12 +166,17 @@ const GameViewPage = () => {
 			picks.forEach(checkForGame);
 			console.log("IS: ", isSubmitted);
 		} else {
+			console.log("no picks yet");
+			console.log(picks);
 			const postPicksRes = await fetch(`http://localhost:3000/api/submit-picks`, {
 				method: "POST",
 				body: JSON.stringify(picks),
 			});
 			if (postPicksRes) {
 				console.log("something happened");
+				// feels like more can be done here to ensure confirmation of successful
+				// pikc submission
+
 				// moved into this if statement to ensure that post was successful
 				// before setting picks to isSubmitted...did I do that right?
 				// I DID NOT!
@@ -166,62 +187,71 @@ const GameViewPage = () => {
 
 	return (
 		<>
-			<p className='text-3xl font-bold mb-4'>This is the game view page</p>
-			<select onChange={handleUserChange}>
-				<option value='Select a User'> -- Select a User -- </option>
-				{users.map((user) => (
-					<option value={user.id}>{user.name}</option>
-				))}
-			</select>
+			{view ? (
+				<div>
+					<p className='text-3xl font-bold mb-4'>This is the game view page</p>
+					<select onChange={handleUserChange}>
+						<option value='Select a User'> -- Select a User -- </option>
+						{users.map((user) => (
+							<option value={user.id}>{user.name}</option>
+						))}
+					</select>
 
-			<Link
-				href='/score_view'
-				passHref
-			>
-				<button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-8 mt-2 ml-8'>
-					Check the scores!
-				</button>
-			</Link>
+					<button
+						className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-8 mt-2 ml-8'
+						onClick={() => handleViewChange()}
+					>
+						Check the scores!
+					</button>
 
-			{games.map((game) => (
-				<div
-					key={game.id}
-					className='flex flex-row justify-around mb-6'
-				>
-					<TeamCard
-						team={teams?.find((t) => t.id === game.home_id)}
-						clicked={clicked}
-						game={game}
-						picks={picks}
-					/>
-					<div className='mt-4'>vs.</div>
-					<TeamCard
-						team={teams?.find((t) => t.id === game.away_id)}
-						clicked={clicked}
-						game={game}
-						picks={picks}
+					{games.map((game) => (
+						<div
+							key={game.id}
+							className='flex flex-row justify-around mb-6'
+						>
+							<TeamCard
+								team={teams?.find((t) => t.id === game.home_id)}
+								clicked={clicked}
+								game={game}
+								picks={picks}
+							/>
+							<div className='mt-4'>vs.</div>
+							<TeamCard
+								team={teams?.find((t) => t.id === game.away_id)}
+								clicked={clicked}
+								game={game}
+								picks={picks}
+							/>
+						</div>
+					))}
+					{isSubmitted.length ? (
+						<button
+							className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-8 mt-2 ml-8'
+							type='submit'
+							onClick={() => handleSubmit()}
+						>
+							Update
+						</button>
+					) : (
+						<button
+							className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-8 mt-2 ml-8'
+							type='submit'
+							onClick={() => handleSubmit()}
+						>
+							Submit
+						</button>
+					)}
+				</div>
+			) : (
+				<div>
+					<ScoreView
+						user={user}
+						handleViewChange={() => handleViewChange()}
 					/>
 				</div>
-			))}
-			{isSubmitted.length ? (
-				<button
-					className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-8 mt-2 ml-8'
-					type='submit'
-					onClick={() => handleSubmit()}
-				>
-					Update
-				</button>
-			) : (
-				<button
-					className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-8 mt-2 ml-8'
-					type='submit'
-					onClick={() => handleSubmit()}
-				>
-					Submit
-				</button>
 			)}
 		</>
 	);
 };
 
-export default GameViewPage;
+export default MainViewPage;
