@@ -2,7 +2,7 @@ const baseUrl =
   process.env.VERCEL_ENV === 'production'
     ? `https://${process.env.VERCEL_URL}`
     : process.env.VERCEL_ENV === 'preview'
-    ? `https://pickems-app-git-working-3-brett-ranieri.vercel.app`
+    ? `https://${process.env.VERCEL_BRANCH_URL}`
     : 'http://localhost:3000'
 
 export default baseUrl
