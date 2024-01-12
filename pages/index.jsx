@@ -12,10 +12,8 @@ export default function Home() {
 	const [isSubmitted, setIsSubmitted] = useState([]);
 	const [user, setUser] = useState({});
 
-	const handleUserChange = (e) => {
-		const value = parseInt(e.target.value);
-		const selectedUser = users.filter((user) => user.id === value);
-		setUser(selectedUser);
+	const selectUser = (user) => {
+		setUser(user);
 	};
 
 	const handleViewChange = () => {
@@ -60,10 +58,11 @@ export default function Home() {
 
 	// add useEffect listening to user to update whenever dropdown changed
 	useEffect(() => {
+		console.log(user);
 		// do you know why I needed to declare a variable here to access user by index?
-		const selected = user[0];
+		// const selected = user[0];
 		// undefined error would happen on initial load until adding optional chaining
-		getPicks(selected?.id);
+		getPicks(user);
 	}, [user]);
 
 	const clicked = async (id, gameId) => {
@@ -180,16 +179,11 @@ export default function Home() {
 					<div>
 						<UserDropdown
 							users={users}
-							// handleViewChange={() => handleViewChange()}
+							handleUserChange={() => handleUserChange()}
+							selectUser={() => selectUser()}
 						/>
 					</div>
 					<p className='text-3xl font-bold mb-4'>This is the game view page</p>
-					<select onChange={handleUserChange}>
-						<option value='Select a User'> -- Select a User -- </option>
-						{users.map((user) => (
-							<option value={user.id}>{user.name}</option>
-						))}
-					</select>
 
 					<button
 						className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-8 mt-2 ml-8'
