@@ -39,19 +39,19 @@ const MainViewPage = () => {
 	};
 	// games fetch WITH query param
 	const getGames = async () => {
-		const results = await fetch(`https://pickems-app-brett-ranieri.vercel.app/api/games?sent=true`);
+		const results = await fetch(`http://localhost:3000/api/games?sent=true`);
 		const upcomingGames = await results.json();
 		setGames(upcomingGames);
 	};
 
 	const getTeams = async () => {
-		const results = await fetch(`https://pickems-app-brett-ranieri.vercel.app/api/teams`);
+		const results = await fetch(`http://localhost:3000/api/teams`);
 		const teams = await results.json();
 		setTeams(teams);
 	};
 
 	const getPicks = async (user) => {
-		const results = await fetch(`https://pickems-app-brett-ranieri.vercel.app/api/picks`);
+		const results = await fetch(`http://localhost:3000/api/picks`);
 		const prevPicks = await results.json();
 		const userPicks = prevPicks.filter((pick) => {
 			return pick.user_id === user;

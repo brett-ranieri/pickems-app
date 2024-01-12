@@ -29,7 +29,7 @@ export const ScoreView = ({ user, handleViewChange }) => {
 	// };
 
 	const getAllPicks = async () => {
-		const results = await fetch(`https://pickems-app-brett-ranieri.vercel.app/api/picks`);
+		const results = await fetch(`http://localhost:3000/api/picks`);
 		const allPicks = await results.json();
 		setAllPicks(allPicks);
 	};
