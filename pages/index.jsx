@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { TeamCard } from "../components/TeamCard";
 import { ScoreView } from "../components/ScoreView";
 
-const MainViewPage = () => {
+export default function Home() {
 	const [teams, setTeams] = useState([]);
 	const [games, setGames] = useState([]);
 	const [view, setView] = useState(true);
@@ -252,6 +252,4 @@ const MainViewPage = () => {
 			)}
 		</>
 	);
-};
-
-export default MainViewPage;
+}
