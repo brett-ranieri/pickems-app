@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ScoreCard } from "../components/ScoreCard";
+import users from "../constants/users";
 
 export const ScoreView = ({ user, handleViewChange }) => {
 	// const [games, setGames] = useState([]);
@@ -8,19 +9,6 @@ export const ScoreView = ({ user, handleViewChange }) => {
 	let allScores = [];
 
 	console.log("SV:", user);
-	// test Users table
-	const users = [
-		{ id: 1, name: "Allison" },
-		{ id: 2, name: "Brett" },
-		{ id: 3, name: "Maurice" },
-		{ id: 4, name: "Biers" },
-		{ id: 5, name: "Benny" },
-		{ id: 6, name: "Flo" },
-		{ id: 7, name: "Ferdinand" },
-		{ id: 8, name: "Taylor" },
-		{ id: 9, name: "Travis" },
-		{ id: 10, name: "Donna" },
-	];
 
 	// const getGames = async () => {
 	// 	const results = await fetch(`http://localhost:3000/api/games`);
