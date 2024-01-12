@@ -27,6 +27,8 @@ const GameViewPage = () => {
 		setUser(e.target.value);
 	};
 
+
+	console.log('get a diff')
 	const getGames = async () => {
 		// here, for this page, you need to pass an optional query param (there's a ? involved) to the games endpoint
 		// call it something like `current`, it can be a boolean, true for this page
