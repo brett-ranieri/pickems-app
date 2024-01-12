@@ -39,7 +39,9 @@ const MainViewPage = () => {
 	};
 	// games fetch WITH query param
 	const getGames = async () => {
-		const results = await fetch(`http://localhost:3000/api/games?sent=true`);
+		const results = await fetch(
+			`https://pickems-edknirytb-brett-ranieri.vercel.app/api/games?sent=true`
+		);
 		const upcomingGames = await results.json();
 		setGames(upcomingGames);
 	};
