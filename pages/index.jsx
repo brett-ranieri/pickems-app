@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { TeamCard } from "../components/TeamCard";
 import { ScoreView } from "../components/ScoreView";
 import users from "../constants/users";
+import { UserDropdown } from "../components/UserDropdown";
 
 export default function Home() {
 	const [teams, setTeams] = useState([]);
@@ -176,6 +177,12 @@ export default function Home() {
 		<>
 			{view ? (
 				<div>
+					<div>
+						<UserDropdown
+							users={users}
+							// handleViewChange={() => handleViewChange()}
+						/>
+					</div>
 					<p className='text-3xl font-bold mb-4'>This is the game view page</p>
 					<select onChange={handleUserChange}>
 						<option value='Select a User'> -- Select a User -- </option>
