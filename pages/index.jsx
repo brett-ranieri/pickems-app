@@ -3,8 +3,15 @@ import { TeamCard } from "../components/TeamCard";
 import { ScoreView } from "../components/ScoreView";
 import users from "../constants/users";
 import { UserDropdown } from "../components/UserDropdown";
+// IMPORTANT TO REMEMBER 
+// you have to import baseUrl, then go down to gssp and return from gssp as a prop
+// then you have to read it on the client side, in your component, as a prop, NOT directly from this import
+// if you read it directly from this import, it will work on local, but it will break on vercel
+// because, on vercel, the baseUrl is an environment variable and so it can't be read by the client side
+// directly without being first passed through a server side function
+import baseUrl from "../constants/baseUrl";
 
-export default function Home({upcomingGames, allTeams}) {
+export default function Home({upcomingGames, allTeams, baseUrl}) {
 	const [teams, setTeams] = useState(allTeams);
 	const [games, setGames] = useState(upcomingGames);
 	const [view, setView] = useState(true);
@@ -12,7 +19,7 @@ export default function Home({upcomingGames, allTeams}) {
 	const [isSubmitted, setIsSubmitted] = useState([]);
 	const [user, setUser] = useState({});
 
-	console.log(teams, games)
+	console.log(baseUrl)
 
 	const selectUser = (user) => {
 		setUser(user);
@@ -27,7 +34,7 @@ export default function Home({upcomingGames, allTeams}) {
 	};
 
 	const getPicks = async (user) => {
-		const results = await fetch(`http://localhost:3000/api/picks`);
+		const results = await fetch(`${baseUrl}/api/picks`);
 		const prevPicks = await results.json();
 		const userPicks = prevPicks.filter((pick) => {
 			return pick.user_id === user;
@@ -236,7 +243,7 @@ export async function getServerSideProps() {
 		// being passed in as props 
 
 		// games fetch WITH query param
-		const gamesResults = await fetch(`http://localhost:3000/api/games?sent=true`);
+		const gamesResults = await fetch(`${baseUrl}/api/games?sent=true`);
 		if (!gamesResults.ok) {
 			const errObj = await gamesResults.json()
 			console.log(errObj)
@@ -244,17 +251,20 @@ export async function getServerSideProps() {
 		const upcomingGames = await gamesResults.json();
 	
 
-		const teamsResults = await fetch(`http://localhost:3000/api/teams`);
+		const teamsResults = await fetch(`${baseUrl}/api/teams`);
 		if (!teamsResults.ok) {
 			const errObj = await teamsResults.json()
 			console.log(errObj)
 		  }
 		const teams = await teamsResults.json();	
 
+		console.log(baseUrl)
+
 		return {
 			props: {
 				upcomingGames: upcomingGames,
-				allTeams: teams
+				allTeams: teams,
+				baseUrl: baseUrl
 			}
 		}
 	} catch (error) {
