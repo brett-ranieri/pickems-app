@@ -4,13 +4,15 @@ import { ScoreView } from "../components/ScoreView";
 import users from "../constants/users";
 import { UserDropdown } from "../components/UserDropdown";
 
-export default function Home() {
-	const [teams, setTeams] = useState([]);
-	const [games, setGames] = useState([]);
+export default function Home({upcomingGames, allTeams}) {
+	const [teams, setTeams] = useState(allTeams);
+	const [games, setGames] = useState(upcomingGames);
 	const [view, setView] = useState(true);
 	const [picks, setPicks] = useState([]);
 	const [isSubmitted, setIsSubmitted] = useState([]);
 	const [user, setUser] = useState({});
+
+	console.log(teams, games)
 
 	const selectUser = (user) => {
 		setUser(user);
@@ -22,18 +24,6 @@ export default function Home() {
 		} else {
 			setView(true);
 		}
-	};
-	// games fetch WITH query param
-	const getGames = async () => {
-		const results = await fetch(`http://localhost:3000/api/games?sent=true`);
-		const upcomingGames = await results.json();
-		setGames(upcomingGames);
-	};
-
-	const getTeams = async () => {
-		const results = await fetch(`http://localhost:3000/api/teams`);
-		const teams = await results.json();
-		setTeams(teams);
 	};
 
 	const getPicks = async (user) => {
@@ -50,11 +40,6 @@ export default function Home() {
 			setIsSubmitted([]);
 		}
 	};
-
-	useEffect(() => {
-		getTeams();
-		getGames();
-	}, []);
 
 	// add useEffect listening to user to update whenever dropdown changed
 	useEffect(() => {
@@ -240,4 +225,39 @@ export default function Home() {
 			)}
 		</>
 	);
+}
+
+// look up "getServerSideProps next docs" to learn more about this function if you want
+export async function getServerSideProps() {
+	try {
+		// moved the fetches for these two pieces of data down here
+		// now when you hit the page it grabs this data before even trying to load the UI
+		// so by the time react does anything and tries to render the component, it already has games and teams
+		// being passed in as props 
+
+		// games fetch WITH query param
+		const gamesResults = await fetch(`http://localhost:3000/api/games?sent=true`);
+		if (!gamesResults.ok) {
+			const errObj = await gamesResults.json()
+			console.log(errObj)
+		  }
+		const upcomingGames = await gamesResults.json();
+	
+
+		const teamsResults = await fetch(`http://localhost:3000/api/teams`);
+		if (!teamsResults.ok) {
+			const errObj = await teamsResults.json()
+			console.log(errObj)
+		  }
+		const teams = await teamsResults.json();	
+
+		return {
+			props: {
+				upcomingGames: upcomingGames,
+				allTeams: teams
+			}
+		}
+	} catch (error) {
+		console.log(error)
+	}
 }
