@@ -1,33 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { TeamCard } from "../components/TeamCard";
 import { ScoreView } from "../components/ScoreView";
+import users from "../constants/users";
+import { UserDropdown } from "../components/UserDropdown";
+// IMPORTANT TO REMEMBER 
+// you have to import baseUrl, then go down to gssp and return from gssp as a prop
+// then you have to read it on the client side, in your component, as a prop, NOT directly from this import
+// if you read it directly from this import, it will work on local, but it will break on vercel
+// because, on vercel, the baseUrl is an environment variable and so it can't be read by the client side
+// directly without being first passed through a server side function
+import baseUrl from "../constants/baseUrl";
 
-const MainViewPage = () => {
-	const [teams, setTeams] = useState([]);
-	const [games, setGames] = useState([]);
+export default function Home({upcomingGames, allTeams, baseUrl}) {
+	const [teams, setTeams] = useState(allTeams);
+	const [games, setGames] = useState(upcomingGames);
 	const [view, setView] = useState(true);
 	const [picks, setPicks] = useState([]);
 	const [isSubmitted, setIsSubmitted] = useState([]);
 	const [user, setUser] = useState({});
 
-	// test Users table
-	const users = [
-		{ id: 1, name: "Allison" },
-		{ id: 2, name: "Brett" },
-		{ id: 3, name: "Maurice" },
-		{ id: 4, name: "Biers" },
-		{ id: 5, name: "Benny" },
-		{ id: 6, name: "Flo" },
-		{ id: 7, name: "Ferdinand" },
-		{ id: 8, name: "Taylor" },
-		{ id: 9, name: "Travis" },
-		{ id: 10, name: "Donna" },
-	];
+	console.log(baseUrl)
 
-	const handleUserChange = (e) => {
-		const value = parseInt(e.target.value);
-		const selectedUser = users.filter((user) => user.id === value);
-		setUser(selectedUser);
+	const selectUser = (user) => {
+		setUser(user);
 	};
 
 	const handleViewChange = () => {
@@ -37,21 +32,9 @@ const MainViewPage = () => {
 			setView(true);
 		}
 	};
-	// games fetch WITH query param
-	const getGames = async () => {
-		const results = await fetch(`https://pickems-app-brett-ranieri.vercel.app/api/games?sent=true`);
-		const upcomingGames = await results.json();
-		setGames(upcomingGames);
-	};
-
-	const getTeams = async () => {
-		const results = await fetch(`https://pickems-app-brett-ranieri.vercel.app/api/teams`);
-		const teams = await results.json();
-		setTeams(teams);
-	};
 
 	const getPicks = async (user) => {
-		const results = await fetch(`https://pickems-app-brett-ranieri.vercel.app/api/picks`);
+		const results = await fetch(`${baseUrl}/api/picks`);
 		const prevPicks = await results.json();
 		const userPicks = prevPicks.filter((pick) => {
 			return pick.user_id === user;
@@ -65,17 +48,13 @@ const MainViewPage = () => {
 		}
 	};
 
-	useEffect(() => {
-		getTeams();
-		getGames();
-	}, []);
-
 	// add useEffect listening to user to update whenever dropdown changed
 	useEffect(() => {
+		console.log(user);
 		// do you know why I needed to declare a variable here to access user by index?
-		const selected = user[0];
+		// const selected = user[0];
 		// undefined error would happen on initial load until adding optional chaining
-		getPicks(selected?.id);
+		getPicks(user);
 	}, [user]);
 
 	const clicked = async (id, gameId) => {
@@ -189,13 +168,14 @@ const MainViewPage = () => {
 		<>
 			{view ? (
 				<div>
+					<div>
+						<UserDropdown
+							users={users}
+							handleUserChange={() => handleUserChange()}
+							selectUser={() => selectUser()}
+						/>
+					</div>
 					<p className='text-3xl font-bold mb-4'>This is the game view page</p>
-					<select onChange={handleUserChange}>
-						<option value='Select a User'> -- Select a User -- </option>
-						{users.map((user) => (
-							<option value={user.id}>{user.name}</option>
-						))}
-					</select>
 
 					<button
 						className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-8 mt-2 ml-8'
@@ -252,6 +232,42 @@ const MainViewPage = () => {
 			)}
 		</>
 	);
-};
+}
 
-export default MainViewPage;
+// look up "getServerSideProps next docs" to learn more about this function if you want
+export async function getServerSideProps() {
+	try {
+		// moved the fetches for these two pieces of data down here
+		// now when you hit the page it grabs this data before even trying to load the UI
+		// so by the time react does anything and tries to render the component, it already has games and teams
+		// being passed in as props 
+
+		// games fetch WITH query param
+		const gamesResults = await fetch(`${baseUrl}/api/games?sent=true`);
+		if (!gamesResults.ok) {
+			const errObj = await gamesResults.json()
+			console.log(errObj)
+		  }
+		const upcomingGames = await gamesResults.json();
+	
+
+		const teamsResults = await fetch(`${baseUrl}/api/teams`);
+		if (!teamsResults.ok) {
+			const errObj = await teamsResults.json()
+			console.log(errObj)
+		  }
+		const teams = await teamsResults.json();	
+
+		console.log(baseUrl)
+
+		return {
+			props: {
+				upcomingGames: upcomingGames,
+				allTeams: teams,
+				baseUrl: baseUrl
+			}
+		}
+	} catch (error) {
+		console.log(error)
+	}
+}
