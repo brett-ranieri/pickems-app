@@ -12,14 +12,14 @@ import { UserDropdown } from "../components/UserDropdown";
 import baseUrl from "../constants/baseUrl";
 
 export default function Home({upcomingGames, allTeams, baseUrl}) {
-	const [teams, setTeams] = useState(allTeams);
-	const [games, setGames] = useState(upcomingGames);
+	const [teams, setTeams] = useState([]);
+	const [games, setGames] = useState([]);
 	const [view, setView] = useState(true);
 	const [picks, setPicks] = useState([]);
 	const [isSubmitted, setIsSubmitted] = useState([]);
 	const [user, setUser] = useState({});
 
-	console.log(baseUrl)
+	console.log('logging out of the client', baseUrl)
 
 	const selectUser = (user) => {
 		setUser(user);
@@ -243,27 +243,27 @@ export async function getServerSideProps() {
 		// being passed in as props 
 
 		// games fetch WITH query param
-		const gamesResults = await fetch(`${baseUrl}/api/games?sent=true`);
-		if (!gamesResults.ok) {
-			const errObj = await gamesResults.json()
-			console.log(errObj)
-		  }
-		const upcomingGames = await gamesResults.json();
+		// const gamesResults = await fetch(`${baseUrl}/api/games?sent=true`);
+		// if (!gamesResults.ok) {
+		// 	const errObj = await gamesResults.json()
+		// 	console.log(errObj)
+		//   }
+		// const upcomingGames = await gamesResults.json();
 	
 
-		const teamsResults = await fetch(`${baseUrl}/api/teams`);
-		if (!teamsResults.ok) {
-			const errObj = await teamsResults.json()
-			console.log(errObj)
-		  }
-		const teams = await teamsResults.json();	
+		// const teamsResults = await fetch(`${baseUrl}/api/teams`);
+		// if (!teamsResults.ok) {
+		// 	const errObj = await teamsResults.json()
+		// 	console.log(errObj)
+		//   }
+		// const teams = await teamsResults.json();	
 
 		console.log(baseUrl)
 
 		return {
 			props: {
-				upcomingGames: upcomingGames,
-				allTeams: teams,
+				// upcomingGames: upcomingGames,
+				// allTeams: teams,
 				baseUrl: baseUrl
 			}
 		}
