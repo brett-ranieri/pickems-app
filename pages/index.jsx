@@ -19,7 +19,7 @@ export default function Home({upcomingGames, allTeams, baseUrl}) {
 	const [isSubmitted, setIsSubmitted] = useState([]);
 	const [user, setUser] = useState({});
 
-	console.log(baseUrl)
+	console.log('logging out of the client', baseUrl)
 
 	const selectUser = (user) => {
 		setUser(user);
