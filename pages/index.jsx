@@ -27,6 +27,10 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 		setUser(user);
 	};
 
+	const logout = () => {
+		setUser(null);
+	};
+
 	const handleViewChange = () => {
 		if (view === true) {
 			setView(false);
@@ -178,24 +182,34 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 
 	return (
 		<>
-			{view ? (
+			{!user ? (
 				<div>
-					<div>
-						<UserDropdown
-							users={users}
-							handleUserChange={() => handleUserChange()}
-							// need to pass the user to selectUser otherwise it just retuns
-							// undefined when function is called.
-							selectUser={(user) => selectUser(user)}
-						/>
-					</div>
-					<p className='text-3xl font-bold mb-4'>This is the game view page</p>
+					<UserDropdown
+						users={users}
+						handleUserChange={() => handleUserChange()}
+						// need to pass the user to selectUser otherwise it just retuns
+						// undefined when function is called.
+						selectUser={(user) => selectUser(user)}
+					/>
+				</div>
+			) : view ? (
+				<div>
+					<h1>Welcome {user.name}!</h1>
+					<p className='text-3xl font-bold mb-4'>
+						This is the game view page. Here you can submit your picks for the upcoming week!
+					</p>
 
 					<button
 						className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-8 mt-2 ml-8'
 						onClick={() => handleViewChange()}
 					>
 						Check the scores!
+					</button>
+					<button
+						className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-8 mt-2 ml-8'
+						onClick={() => logout()}
+					>
+						Logout
 					</button>
 
 					{games.map((game) => (
