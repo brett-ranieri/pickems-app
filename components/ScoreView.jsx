@@ -1,23 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { ScoreCard } from "../components/ScoreCard";
 import users from "../constants/users";
+import baseUrl from "../constants/baseUrl";
 
 export const ScoreView = ({ user, handleViewChange }) => {
-	// const [games, setGames] = useState([]);
+	const [games, setGames] = useState([]);
 	// const [picks, setPicks] = useState([]);
 	const [allPicks, setAllPicks] = useState([]);
 	let allScores = [];
 
 	console.log("SV:", user);
+	console.log("logging out of SV", baseUrl);
 
-	// const getGames = async () => {
-	// 	const results = await fetch(`http://localhost:3000/api/games`);
-	// 	const upcomingGames = await results.json();
-	// 	setGames(upcomingGames);
-	// };
+	const getGames = async () => {
+		const results = await fetch(`${baseUrl}/api/games`);
+		const upcomingGames = await results.json();
+		setGames(upcomingGames);
+	};
 
 	const getAllPicks = async () => {
-		const results = await fetch(`http://localhost:3000/api/picks`);
+		const results = await fetch(`${baseUrl}/api/picks`);
 		const allPicks = await results.json();
 		setAllPicks(allPicks);
 	};
@@ -41,11 +43,12 @@ export const ScoreView = ({ user, handleViewChange }) => {
 	users.forEach(getUserScore);
 
 	useEffect(() => {
-		// getGames();
+		getGames();
 		getAllPicks();
 	}, []);
 
 	console.log(allPicks);
+	console.log(games);
 
 	//sort scores in descending order
 	allScores.sort((a, b) => parseInt(b.score) - parseInt(a.score));

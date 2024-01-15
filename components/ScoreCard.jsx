@@ -4,11 +4,8 @@ export const ScoreCard = ({ score, user }) => {
 	const [current, setCurrent] = useState(false);
 
 	const checkCurrent = (score, user) => {
-		// once again needed to declare variable to access, why??
-		let selected = user[0];
-
 		// add optional chaining to fix undefined error on selected for initial load
-		if (selected?.id === score.user) {
+		if (user?.id === score.user) {
 			setCurrent(true);
 		}
 		//needed to add else statement to clear previously set users if toggled

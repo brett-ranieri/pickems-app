@@ -6,6 +6,7 @@ export const UserDropdown = ({ users, selectUser }) => {
 		const value = parseInt(e.target.value);
 		const selectedUser = users.filter((user) => user.id === value);
 		console.log(selectedUser[0]);
+		//need index here...why?
 		selectUser(selectedUser[0]);
 	};
 	return (
