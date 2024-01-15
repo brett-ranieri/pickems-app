@@ -17,11 +17,13 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	const [view, setView] = useState(true);
 	const [picks, setPicks] = useState([]);
 	const [isSubmitted, setIsSubmitted] = useState([]);
-	const [user, setUser] = useState({});
+	// needed to set to null for initial load
+	const [user, setUser] = useState(null);
 
 	console.log("logging out of the client", baseUrl);
 
 	const selectUser = (user) => {
+		console.log("in main", user);
 		setUser(user);
 	};
 
@@ -33,7 +35,6 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 		}
 	};
 
-	// games fetch WITH query param
 	const getGames = async () => {
 		const results = await fetch(`${baseUrl}/api/games?sent=true`);
 		const upcomingGames = await results.json();
@@ -46,11 +47,11 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 		setTeams(teams);
 	};
 
-	const getPicks = async (user) => {
+	const getPicks = async (userId) => {
 		const results = await fetch(`${baseUrl}/api/picks`);
 		const prevPicks = await results.json();
 		const userPicks = prevPicks.filter((pick) => {
-			return pick.user_id === user;
+			return pick.user_id === userId;
 		});
 		if (userPicks.length) {
 			setPicks(userPicks);
@@ -69,10 +70,9 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	// add useEffect listening to user to update whenever dropdown changed
 	useEffect(() => {
 		console.log(user);
-		// do you know why I needed to declare a variable here to access user by index?
-		// const selected = user[0];
-		// undefined error would happen on initial load until adding optional chaining
-		getPicks(user);
+		if (user) {
+			getPicks(user.id);
+		}
 	}, [user]);
 
 	console.log(games);
@@ -80,6 +80,8 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	const clicked = async (id, gameId) => {
 		const pick = {
 			//needed to add an index here to be able to access object
+			//do you know why this is happening here and why it happens
+			//when calling selectedUser in UserDropdown?
 			user_id: user[0].id,
 			chosen_team: id,
 			game_id: gameId,
@@ -116,17 +118,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 
 			const checkForGame = async (pick) => {
 				// leaving comments below in because I can't see where we talked about
-				// this in last code review
-
-				// ALSO: quick googling of 'too many connections' error brought me to:
-				// https://www.reddit.com/r/SQL/comments/608kbj/postgresql_too_many_connections/
-				// talks about creating a new connection for every row inserted being a problem
-				// possibly all connected??
-				// not seeing how, because connection will fail at times where picks are not being submitted
-				// before call logs (games.js)
-				// got got logs (teams.js)
-				// then too many connections error throws...so not convinced this reddit post
-				// is definitively what is causing my issue
+				// this in last code review:
 
 				// needed to POST data returned from this checkForGame, not PUT,
 				// so i seperated function from comparePicks to allow for different fetch methods
@@ -192,7 +184,9 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 						<UserDropdown
 							users={users}
 							handleUserChange={() => handleUserChange()}
-							selectUser={() => selectUser()}
+							// need to pass the user to selectUser otherwise it just retuns
+							// undefined when function is called.
+							selectUser={(user) => selectUser(user)}
 						/>
 					</div>
 					<p className='text-3xl font-bold mb-4'>This is the game view page</p>
