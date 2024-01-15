@@ -35,13 +35,13 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 
 	// games fetch WITH query param
 	const getGames = async () => {
-		const results = await fetch(`http://localhost:3000/api/games?sent=true`);
+		const results = await fetch(`${baseUrl}/api/games?sent=true`);
 		const upcomingGames = await results.json();
 		setGames(upcomingGames);
 	};
 
 	const getTeams = async () => {
-		const results = await fetch(`http://localhost:3000/api/teams`);
+		const results = await fetch(`${baseUrl}/api/teams`);
 		const teams = await results.json();
 		setTeams(teams);
 	};
@@ -102,7 +102,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					}
 				});
 				if (updatedPicks.length) {
-					const postPicksRes = await fetch(`http://localhost:3000/api/submit-picks`, {
+					const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
 						method: "PUT",
 						body: JSON.stringify(updatedPicks),
 					});
@@ -149,7 +149,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					updatedPicks.push(pick);
 				}
 				if (updatedPicks.length) {
-					const postPicksRes = await fetch(`http://localhost:3000/api/submit-picks`, {
+					const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
 						method: "POST",
 						body: JSON.stringify(updatedPicks),
 					});
@@ -167,7 +167,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 		} else {
 			console.log("no picks yet");
 			console.log(picks);
-			const postPicksRes = await fetch(`http://localhost:3000/api/submit-picks`, {
+			const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
 				method: "POST",
 				body: JSON.stringify(picks),
 			});

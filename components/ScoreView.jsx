@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ScoreCard } from "../components/ScoreCard";
 import users from "../constants/users";
+import baseUrl from "../constants/baseUrl";
 
 export const ScoreView = ({ user, handleViewChange }) => {
 	const [games, setGames] = useState([]);
@@ -9,15 +10,16 @@ export const ScoreView = ({ user, handleViewChange }) => {
 	let allScores = [];
 
 	console.log("SV:", user);
+	console.log("logging out of SV", baseUrl);
 
 	const getGames = async () => {
-		const results = await fetch(`http://localhost:3000/api/games`);
+		const results = await fetch(`${baseUrl}/api/games`);
 		const upcomingGames = await results.json();
 		setGames(upcomingGames);
 	};
 
 	const getAllPicks = async () => {
-		const results = await fetch(`http://localhost:3000/api/picks`);
+		const results = await fetch(`${baseUrl}/api/picks`);
 		const allPicks = await results.json();
 		setAllPicks(allPicks);
 	};
