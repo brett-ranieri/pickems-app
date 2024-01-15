@@ -194,10 +194,8 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 				</div>
 			) : view ? (
 				<div>
-					<h1>Welcome {user.name}!</h1>
-					<p className='text-3xl font-bold mb-4'>
-						This is the game view page. Here you can submit your picks for the upcoming week!
-					</p>
+					<h1 className='text-3xl font-bold mb-4'>Welcome {user.name}!</h1>
+					<p>This is the game view page. Here you can submit your picks for the upcoming week!</p>
 
 					<button
 						className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-8 mt-2 ml-8'
