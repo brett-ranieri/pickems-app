@@ -86,7 +86,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 			//needed to add an index here to be able to access object
 			//do you know why this is happening here and why it happens
 			//when calling selectedUser in UserDropdown?
-			user_id: user[0].id,
+			user_id: user.id,
 			chosen_team: id,
 			game_id: gameId,
 		};
