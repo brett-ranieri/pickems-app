@@ -3,18 +3,18 @@ import { ScoreCard } from "../components/ScoreCard";
 import users from "../constants/users";
 
 export const ScoreView = ({ user, handleViewChange }) => {
-	// const [games, setGames] = useState([]);
+	const [games, setGames] = useState([]);
 	// const [picks, setPicks] = useState([]);
 	const [allPicks, setAllPicks] = useState([]);
 	let allScores = [];
 
 	console.log("SV:", user);
 
-	// const getGames = async () => {
-	// 	const results = await fetch(`http://localhost:3000/api/games`);
-	// 	const upcomingGames = await results.json();
-	// 	setGames(upcomingGames);
-	// };
+	const getGames = async () => {
+		const results = await fetch(`http://localhost:3000/api/games`);
+		const upcomingGames = await results.json();
+		setGames(upcomingGames);
+	};
 
 	const getAllPicks = async () => {
 		const results = await fetch(`http://localhost:3000/api/picks`);
@@ -41,11 +41,12 @@ export const ScoreView = ({ user, handleViewChange }) => {
 	users.forEach(getUserScore);
 
 	useEffect(() => {
-		// getGames();
+		getGames();
 		getAllPicks();
 	}, []);
 
 	console.log(allPicks);
+	console.log(games);
 
 	//sort scores in descending order
 	allScores.sort((a, b) => parseInt(b.score) - parseInt(a.score));

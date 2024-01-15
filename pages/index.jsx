@@ -3,7 +3,7 @@ import { TeamCard } from "../components/TeamCard";
 import { ScoreView } from "../components/ScoreView";
 import users from "../constants/users";
 import { UserDropdown } from "../components/UserDropdown";
-// IMPORTANT TO REMEMBER 
+// IMPORTANT TO REMEMBER
 // you have to import baseUrl, then go down to gssp and return from gssp as a prop
 // then you have to read it on the client side, in your component, as a prop, NOT directly from this import
 // if you read it directly from this import, it will work on local, but it will break on vercel
@@ -11,7 +11,7 @@ import { UserDropdown } from "../components/UserDropdown";
 // directly without being first passed through a server side function
 import baseUrl from "../constants/baseUrl";
 
-export default function Home({upcomingGames, allTeams, baseUrl}) {
+export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	const [teams, setTeams] = useState([]);
 	const [games, setGames] = useState([]);
 	const [view, setView] = useState(true);
@@ -19,7 +19,7 @@ export default function Home({upcomingGames, allTeams, baseUrl}) {
 	const [isSubmitted, setIsSubmitted] = useState([]);
 	const [user, setUser] = useState({});
 
-	console.log('logging out of the client', baseUrl)
+	console.log("logging out of the client", baseUrl);
 
 	const selectUser = (user) => {
 		setUser(user);
@@ -31,6 +31,19 @@ export default function Home({upcomingGames, allTeams, baseUrl}) {
 		} else {
 			setView(true);
 		}
+	};
+
+	// games fetch WITH query param
+	const getGames = async () => {
+		const results = await fetch(`http://localhost:3000/api/games?sent=true`);
+		const upcomingGames = await results.json();
+		setGames(upcomingGames);
+	};
+
+	const getTeams = async () => {
+		const results = await fetch(`http://localhost:3000/api/teams`);
+		const teams = await results.json();
+		setTeams(teams);
 	};
 
 	const getPicks = async (user) => {
@@ -48,6 +61,11 @@ export default function Home({upcomingGames, allTeams, baseUrl}) {
 		}
 	};
 
+	useEffect(() => {
+		getTeams();
+		getGames();
+	}, []);
+
 	// add useEffect listening to user to update whenever dropdown changed
 	useEffect(() => {
 		console.log(user);
@@ -56,6 +74,8 @@ export default function Home({upcomingGames, allTeams, baseUrl}) {
 		// undefined error would happen on initial load until adding optional chaining
 		getPicks(user);
 	}, [user]);
+
+	console.log(games);
 
 	const clicked = async (id, gameId) => {
 		const pick = {
@@ -240,7 +260,7 @@ export async function getServerSideProps() {
 		// moved the fetches for these two pieces of data down here
 		// now when you hit the page it grabs this data before even trying to load the UI
 		// so by the time react does anything and tries to render the component, it already has games and teams
-		// being passed in as props 
+		// being passed in as props
 
 		// games fetch WITH query param
 		// const gamesResults = await fetch(`${baseUrl}/api/games?sent=true`);
@@ -249,25 +269,24 @@ export async function getServerSideProps() {
 		// 	console.log(errObj)
 		//   }
 		// const upcomingGames = await gamesResults.json();
-	
 
 		// const teamsResults = await fetch(`${baseUrl}/api/teams`);
 		// if (!teamsResults.ok) {
 		// 	const errObj = await teamsResults.json()
 		// 	console.log(errObj)
 		//   }
-		// const teams = await teamsResults.json();	
+		// const teams = await teamsResults.json();
 
-		console.log(baseUrl)
+		console.log(baseUrl);
 
 		return {
 			props: {
 				// upcomingGames: upcomingGames,
 				// allTeams: teams,
-				baseUrl: baseUrl
-			}
-		}
+				baseUrl: baseUrl,
+			},
+		};
 	} catch (error) {
-		console.log(error)
+		console.log(error);
 	}
 }
