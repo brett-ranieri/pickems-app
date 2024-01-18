@@ -40,19 +40,22 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	};
 
 	const getGames = async () => {
-		const results = await fetch(`${baseUrl}/api/games?sent=true`);
+		// const results = await fetch(`${baseUrl}/api/games?sent=true`);
+		const results = await fetch(`https://pickems-app.vercel.app/api/games?sent=true`);
 		const upcomingGames = await results.json();
 		setGames(upcomingGames);
 	};
 
 	const getTeams = async () => {
-		const results = await fetch(`${baseUrl}/api/teams`);
+		// const results = await fetch(`${baseUrl}/api/teams`);
+		const results = await fetch(`https://pickems-app.vercel.app/api/teams`);
 		const teams = await results.json();
 		setTeams(teams);
 	};
 
 	const getPicks = async (userId) => {
-		const results = await fetch(`${baseUrl}/api/picks`);
+		// const results = await fetch(`${baseUrl}/api/picks`);
+		const results = await fetch(`https://pickems-app.vercel.app/api/picks`);
 		const prevPicks = await results.json();
 		const userPicks = prevPicks.filter((pick) => {
 			return pick.user_id === userId;
@@ -108,7 +111,11 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					}
 				});
 				if (updatedPicks.length) {
-					const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
+					// const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
+					// 	method: "PUT",
+					// 	body: JSON.stringify(updatedPicks),
+					// });
+					const postPicksRes = await fetch(`https://pickems-app.vercel.app/api/submit-picks`, {
 						method: "PUT",
 						body: JSON.stringify(updatedPicks),
 					});
@@ -145,7 +152,11 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					updatedPicks.push(pick);
 				}
 				if (updatedPicks.length) {
-					const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
+					// const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
+					// 	method: "POST",
+					// 	body: JSON.stringify(updatedPicks),
+					// });
+					const postPicksRes = await fetch(`https://pickems-app.vercel.app/api/submit-picks`, {
 						method: "POST",
 						body: JSON.stringify(updatedPicks),
 					});
@@ -163,7 +174,12 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 		} else {
 			console.log("no picks yet");
 			console.log(picks);
-			const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
+
+			// const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
+			// 	method: "POST",
+			// 	body: JSON.stringify(picks),
+			// });
+			const postPicksRes = await fetch(`https://pickems-app.vercel.app/api/submit-picks`, {
 				method: "POST",
 				body: JSON.stringify(picks),
 			});
