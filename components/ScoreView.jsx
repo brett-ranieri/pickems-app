@@ -3,10 +3,10 @@ import { ScoreCard } from "../components/ScoreCard";
 import users from "../constants/users";
 import baseUrl from "../constants/baseUrl";
 
-export const ScoreView = ({ user, handleViewChange, logout }) => {
+export const ScoreView = ({ allPicks, user, handleViewChange, logout }) => {
 	const [games, setGames] = useState([]);
 	// const [picks, setPicks] = useState([]);
-	const [allPicks, setAllPicks] = useState([]);
+	// const [allPicks, setAllPicks] = useState([]);
 	let allScores = [];
 
 	console.log("SV:", user);
@@ -19,12 +19,12 @@ export const ScoreView = ({ user, handleViewChange, logout }) => {
 		setGames(upcomingGames);
 	};
 
-	const getAllPicks = async () => {
-		const results = await fetch(`${baseUrl}/api/picks`);
-		// const results = await fetch(`https://pickems-app.vercel.app/api/picks`);
-		const allPicks = await results.json();
-		setAllPicks(allPicks);
-	};
+	// const getAllPicks = async () => {
+	// 	const results = await fetch(`${baseUrl}/api/picks`);
+	// 	// const results = await fetch(`https://pickems-app.vercel.app/api/picks`);
+	// 	const allPicks = await results.json();
+	// 	setAllPicks(allPicks);
+	// };
 
 	// re-factored all previous functions to all run in a loop
 	const getUserScore = async (user) => {
@@ -46,10 +46,10 @@ export const ScoreView = ({ user, handleViewChange, logout }) => {
 
 	useEffect(() => {
 		getGames();
-		getAllPicks();
+		// getAllPicks();
 	}, []);
 
-	console.log(allPicks);
+	console.log("SV", allPicks);
 	console.log(games);
 
 	//sort scores in descending order

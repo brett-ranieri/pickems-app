@@ -14,6 +14,7 @@ import baseUrl from "../constants/baseUrl";
 export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	const [teams, setTeams] = useState([]);
 	const [games, setGames] = useState([]);
+	const [allPicks, setAllPicks] = useState([]);
 	const [view, setView] = useState(true);
 	const [picks, setPicks] = useState([]);
 	const [isSubmitted, setIsSubmitted] = useState([]);
@@ -53,6 +54,13 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 		setTeams(teams);
 	};
 
+	const getAllPicks = async () => {
+		const results = await fetch(`${baseUrl}/api/picks`);
+		// const results = await fetch(`https://pickems-app.vercel.app/api/picks`);
+		const allPicks = await results.json();
+		setAllPicks(allPicks);
+	};
+
 	const getPicks = async (userId) => {
 		const results = await fetch(`${baseUrl}/api/picks`);
 		// const results = await fetch(`https://pickems-app.vercel.app/api/picks`);
@@ -72,6 +80,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	useEffect(() => {
 		getTeams();
 		getGames();
+		getAllPicks();
 	}, []);
 
 	// add useEffect listening to user to update whenever dropdown changed
@@ -83,6 +92,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	}, [user]);
 
 	console.log(games);
+	console.log(allPicks);
 
 	const clicked = async (id, gameId) => {
 		const pick = {
@@ -285,6 +295,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 			) : (
 				<div>
 					<ScoreView
+						allPicks={allPicks}
 						user={user}
 						logout={() => logout()}
 						handleViewChange={() => handleViewChange()}
