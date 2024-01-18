@@ -26,7 +26,7 @@ export const TeamCard = ({ team, clicked, game, picks }) => {
 		<>
 			{isPicked === null ? (
 				<div
-					className='w-80 h-10 mt-4 font-bold flex items-center justify-center rounded hover:cursor-pointer bg-gray-200'
+					className='w-80 h-10 mt-4 font-bold flex items-center justify-center rounded hover:cursor-pointer bg-white'
 					// seemed easier to do outside of tailwind, found solution here:
 					// https://stackoverflow.com/questions/70903204/tailwindcss-custom-background-color-not-working
 					style={{ color: `#${team?.color}` }}
@@ -36,7 +36,7 @@ export const TeamCard = ({ team, clicked, game, picks }) => {
 				</div>
 			) : isPicked ? (
 				<div
-					className='w-80 h-10 mt-4 font-bold flex items-center justify-center rounded hover:cursor-pointer border-black border-slate-600 border-4'
+					className='w-80 h-10 mt-4 font-bold flex items-center justify-center rounded hover:cursor-pointer border-white border-4'
 					// seemed easier to do outside of tailwind, found solution here:
 					// https://stackoverflow.com/questions/70903204/tailwindcss-custom-background-color-not-working
 					style={{ backgroundColor: `#${team?.color}`, color: `#${team?.alt_color}` }}

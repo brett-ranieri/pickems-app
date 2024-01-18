@@ -193,65 +193,84 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					/>
 				</div>
 			) : view ? (
-				<div>
-					<h1 className='text-3xl font-bold mb-4'>Welcome {user.name}!</h1>
-					<p>This is the game view page. Here you can submit your picks for the upcoming week!</p>
-
-					<button
-						className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-8 mt-2 ml-8'
-						onClick={() => handleViewChange()}
-					>
-						Check the scores!
-					</button>
-					<button
-						className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-8 mt-2 ml-8'
-						onClick={() => logout()}
-					>
-						Logout
-					</button>
-
-					{games.map((game) => (
-						<div
-							key={game.id}
-							className='flex flex-row justify-around mb-6'
+				<div className='bg-football-super-close bg-cover'>
+					{/*ultimately turn this into a true Navbar */}
+					<div className='bg-lime-800 flex flex-row justify-end p-1'>
+						<button
+							className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded m-2 '
+							onClick={() => handleViewChange()}
 						>
-							<TeamCard
-								team={teams?.find((t) => t.id === game.home_id)}
-								clicked={clicked}
-								game={game}
-								picks={picks}
-							/>
-							<div className='mt-4'>vs.</div>
-							<TeamCard
-								team={teams?.find((t) => t.id === game.away_id)}
-								clicked={clicked}
-								game={game}
-								picks={picks}
-							/>
+							Scores
+						</button>
+						<button
+							className='bg-amber-500 hover:bg-amber-200 hover:text-black text-white font-bold py-2 px-4 rounded m-2'
+							onClick={() => logout()}
+						>
+							Logout
+						</button>
+					</div>
+					<div className='bg-lime-300 bg-opacity-80 m-4 p-1 rounded'>
+						<h1 className='text-3xl text-lime-800 font-bold m-2'>Welcome {user.name}!</h1>
+						<p className='text-lime-800 m-2'>
+							Click on the team you think will win this weeks game. When you're happy with your
+							picks, click submit!
+						</p>
+					</div>
+
+					<div className='bg-lime-700 bg-opacity-80 m-6 pt-1 mb-6 rounded-lg'>
+						{games.map((game) => (
+							<div
+								key={game.id}
+								className='flex flex-row justify-around m-6'
+							>
+								<TeamCard
+									team={teams?.find((t) => t.id === game.home_id)}
+									clicked={clicked}
+									game={game}
+									picks={picks}
+								/>
+								<div className='m-4 mt-6 p-1 font-black text-md text-white rounded'>vs.</div>
+								<TeamCard
+									team={teams?.find((t) => t.id === game.away_id)}
+									clicked={clicked}
+									game={game}
+									picks={picks}
+								/>
+							</div>
+						))}
+						<div className='m-2 mr-8 ml-8 mb-4'>
+							<p className='text-lg text-white font-bold m-2'>WAIT! Are you {user.name}?</p>
+							<p className='text-sm text-lime-300 m-2'>
+								If not, logout to go back to the menu and be sure to select the right user in the
+								dropdown.
+							</p>
 						</div>
-					))}
-					{isSubmitted.length ? (
-						<button
-							className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-8 mt-2 ml-8'
-							type='submit'
-							onClick={() => handleSubmit()}
-						>
-							Update
-						</button>
-					) : (
-						<button
-							className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-8 mt-2 ml-8'
-							type='submit'
-							onClick={() => handleSubmit()}
-						>
-							Submit
-						</button>
-					)}
+						{isSubmitted.length ? (
+							<button
+								className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded mb-8 ml-8'
+								type='submit'
+								onClick={() => handleSubmit()}
+							>
+								Update
+							</button>
+						) : (
+							<button
+								className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded mb-8 ml-8'
+								type='submit'
+								onClick={() => handleSubmit()}
+							>
+								Submit
+							</button>
+						)}
+					</div>
+					{/* temp add to provide space at bottom of page */}
+					<div className='mt-8'>.</div>
 				</div>
 			) : (
 				<div>
 					<ScoreView
 						user={user}
+						logout={() => logout()}
 						handleViewChange={() => handleViewChange()}
 					/>
 				</div>
