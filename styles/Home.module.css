@@ -1,3 +1,17 @@
+@import url("https://fonts.googleapis.com/css2?family=Anton&family=Bangers&family=Black+Ops+One&family=Darker+Grotesque:wght@300;400&family=Luckiest+Guy&family=Rubik+Doodle+Shadow&family=Tektur&display=swap");
+
+.anton {
+	font-family: "Anton", sans-serif;
+}
+
+.bangers {
+	font-family: "Bangers", sans-serif;
+}
+
+.black {
+	font-family: "Black+Ops+One", sans-serif;
+}
+
 .container {
 	min-height: 100vh;
 	padding: 0 0.5rem;

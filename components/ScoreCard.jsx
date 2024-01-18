@@ -26,14 +26,14 @@ export const ScoreCard = ({ score, user }) => {
 		<>
 			{current ? (
 				<>
-					<div className='flex flex-row justify-around text-center bg-orange-300 pt-2 pb-2'>
+					<div className='flex flex-row justify-around text-center bg-lime-900 text-xl text-white font-black pt-2 pb-2 rounded'>
 						<div className='font-bold w-48'>{score.name}</div>
 						<div className='font-bold w-12'>{score.score}</div>
 					</div>
 				</>
 			) : (
 				<>
-					<div className='flex flex-row justify-around text-center pt-2 pb-2'>
+					<div className='flex flex-row justify-around text-center font-bold pt-2 pb-2'>
 						<div className='w-48'>{score.name}</div>
 						<div className='w-12'>{score.score}</div>
 					</div>
