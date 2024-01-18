@@ -13,15 +13,15 @@ export const ScoreView = ({ user, handleViewChange, logout }) => {
 	console.log("logging out of SV", baseUrl);
 
 	const getGames = async () => {
-		// const results = await fetch(`${baseUrl}/api/games`);
-		const results = await fetch(`https://pickems-app.vercel.app/api/games`);
+		const results = await fetch(`${baseUrl}/api/games`);
+		// const results = await fetch(`https://pickems-app.vercel.app/api/games`);
 		const upcomingGames = await results.json();
 		setGames(upcomingGames);
 	};
 
 	const getAllPicks = async () => {
-		// const results = await fetch(`${baseUrl}/api/picks`);
-		const results = await fetch(`https://pickems-app.vercel.app/api/picks`);
+		const results = await fetch(`${baseUrl}/api/picks`);
+		// const results = await fetch(`https://pickems-app.vercel.app/api/picks`);
 		const allPicks = await results.json();
 		setAllPicks(allPicks);
 	};
