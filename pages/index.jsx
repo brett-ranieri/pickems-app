@@ -10,6 +10,7 @@ import { UserDropdown } from "../components/UserDropdown";
 // because, on vercel, the baseUrl is an environment variable and so it can't be read by the client side
 // directly without being first passed through a server side function
 import baseUrl from "../constants/baseUrl";
+import { PickView } from "../components/PickView";
 
 export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	const [teams, setTeams] = useState([]);
@@ -55,6 +56,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	};
 
 	const getAllPicks = async () => {
+		console.log("i Ran");
 		const results = await fetch(`${baseUrl}/api/picks`);
 		// const results = await fetch(`https://pickems-app.vercel.app/api/picks`);
 		const allPicks = await results.json();
@@ -94,7 +96,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	console.log(games);
 	console.log(allPicks);
 
-	const clicked = async (id, gameId) => {
+	const clicked = async (id, gameId, week) => {
 		const pick = {
 			//needed to add an index here to be able to access object
 			//do you know why this is happening here and why it happens
@@ -102,6 +104,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 			user_id: user.id,
 			chosen_team: id,
 			game_id: gameId,
+			week: week,
 		};
 		const tempPicks = picks?.filter((pick) => pick.game_id !== gameId);
 		setPicks([...tempPicks, pick]);
@@ -133,6 +136,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					if (postPicksRes) {
 						console.log("something else happened");
 						setIsSubmitted(picks);
+						getAllPicks();
 					}
 				}
 			};
@@ -174,6 +178,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					if (postPicksRes) {
 						console.log("more somethings happened");
 						setIsSubmitted(picks);
+						getAllPicks();
 					}
 				}
 			};
@@ -202,6 +207,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 				// before setting picks to isSubmitted...did I do that right?
 				// I DID NOT!
 				setIsSubmitted(picks);
+				getAllPicks();
 			}
 		}
 	};
@@ -237,7 +243,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					</div>
 					<div className='bg-lime-300 bg-opacity-80 m-4 p-1 rounded'>
 						<h1 className='text-3xl text-lime-800 font-bold m-2'>Welcome {user.name}!</h1>
-						<p className='text-lime-800 m-2'>
+						<p className='text-black m-2'>
 							Click on the team you think will win this weeks game. When you're happy with your
 							picks, click submit!
 						</p>
@@ -290,6 +296,13 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 						)}
 					</div>
 					{/* temp add to provide space at bottom of page */}
+					<div>
+						<PickView
+							allPicks={allPicks}
+							user={user}
+							teams={teams}
+						/>
+					</div>
 					<div className='mt-8'>.</div>
 				</div>
 			) : (
