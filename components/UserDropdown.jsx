@@ -21,7 +21,7 @@ export const UserDropdown = ({ users, selectUser }) => {
 					<p className='text-4xl font-bold mt-4 mb-4'>Pick'ems</p>
 				</div>
 				<div className='flex flex-col justify-center items-center text-center bg-gradient-to-r from-amber-300 to-amber-500 w-3/5 rounded-2xl'>
-					<p className='m-2 mt-4'>Who the heck are ya?</p>
+					<p className='m-2 mt-4 font-bold'>Who the heck are ya?</p>
 					{/* needed to pass e to handleUserChange to prevent 'e.target.value' from returning undefined */}
 					<select
 						onChange={(e) => handleUserChange(e)}
@@ -29,7 +29,12 @@ export const UserDropdown = ({ users, selectUser }) => {
 					>
 						<option value='Select a User'> -- Select a User -- </option>
 						{users.map((user) => (
-							<option value={user.id}>{user.name}</option>
+							<option
+								key={user.id}
+								value={user.id}
+							>
+								{user.name}
+							</option>
 						))}
 					</select>
 				</div>

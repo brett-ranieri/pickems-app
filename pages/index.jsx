@@ -10,10 +10,12 @@ import { UserDropdown } from "../components/UserDropdown";
 // because, on vercel, the baseUrl is an environment variable and so it can't be read by the client side
 // directly without being first passed through a server side function
 import baseUrl from "../constants/baseUrl";
+import { PickView } from "../components/PickView";
 
 export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	const [teams, setTeams] = useState([]);
 	const [games, setGames] = useState([]);
+	const [allPicks, setAllPicks] = useState([]);
 	const [view, setView] = useState(true);
 	const [picks, setPicks] = useState([]);
 	const [isSubmitted, setIsSubmitted] = useState([]);
@@ -53,6 +55,14 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 		setTeams(teams);
 	};
 
+	const getAllPicks = async () => {
+		console.log("i Ran");
+		// const results = await fetch(`${baseUrl}/api/picks`);
+		const results = await fetch(`https://pickems-app.vercel.app/api/picks`);
+		const allPicks = await results.json();
+		setAllPicks(allPicks);
+	};
+
 	const getPicks = async (userId) => {
 		// const results = await fetch(`${baseUrl}/api/picks`);
 		const results = await fetch(`https://pickems-app.vercel.app/api/picks`);
@@ -72,6 +82,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	useEffect(() => {
 		getTeams();
 		getGames();
+		getAllPicks();
 	}, []);
 
 	// add useEffect listening to user to update whenever dropdown changed
@@ -83,8 +94,9 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	}, [user]);
 
 	console.log(games);
+	console.log(allPicks);
 
-	const clicked = async (id, gameId) => {
+	const clicked = async (id, gameId, week) => {
 		const pick = {
 			//needed to add an index here to be able to access object
 			//do you know why this is happening here and why it happens
@@ -92,6 +104,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 			user_id: user.id,
 			chosen_team: id,
 			game_id: gameId,
+			week: week,
 		};
 		const tempPicks = picks?.filter((pick) => pick.game_id !== gameId);
 		setPicks([...tempPicks, pick]);
@@ -123,6 +136,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					if (postPicksRes) {
 						console.log("something else happened");
 						setIsSubmitted(picks);
+						getAllPicks();
 					}
 				}
 			};
@@ -164,6 +178,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					if (postPicksRes) {
 						console.log("more somethings happened");
 						setIsSubmitted(picks);
+						getAllPicks();
 					}
 				}
 			};
@@ -192,6 +207,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 				// before setting picks to isSubmitted...did I do that right?
 				// I DID NOT!
 				setIsSubmitted(picks);
+				getAllPicks();
 			}
 		}
 	};
@@ -211,7 +227,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 			) : view ? (
 				<div className='bg-football-super-close bg-cover'>
 					{/*ultimately turn this into a true Navbar */}
-					<div className='bg-lime-800 flex flex-row justify-end p-1'>
+					<div className='bg-lime-800 flex flex-row justify-end p-1 sticky top-0'>
 						<button
 							className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded m-2 '
 							onClick={() => handleViewChange()}
@@ -227,7 +243,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					</div>
 					<div className='bg-lime-300 bg-opacity-80 m-4 p-1 rounded'>
 						<h1 className='text-3xl text-lime-800 font-bold m-2'>Welcome {user.name}!</h1>
-						<p className='text-lime-800 m-2'>
+						<p className='text-black m-2'>
 							Click on the team you think will win this weeks game. When you're happy with your
 							picks, click submit!
 						</p>
@@ -240,14 +256,14 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 								className='flex flex-row justify-around m-6'
 							>
 								<TeamCard
-									team={teams?.find((t) => t.id === game.home_id)}
+									team={teams?.find((t) => t.id === game.away_id)}
 									clicked={clicked}
 									game={game}
 									picks={picks}
 								/>
 								<div className='m-4 mt-6 p-1 font-black text-md text-white rounded'>vs.</div>
 								<TeamCard
-									team={teams?.find((t) => t.id === game.away_id)}
+									team={teams?.find((t) => t.id === game.home_id)}
 									clicked={clicked}
 									game={game}
 									picks={picks}
@@ -263,28 +279,39 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 						</div>
 						{isSubmitted.length ? (
 							<button
-								className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded mb-8 ml-8'
+								className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded mb-2 ml-8'
 								type='submit'
 								onClick={() => handleSubmit()}
 							>
-								Update
+								Submit
 							</button>
 						) : (
 							<button
-								className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded mb-8 ml-8'
+								className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded mb-2 ml-8'
 								type='submit'
 								onClick={() => handleSubmit()}
 							>
 								Submit
 							</button>
 						)}
+						<p className='text-sm text-lime-300 ml-10 mb-8 mt-2 pb-8'>
+							* If successfully submitted, picks will appear below in the "Pick History" section.
+						</p>
 					</div>
 					{/* temp add to provide space at bottom of page */}
+					<div>
+						<PickView
+							allPicks={allPicks}
+							user={user}
+							teams={teams}
+						/>
+					</div>
 					<div className='mt-8'>.</div>
 				</div>
 			) : (
 				<div>
 					<ScoreView
+						allPicks={allPicks}
 						user={user}
 						logout={() => logout()}
 						handleViewChange={() => handleViewChange()}

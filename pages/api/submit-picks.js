@@ -18,12 +18,14 @@ export default async function submitPicks(req, res) {
           ( 
             user_id,
             chosen_team,
-            game_id
+            game_id,
+						week
           )
         SELECT
             user_id,
             chosen_team,
-            game_id
+            game_id,
+						week
         FROM
             json_populate_recordset(null::public.picks, $1)
         RETURNING *
