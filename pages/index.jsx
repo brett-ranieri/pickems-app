@@ -227,7 +227,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 			) : view ? (
 				<div className='bg-football-super-close bg-cover'>
 					{/*ultimately turn this into a true Navbar */}
-					<div className='bg-lime-800 flex flex-row justify-end p-1'>
+					<div className='bg-lime-800 flex flex-row justify-end p-1 sticky top-0'>
 						<button
 							className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded m-2 '
 							onClick={() => handleViewChange()}
@@ -256,14 +256,14 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 								className='flex flex-row justify-around m-6'
 							>
 								<TeamCard
-									team={teams?.find((t) => t.id === game.home_id)}
+									team={teams?.find((t) => t.id === game.away_id)}
 									clicked={clicked}
 									game={game}
 									picks={picks}
 								/>
 								<div className='m-4 mt-6 p-1 font-black text-md text-white rounded'>vs.</div>
 								<TeamCard
-									team={teams?.find((t) => t.id === game.away_id)}
+									team={teams?.find((t) => t.id === game.home_id)}
 									clicked={clicked}
 									game={game}
 									picks={picks}
