@@ -279,21 +279,24 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 						</div>
 						{isSubmitted.length ? (
 							<button
-								className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded mb-8 ml-8'
+								className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded mb-2 ml-8'
 								type='submit'
 								onClick={() => handleSubmit()}
 							>
-								Update
+								Submit
 							</button>
 						) : (
 							<button
-								className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded mb-8 ml-8'
+								className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded mb-2 ml-8'
 								type='submit'
 								onClick={() => handleSubmit()}
 							>
 								Submit
 							</button>
 						)}
+						<p className='text-sm text-lime-300 ml-10 mb-8 mt-2 pb-8'>
+							* If successfully submitted, picks will appear below in the "Pick History" section.
+						</p>
 					</div>
 					{/* temp add to provide space at bottom of page */}
 					<div>
