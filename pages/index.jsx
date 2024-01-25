@@ -11,6 +11,7 @@ import { UserDropdown } from "../components/UserDropdown";
 // directly without being first passed through a server side function
 import baseUrl from "../constants/baseUrl";
 import { PickView } from "../components/PickView";
+import stats from "../constants/stats";
 
 export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	const [teams, setTeams] = useState([]);
@@ -40,6 +41,10 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 			setView(true);
 		}
 	};
+
+	const remaingTeams = [{ id: 33 }, { id: 25 }, { id: 8 }, { id: 12 }];
+
+	console.log(stats);
 
 	const getGames = async () => {
 		const results = await fetch(`${baseUrl}/api/games?sent=true`);
