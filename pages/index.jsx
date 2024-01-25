@@ -19,6 +19,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	const [allPicks, setAllPicks] = useState([]);
 	const [view, setView] = useState(true);
 	const [picks, setPicks] = useState([]);
+	const [statPicks, setStatPicks] = useState([]);
 	const [isSubmitted, setIsSubmitted] = useState([]);
 	// needed to set to null for initial load
 	const [user, setUser] = useState(null);
@@ -26,7 +27,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	console.log("logging out of the client", baseUrl);
 
 	const selectUser = (user) => {
-		console.log("in main", user);
+		// console.log("in main", user);
 		setUser(user);
 	};
 
@@ -42,9 +43,9 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 		}
 	};
 
-	const remaingTeams = [{ id: 33 }, { id: 25 }, { id: 8 }, { id: 12 }];
+	const remaingTeams = [{ id: "33" }, { id: "25" }, { id: "8" }, { id: "12" }];
 
-	console.log(stats);
+	console.log("stats:", stats);
 
 	const getGames = async () => {
 		const results = await fetch(`${baseUrl}/api/games?sent=true`);
@@ -61,7 +62,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	};
 
 	const getAllPicks = async () => {
-		console.log("i Ran");
+		// console.log("i Ran");
 		const results = await fetch(`${baseUrl}/api/picks`);
 		// const results = await fetch(`https://pickems-app.vercel.app/api/picks`);
 		const allPicks = await results.json();
@@ -92,27 +93,41 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 
 	// add useEffect listening to user to update whenever dropdown changed
 	useEffect(() => {
-		console.log(user);
+		// console.log(user);
 		if (user) {
 			getPicks(user.id);
 		}
 	}, [user]);
 
-	console.log(games);
-	console.log(allPicks);
+	// console.log(games);
+	// console.log(allPicks);
 
 	const clicked = async (id, gameId, week) => {
 		const pick = {
-			//needed to add an index here to be able to access object
-			//do you know why this is happening here and why it happens
-			//when calling selectedUser in UserDropdown?
 			user_id: user.id,
 			chosen_team: id,
 			game_id: gameId,
 			week: week,
 		};
+		console.log("p", pick);
 		const tempPicks = picks?.filter((pick) => pick.game_id !== gameId);
 		setPicks([...tempPicks, pick]);
+	};
+
+	const statClicked = async (id, gameId, week) => {
+		console.log("wk", week);
+		const pick = {
+			user_id: user.id,
+			chosen_team: id,
+			game_id: gameId,
+			// this key allows me to hard code the week for now
+			week: 3,
+		};
+		console.log(pick);
+		const tempStatPicks = statPicks?.filter((pick) => pick.game_id !== gameId);
+		console.log("temp", tempStatPicks);
+		setStatPicks([...tempStatPicks, pick]);
+		console.log(statPicks);
 	};
 
 	const handleSubmit = async () => {
@@ -216,6 +231,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 			}
 		}
 	};
+	console.log("statPicks", statPicks);
 
 	return (
 		<>
@@ -275,6 +291,28 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 								/>
 							</div>
 						))}
+						<div>
+							<p>Stats picks will go here!</p>
+							{stats.map((stat) => (
+								<div
+									key={stat.id}
+									className='flex flex-row justify-around m-6'
+								>
+									<p>{stat.name}</p>
+									<div className='flex flex-col justify-around m-6'>
+										{remaingTeams.map((team) => (
+											<TeamCard
+												key={team.id}
+												team={teams?.find((t) => t.id === team.id)}
+												clicked={statClicked}
+												game={stat}
+												picks={statPicks}
+											/>
+										))}
+									</div>
+								</div>
+							))}
+						</div>
 						<div className='m-2 mr-8 ml-8 mb-4'>
 							<p className='text-lg text-white font-bold m-2'>WAIT! Are you {user.name}?</p>
 							<p className='text-sm text-lime-300 m-2'>
