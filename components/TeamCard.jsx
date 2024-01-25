@@ -43,7 +43,7 @@ export const TeamCard = ({ team, clicked, game, picks, history }) => {
 					// seemed easier to do outside of tailwind, found solution here:
 					// https://stackoverflow.com/questions/70903204/tailwindcss-custom-background-color-not-working
 					style={{ backgroundColor: `#${team?.color}`, color: `#${team?.alt_color}` }}
-					onClick={() => clicked(team.id, game.id)}
+					onClick={() => clicked(team.id, game.id, game.week)}
 				>
 					{team?.name}
 				</div>
@@ -60,7 +60,7 @@ export const TeamCard = ({ team, clicked, game, picks, history }) => {
 				// this is basically isPicked === false
 				<div
 					className='w-80 h-10 mt-4 font-bold flex items-center justify-center rounded hover:cursor-pointer bg-gray-200 text-slate-600'
-					onClick={() => clicked(team.id, game.id)}
+					onClick={() => clicked(team.id, game.id, game.week)}
 				>
 					{team?.name}
 				</div>
