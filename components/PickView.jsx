@@ -6,7 +6,7 @@ export const PickView = ({ allPicks, user, teams }) => {
 	let userPicks = [];
 
 	const initialPicks = allPicks?.filter((pick) => pick.user_id === user.id);
-	console.log(initialPicks);
+	// console.log(initialPicks);
 	const week1Picks = initialPicks.filter((x) => x.week === 1);
 	const week2Picks = initialPicks.filter((x) => x.week === 2);
 	// const addDetails = (pick) => {

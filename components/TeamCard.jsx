@@ -19,7 +19,7 @@ export const TeamCard = ({ team, clicked, game, picks, history }) => {
 			setIsPicked(null);
 		}
 	};
-	console.log(team.display_name, isPicked);
+	// console.log(team.display_name, isPicked);
 
 	useEffect(() => {
 		checkPick();

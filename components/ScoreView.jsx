@@ -9,8 +9,8 @@ export const ScoreView = ({ allPicks, user, handleViewChange, logout }) => {
 	// const [allPicks, setAllPicks] = useState([]);
 	let allScores = [];
 
-	console.log("SV:", user);
-	console.log("logging out of SV", baseUrl);
+	// console.log("SV:", user);
+	// console.log("logging out of SV", baseUrl);
 
 	const getGames = async () => {
 		const results = await fetch(`${baseUrl}/api/games`);
@@ -49,8 +49,8 @@ export const ScoreView = ({ allPicks, user, handleViewChange, logout }) => {
 		// getAllPicks();
 	}, []);
 
-	console.log("SV", allPicks);
-	console.log(games);
+	// console.log("SV", allPicks);
+	// console.log(games);
 
 	//sort scores in descending order
 	allScores.sort((a, b) => parseInt(b.score) - parseInt(a.score));
