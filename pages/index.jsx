@@ -446,7 +446,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 									className='flex flex-col justify-around m-2'
 								>
 									<p className='text-lg text-lime-300 font-bold ml-8 m-2'>{stat.name}</p>
-									<div className='flex flex-col justify-around m-2 mx-12'>
+									<div className='flex flex-col justify-center items-center m-2 mx-12'>
 										{remaingTeams.map((team) => (
 											<TeamCard
 												key={team.id}
