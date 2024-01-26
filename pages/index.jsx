@@ -17,6 +17,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	const [teams, setTeams] = useState([]);
 	const [games, setGames] = useState([]);
 	const [allPicks, setAllPicks] = useState([]);
+	const [allStatPicks, setAllStatPicks] = useState([]);
 	const [view, setView] = useState(true);
 	const [picks, setPicks] = useState([]);
 	const [statPicks, setStatPicks] = useState([]);
@@ -70,6 +71,17 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 		setAllPicks(allPicks);
 	};
 
+	const getAllStatPicks = async () => {
+		// wanted to do this with conditional but wasn't sure how to handle that with the join
+		// in the picks endpoint. made additional endpoint for fast deployment and then need to
+		// come back and re-factor
+		console.log("stat pickin");
+		const results = await fetch(`${baseUrl}/api/stat-picks`);
+		// const results = await fetch(`https://pickems-app.vercel.app/api/stat-picks`);
+		const allPicks = await results.json();
+		setAllStatPicks(allPicks);
+	};
+
 	const getPicks = async (userId) => {
 		const results = await fetch(`${baseUrl}/api/picks`);
 		// const results = await fetch(`https://pickems-app.vercel.app/api/picks`);
@@ -86,10 +98,32 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 		}
 	};
 
+	const getStatPicks = async (userId) => {
+		// wanted to do this with conditional but wasn't sure how to handle that with the join
+		// in the picks endpoint. made additional endpoint for fast deployment and then need to
+		// come back and re-factor
+		console.log("user stat pickin", userId);
+		const results = await fetch(`${baseUrl}/api/stat-picks`);
+		// const results = await fetch(`https://pickems-app.vercel.app/api/stat-picks`);
+		const prevPicks = await results.json();
+		const userPicks = prevPicks.filter((pick) => {
+			return pick.user_id === userId;
+		});
+		console.log("33:", userPicks);
+		if (userPicks.length) {
+			setStatPicks(userPicks);
+			setIsStatSubmitted(userPicks);
+		} else {
+			setStatPicks([]);
+			setIsStatSubmitted([]);
+		}
+	};
+
 	useEffect(() => {
 		getTeams();
 		getGames();
 		getAllPicks();
+		getAllStatPicks();
 	}, []);
 
 	// add useEffect listening to user to update whenever dropdown changed
@@ -97,11 +131,15 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 		// console.log(user);
 		if (user) {
 			getPicks(user.id);
+			getStatPicks(user.id);
 		}
 	}, [user]);
 
 	// console.log(games);
 	// console.log(allPicks);
+	console.log(picks);
+	console.log(allStatPicks);
+	console.log("user:", statPicks);
 
 	const clicked = async (id, gameId, week) => {
 		const pick = {
@@ -233,7 +271,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					// before setting picks to isSubmitted...did I do that right?
 					// I DID NOT!
 					setIsStatSubmitted(statPicks);
-					getAllPicks();
+					getAllStatPicks();
 				}
 			}
 		}
