@@ -461,11 +461,25 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 							))}
 						</div>
 						<div className='m-2 mr-8 ml-8 mb-4'>
-							<p className='text-lg text-white font-bold m-2'>WAIT! Are you {user.name}?</p>
-							<p className='text-sm text-lime-300 m-2'>
-								If not, logout to go back to the menu and be sure to select the right user in the
-								dropdown.
-							</p>
+							{user.id === 10 ? (
+								<div>
+									<p className='text-lg text-white font-bold m-2'>
+										WAIT! <span classname='underline'>HOW</span> are you {user.name}?
+									</p>
+									<p className='text-sm text-white m-2'>
+										It's been about a week since we've heard from you...just want to make sure you
+										are doing okay. Do anything fun this week?
+									</p>
+								</div>
+							) : (
+								<div>
+									<p className='text-lg text-white font-bold m-2'>WAIT! Are you {user.name}?</p>
+									<p className='text-sm text-lime-300 m-2'>
+										If not, logout to go back to the menu and be sure to select the right user in
+										the dropdown.
+									</p>
+								</div>
+							)}
 						</div>
 						{isSubmitted.length ? (
 							<button
