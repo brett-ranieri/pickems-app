@@ -200,7 +200,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 						if (postPicksRes) {
 							console.log("something else stat happened");
 							setIsStatSubmitted(statPicks);
-							getAllPicks();
+							getAllStatPicks();
 						}
 					}
 				};
@@ -242,7 +242,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 						if (postPicksRes) {
 							console.log("more stat somethings happened");
 							setIsStatSubmitted(statPicks);
-							getAllPicks();
+							getAllStatPicks();
 						}
 					}
 				};
@@ -352,7 +352,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 			picks.forEach(checkForGame);
 			// console.log("IS: ", isSubmitted);
 		} else {
-			// console.log("no picks yet");
+			console.log("no picks yet");
 			// console.log(picks);
 
 			const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
@@ -491,6 +491,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					<div>
 						<PickView
 							allPicks={allPicks}
+							allStatPicks={allStatPicks}
 							user={user}
 							teams={teams}
 						/>

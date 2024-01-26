@@ -1,15 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { TeamCard } from "./TeamCard";
+import { StatCard } from "./StatCard";
+import stats from "../constants/stats";
 
-export const PickView = ({ allPicks, user, teams }) => {
+export const PickView = ({ allPicks, allStatPicks, user, teams }) => {
 	// const [userPicks, setUserPicks] = useState([]);
 	let userPicks = [];
 
 	const initialPicks = allPicks?.filter((pick) => pick.user_id === user.id);
+	const initialStatPicks = allStatPicks?.filter((pick) => pick.user_id === user.id);
 	// console.log(initialPicks);
+	console.log(initialStatPicks);
 	const week1Picks = initialPicks.filter((x) => x.week === 1);
 	const week2Picks = initialPicks.filter((x) => x.week === 2);
 	const week3Picks = initialPicks.filter((x) => x.week === 3);
+
+	const week3StatPicks = initialStatPicks.filter((x) => x.week === 3);
 	// const addDetails = (pick) => {
 	// 	console.log("wk:", pick.week, pick, teams);
 	// 	const matchingTeam = teams.find((team) => team.id === pick.chosen_team);
@@ -54,6 +60,27 @@ export const PickView = ({ allPicks, user, teams }) => {
 					<p className='text-md text-black m-2'>No picks have been saved to the Database yet.</p>
 				</div>
 			)}
+			<h5>Stat Picks:</h5>
+			{week3StatPicks.length ? (
+				<div className='flex flex-col justify-around items-center 6'>
+					{week3StatPicks?.map((pick) => (
+						<div key={pick.game_id}>
+							<StatCard stat={stats.find((x) => x.id === pick.game_id)} />
+							<TeamCard
+								team={teams.find((x) => x.id === pick.chosen_team)}
+								history={true}
+							/>
+						</div>
+					))}
+				</div>
+			) : (
+				<div className='flex flex-col justify-around items-center 6'>
+					<p className='text-md text-black m-2'>
+						No stat picks have been saved to the Database yet.
+					</p>
+				</div>
+			)}
+
 			<h3 className='text-lg text-lime-900 font-bold m-2'>Divisonal Championship Weekend:</h3>
 			{week2Picks.length ? (
 				<div className='flex flex-col justify-around items-center 6'>
