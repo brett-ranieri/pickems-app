@@ -60,11 +60,14 @@ export const PickView = ({ allPicks, allStatPicks, user, teams }) => {
 					<p className='text-md text-black m-2'>No picks have been saved to the Database yet.</p>
 				</div>
 			)}
-			<h5>Stat Picks:</h5>
+			<h5 className='text-lg text-lime-900 font-bold m-2'>Stat Picks:</h5>
 			{week3StatPicks.length ? (
 				<div className='flex flex-col justify-around items-center 6'>
 					{week3StatPicks?.map((pick) => (
-						<div key={pick.game_id}>
+						<div
+							className='mb-2'
+							key={pick.game_id}
+						>
 							<StatCard stat={stats.find((x) => x.id === pick.game_id)} />
 							<TeamCard
 								team={teams.find((x) => x.id === pick.chosen_team)}

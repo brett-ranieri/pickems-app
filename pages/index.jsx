@@ -417,10 +417,11 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					</div>
 
 					<div className='bg-lime-700 bg-opacity-80 m-6 pt-1 mb-6 rounded-lg'>
+						<p className='text-xl text-lime-300 font-bold ml-8 m-2 underline'>Game Picks:</p>
 						{games.map((game) => (
 							<div
 								key={game.id}
-								className='flex flex-row justify-around m-6'
+								className='flex flex-row justify-around m-2 mx-6'
 							>
 								<TeamCard
 									team={teams?.find((t) => t.id === game.away_id)}
@@ -438,14 +439,14 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 							</div>
 						))}
 						<div>
-							<p>Stats picks will go here!</p>
+							<p className='text-xl text-lime-300 font-bold ml-8 m-2 underline'>Stat Picks:</p>
 							{stats.map((stat) => (
 								<div
 									key={stat.id}
-									className='flex flex-row justify-around m-6'
+									className='flex flex-col justify-around m-2'
 								>
-									<p>{stat.name}</p>
-									<div className='flex flex-col justify-around m-6'>
+									<p className='text-lg text-lime-300 font-bold ml-8 m-2'>{stat.name}</p>
+									<div className='flex flex-col justify-around m-2 mx-12'>
 										{remaingTeams.map((team) => (
 											<TeamCard
 												key={team.id}
