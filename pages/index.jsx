@@ -21,6 +21,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	const [picks, setPicks] = useState([]);
 	const [statPicks, setStatPicks] = useState([]);
 	const [isSubmitted, setIsSubmitted] = useState([]);
+	const [isStatSubmitted, setIsStatSubmitted] = useState([]);
 	// needed to set to null for initial load
 	const [user, setUser] = useState(null);
 
@@ -131,8 +132,114 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	};
 
 	const handleSubmit = async () => {
+		//if statement to handle statPicks
+		if (statPicks.length) {
+			console.log("GOT STATS TO SUBMIT");
+			if (isStatSubmitted.length) {
+				console.log("stat picks already made");
+
+				const comparePicks = async (pick) => {
+					console.log("compared");
+					let updatedPicks = [];
+					isStatSubmitted.forEach(function (submittedPick) {
+						if (pick.game_id === submittedPick.game_id) {
+							if (pick.chosen_team !== submittedPick.chosen_team) {
+								console.log("different");
+								updatedPicks.push(pick);
+							}
+						}
+					});
+					if (updatedPicks.length) {
+						const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
+							method: "PUT",
+							body: JSON.stringify(updatedPicks),
+						});
+						// const postPicksRes = await fetch(`https://pickems-app.vercel.app/api/submit-stat-picks`, {
+						// 	method: "PUT",
+						// 	body: JSON.stringify(updatedPicks),
+						// });
+						// this is NOT working as anticipated
+						if (postPicksRes) {
+							console.log("something else stat happened");
+							setIsStatSubmitted(statPicks);
+							getAllPicks();
+						}
+					}
+				};
+
+				const checkForGame = async (pick) => {
+					// leaving comments below in because I can't see where we talked about
+					// this in last code review:
+
+					// needed to POST data returned from this checkForGame, not PUT,
+					// so i seperated function from comparePicks to allow for different fetch methods
+					//
+					// are some variables, like declaring updatedPicks in both functions
+					// a bit redundant?
+					// kept them seperate because each function needs to run independantly
+					// of the other, but both need to be populated simultaneously AND if the
+					// results of either function were sent to the wrong fetch it would
+					// mess up the data...
+					//
+					// you mentioned an insert/update query though...is this a use case
+					// for something like that?
+					let updatedPicks = [];
+					console.log("checking...", pick.game_id);
+					const submissionCheck = isStatSubmitted.some((obj) => obj.game_id === pick.game_id);
+					// console.log(submissionCheck);
+					if (!submissionCheck) {
+						// console.log(pick);
+						updatedPicks.push(pick);
+					}
+					if (updatedPicks.length) {
+						const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
+							method: "POST",
+							body: JSON.stringify(updatedPicks),
+						});
+						// const postPicksRes = await fetch(`https://pickems-app.vercel.app/api/submit-stat-picks`, {
+						// 	method: "POST",
+						// 	body: JSON.stringify(updatedPicks),
+						// });
+						// this is NOT working as anticipated
+						if (postPicksRes) {
+							console.log("more stat somethings happened");
+							setIsStatSubmitted(statPicks);
+							getAllPicks();
+						}
+					}
+				};
+
+				statPicks.forEach(comparePicks);
+				statPicks.forEach(checkForGame);
+				console.log("IStatS: ", isStatSubmitted);
+			} else {
+				console.log("no stat picks yet");
+				console.log(statPicks);
+
+				const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
+					method: "POST",
+					body: JSON.stringify(statPicks),
+				});
+				// const postPicksRes = await fetch(`https://pickems-app.vercel.app/api/submit-stat-picks`, {
+				// 	method: "POST",
+				// 	body: JSON.stringify(statPicks),
+				// });
+				if (postPicksRes) {
+					console.log("something stat happened");
+					// feels like more can be done here to ensure confirmation of successful
+					// pikc submission
+
+					// moved into this if statement to ensure that post was successful
+					// before setting picks to isSubmitted...did I do that right?
+					// I DID NOT!
+					setIsStatSubmitted(statPicks);
+					getAllPicks();
+				}
+			}
+		}
+		// handling picks from here down
 		if (isSubmitted.length) {
-			console.log("picks already made");
+			// console.log("picks already made");
 
 			const comparePicks = async (pick) => {
 				let updatedPicks = [];
@@ -154,7 +261,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					// });
 					// this is NOT working as anticipated
 					if (postPicksRes) {
-						console.log("something else happened");
+						// console.log("something else happened");
 						setIsSubmitted(picks);
 						getAllPicks();
 					}
@@ -196,7 +303,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					// });
 					// this is NOT working as anticipated
 					if (postPicksRes) {
-						console.log("more somethings happened");
+						// console.log("more somethings happened");
 						setIsSubmitted(picks);
 						getAllPicks();
 					}
@@ -205,10 +312,10 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 
 			picks.forEach(comparePicks);
 			picks.forEach(checkForGame);
-			console.log("IS: ", isSubmitted);
+			// console.log("IS: ", isSubmitted);
 		} else {
-			console.log("no picks yet");
-			console.log(picks);
+			// console.log("no picks yet");
+			// console.log(picks);
 
 			const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
 				method: "POST",
@@ -219,7 +326,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 			// 	body: JSON.stringify(picks),
 			// });
 			if (postPicksRes) {
-				console.log("something happened");
+				// console.log("something happened");
 				// feels like more can be done here to ensure confirmation of successful
 				// pikc submission
 
@@ -232,6 +339,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 		}
 	};
 	console.log("statPicks", statPicks);
+	console.log("isStatS:", isStatSubmitted);
 
 	return (
 		<>
