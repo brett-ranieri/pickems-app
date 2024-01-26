@@ -11,21 +11,25 @@ import { UserDropdown } from "../components/UserDropdown";
 // directly without being first passed through a server side function
 import baseUrl from "../constants/baseUrl";
 import { PickView } from "../components/PickView";
+import stats from "../constants/stats";
 
 export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	const [teams, setTeams] = useState([]);
 	const [games, setGames] = useState([]);
 	const [allPicks, setAllPicks] = useState([]);
+	const [allStatPicks, setAllStatPicks] = useState([]);
 	const [view, setView] = useState(true);
 	const [picks, setPicks] = useState([]);
+	const [statPicks, setStatPicks] = useState([]);
 	const [isSubmitted, setIsSubmitted] = useState([]);
+	const [isStatSubmitted, setIsStatSubmitted] = useState([]);
 	// needed to set to null for initial load
 	const [user, setUser] = useState(null);
 
 	console.log("logging out of the client", baseUrl);
 
 	const selectUser = (user) => {
-		console.log("in main", user);
+		// console.log("in main", user);
 		setUser(user);
 	};
 
@@ -40,6 +44,10 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 			setView(true);
 		}
 	};
+
+	const remaingTeams = [{ id: "33" }, { id: "25" }, { id: "8" }, { id: "12" }];
+
+	console.log("stats:", stats);
 
 	const getGames = async () => {
 		// const results = await fetch(`${baseUrl}/api/games?sent=true`);
@@ -56,14 +64,27 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	};
 
 	const getAllPicks = async () => {
-		console.log("i Ran");
+		// console.log("i Ran");
 		// const results = await fetch(`${baseUrl}/api/picks`);
 		const results = await fetch(`https://pickems-app.vercel.app/api/picks`);
 		const allPicks = await results.json();
 		setAllPicks(allPicks);
 	};
 
+	const getAllStatPicks = async () => {
+		// wanted to do this with conditional but wasn't sure how to handle that with the join
+		// in the picks endpoint. made additional endpoint for fast deployment and then need to
+		// come back and re-factor
+		console.log("stat pickin");
+		// const results = await fetch(`${baseUrl}/api/stat-picks`);
+		const results = await fetch(`https://pickems-app.vercel.app/api/stat-picks`);
+		const allPicks = await results.json();
+		setAllStatPicks(allPicks);
+	};
+
 	const getPicks = async (userId) => {
+		// is it necessary to have another fetch here? feels like I should be fetching from
+		// getAllPicks and then use that for this function...
 		// const results = await fetch(`${baseUrl}/api/picks`);
 		const results = await fetch(`https://pickems-app.vercel.app/api/picks`);
 		const prevPicks = await results.json();
@@ -79,40 +100,192 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 		}
 	};
 
+	const getStatPicks = async (userId) => {
+		// wanted to do this with conditional but wasn't sure how to handle that with the join
+		// in the picks endpoint. made additional endpoint for fast deployment and then need to
+		// come back and re-factor
+		console.log("user stat pickin", userId);
+		// const results = await fetch(`${baseUrl}/api/stat-picks`);
+		const results = await fetch(`https://pickems-app.vercel.app/api/stat-picks`);
+		const prevPicks = await results.json();
+		const userPicks = prevPicks.filter((pick) => {
+			return pick.user_id === userId;
+		});
+		console.log("33:", userPicks);
+		if (userPicks.length) {
+			setStatPicks(userPicks);
+			setIsStatSubmitted(userPicks);
+		} else {
+			setStatPicks([]);
+			setIsStatSubmitted([]);
+		}
+	};
+
 	useEffect(() => {
 		getTeams();
 		getGames();
 		getAllPicks();
+		getAllStatPicks();
 	}, []);
 
 	// add useEffect listening to user to update whenever dropdown changed
 	useEffect(() => {
-		console.log(user);
+		// console.log(user);
 		if (user) {
 			getPicks(user.id);
+			getStatPicks(user.id);
 		}
 	}, [user]);
 
-	console.log(games);
-	console.log(allPicks);
+	// console.log(games);
+	// console.log(allPicks);
+	console.log(picks);
+	console.log(allStatPicks);
+	console.log("user:", statPicks);
 
 	const clicked = async (id, gameId, week) => {
 		const pick = {
-			//needed to add an index here to be able to access object
-			//do you know why this is happening here and why it happens
-			//when calling selectedUser in UserDropdown?
 			user_id: user.id,
 			chosen_team: id,
 			game_id: gameId,
 			week: week,
 		};
+		console.log("p", pick);
 		const tempPicks = picks?.filter((pick) => pick.game_id !== gameId);
 		setPicks([...tempPicks, pick]);
 	};
 
+	const statClicked = async (id, gameId, week) => {
+		console.log("wk", week);
+		const pick = {
+			user_id: user.id,
+			chosen_team: id,
+			game_id: gameId,
+			// this key allows me to hard code the week for now
+			week: 3,
+		};
+		console.log(pick);
+		const tempStatPicks = statPicks?.filter((pick) => pick.game_id !== gameId);
+		console.log("temp", tempStatPicks);
+		setStatPicks([...tempStatPicks, pick]);
+		console.log(statPicks);
+	};
+
 	const handleSubmit = async () => {
+		//if statement to handle statPicks
+		if (statPicks.length) {
+			console.log("GOT STATS TO SUBMIT");
+			if (isStatSubmitted.length) {
+				console.log("stat picks already made");
+
+				const comparePicks = async (pick) => {
+					console.log("compared");
+					let updatedPicks = [];
+					isStatSubmitted.forEach(function (submittedPick) {
+						if (pick.game_id === submittedPick.game_id) {
+							if (pick.chosen_team !== submittedPick.chosen_team) {
+								console.log("different");
+								updatedPicks.push(pick);
+							}
+						}
+					});
+					if (updatedPicks.length) {
+						// const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
+						// 	method: "PUT",
+						// 	body: JSON.stringify(updatedPicks),
+						// });
+						const postPicksRes = await fetch(
+							`https://pickems-app.vercel.app/api/submit-stat-picks`,
+							{
+								method: "PUT",
+								body: JSON.stringify(updatedPicks),
+							}
+						);
+						// this is NOT working as anticipated
+						if (postPicksRes) {
+							console.log("something else stat happened");
+							setIsStatSubmitted(statPicks);
+							getAllStatPicks();
+						}
+					}
+				};
+
+				const checkForGame = async (pick) => {
+					// leaving comments below in because I can't see where we talked about
+					// this in last code review:
+
+					// needed to POST data returned from this checkForGame, not PUT,
+					// so i seperated function from comparePicks to allow for different fetch methods
+					//
+					// are some variables, like declaring updatedPicks in both functions
+					// a bit redundant?
+					// kept them seperate because each function needs to run independantly
+					// of the other, but both need to be populated simultaneously AND if the
+					// results of either function were sent to the wrong fetch it would
+					// mess up the data...
+					//
+					// you mentioned an insert/update query though...is this a use case
+					// for something like that?
+					let updatedPicks = [];
+					console.log("checking...", pick.game_id);
+					const submissionCheck = isStatSubmitted.some((obj) => obj.game_id === pick.game_id);
+					// console.log(submissionCheck);
+					if (!submissionCheck) {
+						// console.log(pick);
+						updatedPicks.push(pick);
+					}
+					if (updatedPicks.length) {
+						// const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
+						// 	method: "POST",
+						// 	body: JSON.stringify(updatedPicks),
+						// });
+						const postPicksRes = await fetch(
+							`https://pickems-app.vercel.app/api/submit-stat-picks`,
+							{
+								method: "POST",
+								body: JSON.stringify(updatedPicks),
+							}
+						);
+						// this is NOT working as anticipated
+						if (postPicksRes) {
+							console.log("more stat somethings happened");
+							setIsStatSubmitted(statPicks);
+							getAllStatPicks();
+						}
+					}
+				};
+
+				statPicks.forEach(comparePicks);
+				statPicks.forEach(checkForGame);
+				console.log("IStatS: ", isStatSubmitted);
+			} else {
+				console.log("no stat picks yet");
+				console.log(statPicks);
+
+				// const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
+				// 	method: "POST",
+				// 	body: JSON.stringify(statPicks),
+				// });
+				const postPicksRes = await fetch(`https://pickems-app.vercel.app/api/submit-stat-picks`, {
+					method: "POST",
+					body: JSON.stringify(statPicks),
+				});
+				if (postPicksRes) {
+					console.log("something stat happened");
+					// feels like more can be done here to ensure confirmation of successful
+					// pikc submission
+
+					// moved into this if statement to ensure that post was successful
+					// before setting picks to isSubmitted...did I do that right?
+					// I DID NOT!
+					setIsStatSubmitted(statPicks);
+					getAllStatPicks();
+				}
+			}
+		}
+		// handling picks from here down
 		if (isSubmitted.length) {
-			console.log("picks already made");
+			// console.log("picks already made");
 
 			const comparePicks = async (pick) => {
 				let updatedPicks = [];
@@ -134,7 +307,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					});
 					// this is NOT working as anticipated
 					if (postPicksRes) {
-						console.log("something else happened");
+						// console.log("something else happened");
 						setIsSubmitted(picks);
 						getAllPicks();
 					}
@@ -176,7 +349,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					});
 					// this is NOT working as anticipated
 					if (postPicksRes) {
-						console.log("more somethings happened");
+						// console.log("more somethings happened");
 						setIsSubmitted(picks);
 						getAllPicks();
 					}
@@ -185,10 +358,10 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 
 			picks.forEach(comparePicks);
 			picks.forEach(checkForGame);
-			console.log("IS: ", isSubmitted);
+			// console.log("IS: ", isSubmitted);
 		} else {
 			console.log("no picks yet");
-			console.log(picks);
+			// console.log(picks);
 
 			// const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
 			// 	method: "POST",
@@ -199,7 +372,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 				body: JSON.stringify(picks),
 			});
 			if (postPicksRes) {
-				console.log("something happened");
+				// console.log("something happened");
 				// feels like more can be done here to ensure confirmation of successful
 				// pikc submission
 
@@ -211,6 +384,8 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 			}
 		}
 	};
+	console.log("statPicks", statPicks);
+	console.log("isStatS:", isStatSubmitted);
 
 	return (
 		<>
@@ -250,10 +425,11 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					</div>
 
 					<div className='bg-lime-700 bg-opacity-80 m-6 pt-1 mb-6 rounded-lg'>
+						<p className='text-xl text-lime-300 font-bold ml-8 m-2 underline'>Game Picks:</p>
 						{games.map((game) => (
 							<div
 								key={game.id}
-								className='flex flex-row justify-around m-6'
+								className='flex flex-row justify-around m-2 mx-6'
 							>
 								<TeamCard
 									team={teams?.find((t) => t.id === game.away_id)}
@@ -270,12 +446,48 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 								/>
 							</div>
 						))}
+						<div>
+							<p className='text-xl text-lime-300 font-bold ml-8 m-2 underline'>Stat Picks:</p>
+							{stats.map((stat) => (
+								<div
+									key={stat.id}
+									className='flex flex-col justify-around m-2'
+								>
+									<p className='text-lg text-lime-300 font-bold ml-8 m-2'>{stat.name}</p>
+									<div className='flex flex-col justify-center items-center m-2 mx-12'>
+										{remaingTeams.map((team) => (
+											<TeamCard
+												key={team.id}
+												team={teams?.find((t) => t.id === team.id)}
+												clicked={statClicked}
+												game={stat}
+												picks={statPicks}
+											/>
+										))}
+									</div>
+								</div>
+							))}
+						</div>
 						<div className='m-2 mr-8 ml-8 mb-4'>
-							<p className='text-lg text-white font-bold m-2'>WAIT! Are you {user.name}?</p>
-							<p className='text-sm text-lime-300 m-2'>
-								If not, logout to go back to the menu and be sure to select the right user in the
-								dropdown.
-							</p>
+							{user.id === 10 ? (
+								<div>
+									<p className='text-lg text-white font-bold m-2'>
+										WAIT! <span classname='underline'>HOW</span> are you {user.name}?
+									</p>
+									<p className='text-sm text-white m-2'>
+										It's been about a week since we've heard from you...just want to make sure you
+										are doing okay. Do anything fun this week?
+									</p>
+								</div>
+							) : (
+								<div>
+									<p className='text-lg text-white font-bold m-2'>WAIT! Are you {user.name}?</p>
+									<p className='text-sm text-lime-300 m-2'>
+										If not, logout to go back to the menu and be sure to select the right user in
+										the dropdown.
+									</p>
+								</div>
+							)}
 						</div>
 						{isSubmitted.length ? (
 							<button
@@ -302,6 +514,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					<div>
 						<PickView
 							allPicks={allPicks}
+							allStatPicks={allStatPicks}
 							user={user}
 							teams={teams}
 						/>
