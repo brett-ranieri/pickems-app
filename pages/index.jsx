@@ -76,8 +76,8 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 		// in the picks endpoint. made additional endpoint for fast deployment and then need to
 		// come back and re-factor
 		console.log("stat pickin");
-		// const results = await fetch(`${baseUrl}/api/stat-picks`);
-		const results = await fetch(`https://pickems-app.vercel.app/api/stat-picks`);
+		const results = await fetch(`${baseUrl}/api/stat-picks`);
+		// const results = await fetch(`https://pickems-app.vercel.app/api/stat-picks`);
 		const allPicks = await results.json();
 		setAllStatPicks(allPicks);
 	};
