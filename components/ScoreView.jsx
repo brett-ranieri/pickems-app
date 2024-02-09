@@ -76,6 +76,7 @@ export const ScoreView = ({ allPicks, allStatPicks, user, handleViewChange, logo
 
 	//sort scores in descending order
 	allGameScores.sort((a, b) => parseInt(b.score) - parseInt(a.score));
+	allStatScores.sort((a, b) => parseInt(b.score) - parseInt(a.score));
 
 	return (
 		<div className='bg-side-line bg-cover'>
