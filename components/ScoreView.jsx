@@ -10,6 +10,7 @@ export const ScoreView = ({ allPicks, allStatPicks, user, handleViewChange, logo
 	// const [allPicks, setAllPicks] = useState([]);
 	let allGameScores = [];
 	let allStatScores = [];
+	let allOverallScores = [];
 
 	// console.log("SV:", user);
 	// console.log("logging out of SV", baseUrl);
@@ -64,7 +65,20 @@ export const ScoreView = ({ allPicks, allStatPicks, user, handleViewChange, logo
 	};
 	users.forEach(calcStatScore);
 
-	console.log(allStatScores);
+	const calcOverallScore = async (user) => {
+		const userGameScore = allGameScores.find((score) => {
+			return score.user === user.id;
+		});
+		console.log(userGameScore);
+		const userStatScore = allStatScores.find((score) => {
+			return score.user === user.id;
+		});
+		console.log(userStatScore);
+		const userOverallScore = userGameScore.score + userStatScore.score;
+		console.log(userOverallScore);
+		allOverallScores.push({ user: user.id, name: user.name, score: userOverallScore });
+	};
+	users.forEach(calcOverallScore);
 
 	useEffect(() => {
 		getGames();
@@ -77,6 +91,8 @@ export const ScoreView = ({ allPicks, allStatPicks, user, handleViewChange, logo
 	//sort scores in descending order
 	allGameScores.sort((a, b) => parseInt(b.score) - parseInt(a.score));
 	allStatScores.sort((a, b) => parseInt(b.score) - parseInt(a.score));
+	allOverallScores.sort((a, b) => parseInt(b.score) - parseInt(a.score));
+	console.log(allOverallScores);
 
 	return (
 		<div className='bg-side-line bg-cover'>
@@ -93,6 +109,22 @@ export const ScoreView = ({ allPicks, allStatPicks, user, handleViewChange, logo
 				>
 					Logout
 				</button>
+			</div>
+			<div className='bg-lime-300 bg-opacity-70 m-4 p-1 rounded'>
+				<p className='text-3xl text-lime-800 font-black underline m-4'>Overall Scores:</p>
+				<div className='mb-6'>
+					{allOverallScores.map((score) => (
+						<div
+							key={score.user}
+							className='text-lg'
+						>
+							<ScoreCard
+								score={score}
+								user={user}
+							/>
+						</div>
+					))}
+				</div>
 			</div>
 			<div className='bg-lime-300 bg-opacity-70 m-4 p-1 rounded'>
 				<p className='text-3xl text-lime-800 font-black underline m-4'>Game Scores:</p>
