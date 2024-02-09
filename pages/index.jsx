@@ -27,6 +27,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	const [user, setUser] = useState(null);
 
 	console.log("logging out of the client", baseUrl);
+	console.log("teams:", teams);
 
 	const selectUser = (user) => {
 		// console.log("in main", user);
@@ -525,6 +526,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 				<div>
 					<ScoreView
 						allPicks={allPicks}
+						allStatPicks={allStatPicks}
 						user={user}
 						logout={() => logout()}
 						handleViewChange={() => handleViewChange()}

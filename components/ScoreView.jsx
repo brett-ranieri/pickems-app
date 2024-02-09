@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import { ScoreCard } from "../components/ScoreCard";
 import users from "../constants/users";
 import baseUrl from "../constants/baseUrl";
+import stat_results from "../constants/stats-results";
 
-export const ScoreView = ({ allPicks, user, handleViewChange, logout }) => {
+export const ScoreView = ({ allPicks, allStatPicks, user, handleViewChange, logout }) => {
 	const [games, setGames] = useState([]);
 	// const [picks, setPicks] = useState([]);
 	// const [allPicks, setAllPicks] = useState([]);
-	let allScores = [];
+	let allGameScores = [];
+	let allStatScores = [];
 
 	// console.log("SV:", user);
 	// console.log("logging out of SV", baseUrl);
@@ -40,9 +42,29 @@ export const ScoreView = ({ allPicks, user, handleViewChange, logout }) => {
 		if (userPicks.length) {
 			userPicks.forEach(checkForWinner);
 		}
-		allScores.push({ user: user.id, name: user.name, score: score });
+		allGameScores.push({ user: user.id, name: user.name, score: score });
 	};
 	users.forEach(getUserScore);
+
+	const calcStatScore = async (user) => {
+		console.log(user);
+		let statScore = 0;
+		const userPicks = allStatPicks.filter((pick) => {
+			return pick.user_id === user.id;
+		});
+		const checkForWinner = (pick) => {
+			if (pick.winner === pick.chosen_team) {
+				statScore++;
+			}
+		};
+		if (userPicks.length) {
+			userPicks.forEach(checkForWinner);
+		}
+		allStatScores.push({ user: user.id, name: user.name, score: statScore });
+	};
+	users.forEach(calcStatScore);
+
+	console.log(allStatScores);
 
 	useEffect(() => {
 		getGames();
@@ -53,7 +75,7 @@ export const ScoreView = ({ allPicks, user, handleViewChange, logout }) => {
 	// console.log(games);
 
 	//sort scores in descending order
-	allScores.sort((a, b) => parseInt(b.score) - parseInt(a.score));
+	allGameScores.sort((a, b) => parseInt(b.score) - parseInt(a.score));
 
 	return (
 		<div className='bg-side-line bg-cover'>
@@ -72,9 +94,25 @@ export const ScoreView = ({ allPicks, user, handleViewChange, logout }) => {
 				</button>
 			</div>
 			<div className='bg-lime-300 bg-opacity-70 m-4 p-1 rounded'>
-				<p className='text-3xl text-lime-800 font-black underline m-4'>Overall Scores:</p>
+				<p className='text-3xl text-lime-800 font-black underline m-4'>Game Scores:</p>
 				<div className='mb-6'>
-					{allScores.map((score) => (
+					{allGameScores.map((score) => (
+						<div
+							key={score.user}
+							className='text-lg'
+						>
+							<ScoreCard
+								score={score}
+								user={user}
+							/>
+						</div>
+					))}
+				</div>
+			</div>
+			<div className='bg-lime-300 bg-opacity-70 m-4 p-1 rounded'>
+				<p className='text-3xl text-lime-800 font-black underline m-4'>Stat Scores:</p>
+				<div className='mb-6'>
+					{allStatScores.map((score) => (
 						<div
 							key={score.user}
 							className='text-lg'
