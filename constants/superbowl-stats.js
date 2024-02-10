@@ -1,6 +1,6 @@
 // test Users table
 const superbowlStats = [
-	{ id: "9101", name: "Team with Most Points" },
+	{ id: "9101", name: "Team with Most Points in the First Half" },
 	{ id: "9201", name: "Team to Score First Touchdown" },
 	{ id: "9301", name: "Team with Most Passing Yards" },
 	{ id: "9401", name: "Team with Most Rushing Yards" },
