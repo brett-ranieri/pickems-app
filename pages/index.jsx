@@ -47,44 +47,88 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 
 	// console.log("stats:", stats);
 
+
+	/////////////// ASYNC/AWAIT OPTION OF INITIAL DATA FETCH
 	const getData = async () => {
-		console.log(baseUrl);
-		try {
-			const [gamesRes, teamsRes, allPicksRes, allStatPicksRes] = await Promise.all([
-				fetch(`${baseUrl}/api/games?sent=true`),
-				fetch(`${baseUrl}/api/teams`),
-				fetch(`${baseUrl}/api/picks`),
-				fetch(`${baseUrl}/api/stat-picks`)
-			]);
-	
-			const [upcomingGames, theTeams, theAllPicks, theAllStatPicks] = await Promise.all([
-				gamesRes.json(),
-				teamsRes.json(),
-				allPicksRes.json(),
-				allStatPicksRes.json()
-			]);
-	
-			setGames(upcomingGames);
-			console.log('after games call');
-			setTeams(theTeams);
-			console.log('after teams call');
-			setAllPicks(theAllPicks);
-			console.log('after picks call');
-			setAllStatPicks(theAllStatPicks);
-			console.log('after stat picks call');
-	
-			const userPicks = theAllPicks.filter((pick) => pick.user_id === userState?.id);
-			setPicks(userPicks.length ? userPicks : []);
-			setIsSubmitted(userPicks.length ? userPicks : []);
-	
-			const statUserPicks = theAllStatPicks.filter((pick) => pick.user_id === userState?.id);
-			setStatPicks(statUserPicks.length ? statUserPicks : []);
-			setIsStatSubmitted(statUserPicks.length ? statUserPicks : []);
-		} catch (error) {
-			console.error(error);
+		const gamesRes = await fetch(`${baseUrl}/api/games?sent=true`);
+		const upcomingGames = await gamesRes.json();
+		setGames(upcomingGames);
+console.log('after games call')
+		const teamsRes = await fetch(`${baseUrl}/api/teams`);
+		const theTeams = await teamsRes.json();
+		setTeams(theTeams);
+console.log('after teams call')
+		const allPicksRes = await fetch(`${baseUrl}/api/picks`);
+		const theAllPicks = await allPicksRes.json();
+		setAllPicks(theAllPicks);
+console.log('after picks call')
+		const allStatPicksRes = await fetch(`${baseUrl}/api/stat-picks`);
+		const theAllStatPicks = await allStatPicksRes.json();
+		setAllStatPicks(theAllStatPicks);
+console.log('after stat picks call')
+		const userPicks = theAllPicks.filter((pick) => {
+			return pick.user_id === userState?.id;
+		});
+		if (userPicks.length) {
+			setPicks(userPicks);
+			setIsSubmitted(userPicks);
+		} else {
+			setPicks([]);
+			setIsSubmitted([]);
+		}
+
+		const statUserPicks = theAllStatPicks.filter((pick) => {
+			return pick.user_id === userState?.id;
+		});
+		if (statUserPicks.length) {
+			setStatPicks(statUserPicks);
+			setIsStatSubmitted(statUserPicks);
+		} else {
+			setStatPicks([]);
+			setIsStatSubmitted([]);
 		}
 	};
 
+	// ////////////////// PROMISE.ALL OPTION OF INITIAL DATA FETCH
+	// const getData = async () => {
+	// 	try {
+	// 		const [gamesRes, teamsRes, allPicksRes, allStatPicksRes] = await Promise.all([
+	// 			fetch(`${baseUrl}/api/games?sent=true`),
+	// 			fetch(`${baseUrl}/api/teams`),
+	// 			fetch(`${baseUrl}/api/picks`),
+	// 			fetch(`${baseUrl}/api/stat-picks`)
+	// 		]);
+	
+	// 		const [upcomingGames, theTeams, theAllPicks, theAllStatPicks] = await Promise.all([
+	// 			gamesRes.json(),
+	// 			teamsRes.json(),
+	// 			allPicksRes.json(),
+	// 			allStatPicksRes.json()
+	// 		]);
+	
+	// 		setGames(upcomingGames);
+	// 		console.log('after games call');
+	// 		setTeams(theTeams);
+	// 		console.log('after teams call');
+	// 		setAllPicks(theAllPicks);
+	// 		console.log('after picks call');
+	// 		setAllStatPicks(theAllStatPicks);
+	// 		console.log('after stat picks call');
+	
+	// 		const userPicks = theAllPicks.filter((pick) => pick.user_id === userState?.id);
+	// 		setPicks(userPicks.length ? userPicks : []);
+	// 		setIsSubmitted(userPicks.length ? userPicks : []);
+	
+	// 		const statUserPicks = theAllStatPicks.filter((pick) => pick.user_id === userState?.id);
+	// 		setStatPicks(statUserPicks.length ? statUserPicks : []);
+	// 		setIsStatSubmitted(statUserPicks.length ? statUserPicks : []);
+	// 	} catch (error) {
+	// 		console.error(error);
+	// 	}
+	// };
+
+
+	// ////////// OG INITIAL DATA FETCH
 	// const getTeams = async () => {
 	// 	// const results = await fetch(`${baseUrl}/api/teams`);
 	// 	const results = await fetch(`${baseUrl}/api/teams`);
@@ -269,9 +313,10 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 				const checkForGame = async (picks) => {
 					let newPicks = [];
 					let putPicks = []
+					let otherPicks = []
 					for (const pick of picks) {
 						const submissionCheck = isStatSubmitted.some((obj) => obj.game_id === pick.game_id);
-						console.log(pick, isStatSubmitted)
+						console.log(pick, submissionCheck)
 						if (!submissionCheck) {
 							newPicks.push(pick)
 						} else {
@@ -280,6 +325,8 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 									if (pick.chosen_team !== submittedPick.chosen_team) {
 										// console.log("different");
 										putPicks.push(pick);
+									} else {
+										otherPicks.push(pick)
 									}
 								}
 						})}
@@ -313,11 +360,13 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 						// START OF WHAT ALLISON CHANGED
 						console.log('🍇 271, POST of some kind')
 						setIsStatSubmitted(statPicks);
+
+						console.log('OTHER PICKS HERE!!!!', otherPicks)
 						console.log('🍓 NEW STAT PICKS', allStatPicks, theNewStatPicks, thePutStatPicks)
-						setStatPicks([...theNewStatPicks, ...thePutStatPicks])
+						setStatPicks([...otherPicks, ...theNewStatPicks, ...thePutStatPicks])
 						// filtered all stat picks to not include the user's picks spread with the user's stat picks
 						// result is one less network call
-						const combinedStatPicks = [...allStatPicks.filter(x => x.user_id !== userState.id), ...theNewStatPicks, ...thePutStatPicks]
+						const combinedStatPicks = [...allStatPicks.filter(x => x.user_id !== userState.id), ...otherPicks, ...theNewStatPicks, ...thePutStatPicks]
 						setAllStatPicks(combinedStatPicks)
 						// END OF WHAT ALLISON CHANGED
 					
