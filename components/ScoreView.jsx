@@ -158,6 +158,27 @@ export const ScoreView = ({ allPicks, allStatPicks, user, handleViewChange, logo
 					))}
 				</div>
 			</div>
+			<div className='bg-lime-300 bg-opacity-70 m-4 p-1 rounded'>
+				<p className='text-3xl text-lime-800 font-black underline m-4'>
+					Conference Championship Stat Results:
+				</p>
+				<div className='flex flex-col justify-around text-center font-bold pt-2 pb-2 mb-6'>
+					<h3 className='text-2xl mb-2'>Total Points:</h3>
+					<ul className='mb-2'>
+						<li>49ers - 34</li>
+						<li>Lions - 31</li>
+						<li>Chiefs - 17</li>
+						<li>Ravens - 10</li>
+					</ul>
+					<h3 className='text-2xl mb-2'>Total Yards:</h3>
+					<ul className='mb-2'>
+						<li>Lions - 442</li>
+						<li>49ers - 413</li>
+						<li>Ravens - 336</li>
+						<li>Cheifs - 319</li>
+					</ul>
+				</div>
+			</div>
 			<div className='mt-80'>.</div>
 		</div>
 	);
