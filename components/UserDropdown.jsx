@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 
 export const UserDropdown = ({ users, selectUser }) => {
-	console.log("DD", users);
+	// console.log("DD", users);
 	const handleUserChange = (e) => {
 		const value = parseInt(e.target.value);
 		const selectedUser = users.filter((user) => user.id === value);
-		console.log(selectedUser[0]);
+		// console.log(selectedUser[0]);
 		//need index here...why?
 		selectUser(selectedUser[0]);
 	};

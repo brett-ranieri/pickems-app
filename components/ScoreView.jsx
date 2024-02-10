@@ -12,8 +12,8 @@ export const ScoreView = ({ allPicks, allStatPicks, user, handleViewChange, logo
 	let allStatScores = [];
 	let allOverallScores = [];
 
-	// console.log("SV:", user);
-	// console.log("logging out of SV", baseUrl);
+	// // console.log("SV:", user);
+	// // console.log("logging out of SV", baseUrl);
 
 	const getGames = async () => {
 		const results = await fetch(`${baseUrl}/api/games`);
@@ -48,7 +48,7 @@ export const ScoreView = ({ allPicks, allStatPicks, user, handleViewChange, logo
 	users.forEach(getUserScore);
 
 	const calcStatScore = async (user) => {
-		console.log(user);
+		// // console.log(user);
 		let statScore = 0;
 		const userPicks = allStatPicks.filter((pick) => {
 			return pick.user_id === user.id;
@@ -69,13 +69,13 @@ export const ScoreView = ({ allPicks, allStatPicks, user, handleViewChange, logo
 		const userGameScore = allGameScores.find((score) => {
 			return score.user === user.id;
 		});
-		console.log(userGameScore);
+		// console.log(userGameScore);
 		const userStatScore = allStatScores.find((score) => {
 			return score.user === user.id;
 		});
-		console.log(userStatScore);
+		// console.log(userStatScore);
 		const userOverallScore = userGameScore.score + userStatScore.score;
-		console.log(userOverallScore);
+		// console.log(userOverallScore);
 		allOverallScores.push({ user: user.id, name: user.name, score: userOverallScore });
 	};
 	users.forEach(calcOverallScore);
@@ -85,14 +85,14 @@ export const ScoreView = ({ allPicks, allStatPicks, user, handleViewChange, logo
 		// getAllPicks();
 	}, []);
 
-	// console.log("SV", allPicks);
-	// console.log(games);
+	// // console.log("SV", allPicks);
+	// // console.log(games);
 
 	//sort scores in descending order
 	allGameScores.sort((a, b) => parseInt(b.score) - parseInt(a.score));
 	allStatScores.sort((a, b) => parseInt(b.score) - parseInt(a.score));
 	allOverallScores.sort((a, b) => parseInt(b.score) - parseInt(a.score));
-	console.log(allOverallScores);
+	// console.log(allOverallScores);
 
 	return (
 		<div className='bg-side-line bg-cover'>
