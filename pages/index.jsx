@@ -47,47 +47,26 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 
 	// console.log("stats:", stats);
 
-	const getGames = async () => {
+	const getData = async () => {
 		// const results = await fetch(`${baseUrl}/api/games?sent=true`);
-		const results = await fetch(`https://pickems-app.vercel.app/api/games?sent=true`);
-		const upcomingGames = await results.json();
+		const gamesRes = await fetch(`https://pickems-app.vercel.app/api/games?sent=true`);
+		const upcomingGames = await gamesRes.json();
 		setGames(upcomingGames);
-	};
 
-	const getTeams = async () => {
-		// const results = await fetch(`${baseUrl}/api/teams`);
-		const results = await fetch(`https://pickems-app.vercel.app/api/teams`);
-		const teams = await results.json();
-		setTeams(teams);
-	};
+		const teamsRes = await fetch(`https://pickems-app.vercel.app/api/teams`);
+		const theTeams = await teamsRes.json();
+		setTeams(theTeams);
 
-	const getAllPicks = async () => {
-		// // console.log("i Ran");
-		// const results = await fetch(`${baseUrl}/api/picks`);
-		const results = await fetch(`https://pickems-app.vercel.app/api/picks`);
-		const allPicks = await results.json();
-		setAllPicks(allPicks);
-	};
+		const allPicksRes = await fetch(`https://pickems-app.vercel.app/api/picks`);
+		const theAllPicks = await allPicksRes.json();
+		setAllPicks(theAllPicks);
 
-	const getAllStatPicks = async () => {
-		// wanted to do this with conditional but wasn't sure how to handle that with the join
-		// in the picks endpoint. made additional endpoint for fast deployment and then need to
-		// come back and re-factor
-		// console.log("stat pickin");
-		// const results = await fetch(`${baseUrl}/api/stat-picks`);
-		const results = await fetch(`https://pickems-app.vercel.app/api/stat-picks`);
-		const allPicks = await results.json();
-		setAllStatPicks(allPicks);
-	};
+		const allStatPicksRes = await fetch(`https://pickems-app.vercel.app/api/stat-picks`);
+		const theAllStatPicks = await allStatPicksRes.json();
+		setAllStatPicks(theAllStatPicks);
 
-	const getPicks = async (userId) => {
-		// is it necessary to have another fetch here? feels like I should be fetching from
-		// getAllPicks and then use that for this function...
-		// const results = await fetch(`${baseUrl}/api/picks`);
-		const results = await fetch(`https://pickems-app.vercel.app/api/picks`);
-		const prevPicks = await results.json();
-		const userPicks = prevPicks.filter((pick) => {
-			return pick.user_id === userId;
+		const userPicks = theAllPicks.filter((pick) => {
+			return pick.user_id === userState.id;
 		});
 		if (userPicks.length) {
 			setPicks(userPicks);
@@ -96,44 +75,110 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 			setPicks([]);
 			setIsSubmitted([]);
 		}
-	};
 
-	const getStatPicks = async (userId) => {
-		// wanted to do this with conditional but wasn't sure how to handle that with the join
-		// in the picks endpoint. made additional endpoint for fast deployment and then need to
-		// come back and re-factor
-		// console.log("user stat pickin", userId);
-		// const results = await fetch(`${baseUrl}/api/stat-picks`);
-		const results = await fetch(`https://pickems-app.vercel.app/api/stat-picks`);
-		const prevPicks = await results.json();
-		const userPicks = prevPicks.filter((pick) => {
-			return pick.user_id === userId;
+		const statUserPicks = allStatPicks.filter((pick) => {
+			return pick.user_id === userState.id;
 		});
-		// console.log("33:", userPicks);
-		if (userPicks.length) {
-			setStatPicks(userPicks);
-			setIsStatSubmitted(userPicks);
+		if (statUserPicks.length) {
+			setStatPicks(statUserPicks);
+			setIsStatSubmitted(statUserPicks);
 		} else {
 			setStatPicks([]);
 			setIsStatSubmitted([]);
 		}
 	};
 
-	useEffect(() => {
-		getTeams();
-		getGames();
-		getAllPicks();
-		getAllStatPicks();
-	}, []);
+	// const getTeams = async () => {
+	// 	// const results = await fetch(`${baseUrl}/api/teams`);
+	// 	const results = await fetch(`https://pickems-app.vercel.app/api/teams`);
+	// 	const teams = await results.json();
+	// 	setTeams(teams);
+	// };
 
-	// add useEffect listening to user to update whenever dropdown changed
+	// const getAllPicks = async () => {
+	// 	// // console.log("i Ran");
+	// 	// const results = await fetch(`${baseUrl}/api/picks`);
+	// 	const results = await fetch(`https://pickems-app.vercel.app/api/picks`);
+	// 	const allPicks = await results.json();
+	// 	setAllPicks(allPicks);
+	// };
+
+	// const getAllStatPicks = async () => {
+	// 	// wanted to do this with conditional but wasn't sure how to handle that with the join
+	// 	// in the picks endpoint. made additional endpoint for fast deployment and then need to
+	// 	// come back and re-factor
+	// 	// console.log("stat pickin");
+	// 	// const results = await fetch(`${baseUrl}/api/stat-picks`);
+	// 	const results = await fetch(`https://pickems-app.vercel.app/api/stat-picks`);
+	// 	const allPicks = await results.json();
+	// 	setAllStatPicks(allPicks);
+	// };
+
+	// const getBothPicks = async (userId) => {
+	// 	// is it necessary to have another fetch here? feels like I should be fetching from
+	// 	// getAllPicks and then use that for this function...
+	// 	// const results = await fetch(`${baseUrl}/api/picks`);
+	// 	const results = await fetch(`https://pickems-app.vercel.app/api/picks`);
+	// 	const prevPicks = await results.json();
+	// 	const userPicks = prevPicks.filter((pick) => {
+	// 		return pick.user_id === userId;
+	// 	});
+	// 	if (userPicks.length) {
+	// 		setPicks(userPicks);
+	// 		setIsSubmitted(userPicks);
+	// 	} else {
+	// 		setPicks([]);
+	// 		setIsSubmitted([]);
+	// 	}
+
+	// 	const statResults = await fetch(`https://pickems-app.vercel.app/api/stat-picks`);
+	// 	const statPrevPicks = await statResults.json();
+	// 	const statUserPicks = statPrevPicks.filter((pick) => {
+	// 		return pick.user_id === userId;
+	// 	});
+	// 	// console.log("33:", userPicks);
+	// 	if (statUserPicks.length) {
+	// 		setStatPicks(statUserPicks);
+	// 		setIsStatSubmitted(statUserPicks);
+	// 	} else {
+	// 		setStatPicks([]);
+	// 		setIsStatSubmitted([]);
+	// 	}
+	// };
+
+	// const getStatPicks = async (userId) => {
+	// 	// wanted to do this with conditional but wasn't sure how to handle that with the join
+	// 	// in the picks endpoint. made additional endpoint for fast deployment and then need to
+	// 	// come back and re-factor
+	// 	// console.log("user stat pickin", userId);
+	// 	// const results = await fetch(`${baseUrl}/api/stat-picks`);
+	// 	const results = await fetch(`https://pickems-app.vercel.app/api/stat-picks`);
+	// 	const prevPicks = await results.json();
+	// 	const userPicks = prevPicks.filter((pick) => {
+	// 		return pick.user_id === userId;
+	// 	});
+	// 	// console.log("33:", userPicks);
+	// 	if (userPicks.length) {
+	// 		setStatPicks(userPicks);
+	// 		setIsStatSubmitted(userPicks);
+	// 	} else {
+	// 		setStatPicks([]);
+	// 		setIsStatSubmitted([]);
+	// 	}
+	// };
+
 	useEffect(() => {
-		// // console.log(user);
-		if (userState) {
-			getPicks(userState.id);
-			getStatPicks(userState.id);
-		}
+		getData()
 	}, [userState]);
+
+	// // add useEffect listening to user to update whenever dropdown changed
+	// useEffect(() => {
+	// 	// // console.log(user);
+	// 	if (userState) {
+	// 		getBothPicks(userState.id);
+	// 		// getStatPicks(userState.id);
+	// 	}
+	// }, [userState]);
 
 	// // console.log(games);
 	// // console.log(allPicks);
