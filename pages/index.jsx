@@ -25,18 +25,18 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	const [isSubmitted, setIsSubmitted] = useState([]);
 	const [isStatSubmitted, setIsStatSubmitted] = useState([]);
 	// needed to set to null for initial load
-	const [user, setUser] = useState(null);
+	const [userState, setUserState] = useState(null);
 
 	// console.log("logging out of the client", baseUrl);
 	// console.log("teams:", teams);
 
 	const selectUser = (user) => {
-		// // console.log("in main", user);
-		setUser(user);
+		console.log("in main", user);
+		setUserState(user);
 	};
 
 	const logout = () => {
-		setUser(null);
+		setUserState(null);
 	};
 
 	const handleViewChange = () => {
@@ -134,11 +134,11 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	// add useEffect listening to user to update whenever dropdown changed
 	useEffect(() => {
 		// // console.log(user);
-		if (user) {
-			getPicks(user.id);
-			getStatPicks(user.id);
+		if (userState) {
+			getPicks(userState.id);
+			getStatPicks(userState.id);
 		}
-	}, [user]);
+	}, [userState]);
 
 	// // console.log(games);
 	// // console.log(allPicks);
@@ -148,7 +148,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 
 	const clicked = async (id, gameId, week) => {
 		const pick = {
-			user_id: user.id,
+			user_id: userState.id,
 			chosen_team: id,
 			game_id: gameId,
 			week: week,
@@ -161,7 +161,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	const statClicked = async (id, gameId, week) => {
 		// console.log("wk", week);
 		const pick = {
-			user_id: user.id,
+			user_id: userState.id,
 			chosen_team: id,
 			game_id: gameId,
 			// this key allows me to hard code the week for now
@@ -222,7 +222,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 							setStatPicks(theStatPicks)
 							// filtered all stat picks to not include the user's picks spread with the user's stat picks
 							// result is one less network call
-							const combinedStatPicks = [...allStatPicks.filter(x => x.user_id !== user.id), ...theStatPicks]
+							const combinedStatPicks = [...allStatPicks.filter(x => x.user_id !== userState.id), ...theStatPicks]
 							setAllStatPicks(combinedStatPicks)
 							// END OF WHAT ALLISON CHANGED
 						}
@@ -282,7 +282,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 							setStatPicks(theStatPicks)
 							// filtered all stat picks to not include the user's picks spread with the user's stat picks
 							// result is one less network call
-							const combinedStatPicks = [...allStatPicks.filter(x => x.user_id !== user.id), ...theStatPicks]
+							const combinedStatPicks = [...allStatPicks.filter(x => x.user_id !== userState.id), ...theStatPicks]
 							setAllStatPicks(combinedStatPicks)
 							// END OF WHAT ALLISON CHANGED
 						}
@@ -323,7 +323,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					setStatPicks(theStatPicks)
 					// filtered all stat picks to not include the user's picks spread with the user's stat picks
 					// result is one less network call
-					const combinedStatPicks = [...allStatPicks.filter(x => x.user_id !== user.id), ...theStatPicks]
+					const combinedStatPicks = [...allStatPicks.filter(x => x.user_id !== userState.id), ...theStatPicks]
 					setAllStatPicks(combinedStatPicks)
 					// END OF WHAT ALLISON CHANGED
 					// getAllStatPicks();
@@ -439,14 +439,14 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 
 	return (
 		<>
-			{!user ? (
+			{!userState ? (
 				<div>
 					<UserDropdown
 						users={users}
-						handleUserChange={() => handleUserChange()}
+						// handleUserChange={() => handleUserChange()}
 						// need to pass the user to selectUser otherwise it just retuns
 						// undefined when function is called.
-						selectUser={(user) => selectUser(user)}
+						selectUser={selectUser}
 					/>
 				</div>
 			) : view ? (
@@ -467,7 +467,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 						</button>
 					</div>
 					<div className='bg-lime-300 bg-opacity-80 m-4 p-1 rounded'>
-						<h1 className='text-3xl text-lime-800 font-bold m-2'>Welcome {user.name}!</h1>
+						<h1 className='text-3xl text-lime-800 font-bold m-2'>Welcome {userState.name}!</h1>
 						<p className='text-black m-2 ml-4'>
 							It's the Super Bowl baby!!
 							<br />
@@ -547,10 +547,10 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 							))}
 						</div>
 						<div className='m-2 mr-8 ml-8 mb-4'>
-							{user.id === 10 ? (
+							{userState.id === 10 ? (
 								<div>
 									<p className='text-lg text-white font-bold m-2'>
-										WAIT! <span classname='underline'>HOW</span> are you {user.name}?
+										WAIT! <span classname='underline'>HOW</span> are you {userState.name}?
 									</p>
 									<p className='text-sm text-white m-2'>
 										It's been about two weeks since we last saw you and those voluptuous
@@ -559,7 +559,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 								</div>
 							) : (
 								<div>
-									<p className='text-lg text-white font-bold m-2'>WAIT! Are you {user.name}?</p>
+									<p className='text-lg text-white font-bold m-2'>WAIT! Are you {userState.name}?</p>
 									<p className='text-sm text-lime-300 m-2'>
 										If not, logout to go back to the menu and be sure to select the right user in
 										the dropdown.
@@ -593,7 +593,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 						<PickView
 							allPicks={allPicks}
 							allStatPicks={allStatPicks}
-							user={user}
+							user={userState}
 							teams={teams}
 						/>
 					</div>
@@ -604,7 +604,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					<ScoreView
 						allPicks={allPicks}
 						allStatPicks={allStatPicks}
-						user={user}
+						user={userState}
 						logout={() => logout()}
 						handleViewChange={() => handleViewChange()}
 					/>

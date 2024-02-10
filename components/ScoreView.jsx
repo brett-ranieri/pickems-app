@@ -22,13 +22,6 @@ export const ScoreView = ({ allPicks, allStatPicks, user, handleViewChange, logo
 		setGames(upcomingGames);
 	};
 
-	// const getAllPicks = async () => {
-	// 	const results = await fetch(`${baseUrl}/api/picks`);
-	// 	// const results = await fetch(`https://pickems-app.vercel.app/api/picks`);
-	// 	const allPicks = await results.json();
-	// 	setAllPicks(allPicks);
-	// };
-
 	// re-factored all previous functions to all run in a loop
 	const getUserScore = async (user) => {
 		let score = 0;
