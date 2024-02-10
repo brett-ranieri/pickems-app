@@ -43,9 +43,9 @@ export default async function submitPicks(req, res) {
 			const gameIdsToDelete = updatedPicks.map(x => x.game_id)
 			console.log(gameIdsToDelete)
 			await client.query(`
-				delete from public.stat_picks where user_id=$1 and game_id in (${paramCount})
+				delete from public.stat_picks where user_id=$1 and week=5
 				`, 
-				[updatedPicks[0].user_id, ...gameIdsToDelete])
+				[updatedPicks[0].user_id])
 			console.log('after delete')
 			// is it bad form to parse here and not stringify again before query?
 			results = await client.query(

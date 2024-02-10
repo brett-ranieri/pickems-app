@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { ScoreCard } from "../components/ScoreCard";
 import users from "../constants/users";
-import baseUrl from "../constants/baseUrl";
 import stat_results from "../constants/stats-results";
 
-export const ScoreView = ({ allPicks, allStatPicks, user, handleViewChange, logout }) => {
+export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewChange, logout }) => {
 	const [games, setGames] = useState([]);
 	// const [picks, setPicks] = useState([]);
 	// const [allPicks, setAllPicks] = useState([]);
@@ -17,7 +16,7 @@ export const ScoreView = ({ allPicks, allStatPicks, user, handleViewChange, logo
 
 	const getGames = async () => {
 		// const results = await fetch(`${baseUrl}/api/games`);
-		const results = await fetch(`https://pickems-app.vercel.app/api/games`);
+		const results = await fetch(`${baseUrl}/api/games`);
 		const upcomingGames = await results.json();
 		setGames(upcomingGames);
 	};

@@ -48,49 +48,46 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	// console.log("stats:", stats);
 
 	const getData = async () => {
-		// const results = await fetch(`${baseUrl}/api/games?sent=true`);
-		const gamesRes = await fetch(`https://pickems-app.vercel.app/api/games?sent=true`);
-		const upcomingGames = await gamesRes.json();
-		setGames(upcomingGames);
-
-		const teamsRes = await fetch(`https://pickems-app.vercel.app/api/teams`);
-		const theTeams = await teamsRes.json();
-		setTeams(theTeams);
-
-		const allPicksRes = await fetch(`https://pickems-app.vercel.app/api/picks`);
-		const theAllPicks = await allPicksRes.json();
-		setAllPicks(theAllPicks);
-
-		const allStatPicksRes = await fetch(`https://pickems-app.vercel.app/api/stat-picks`);
-		const theAllStatPicks = await allStatPicksRes.json();
-		setAllStatPicks(theAllStatPicks);
-
-		const userPicks = theAllPicks.filter((pick) => {
-			return pick.user_id === userState?.id;
-		});
-		if (userPicks.length) {
-			setPicks(userPicks);
-			setIsSubmitted(userPicks);
-		} else {
-			setPicks([]);
-			setIsSubmitted([]);
-		}
-
-		const statUserPicks = theAllStatPicks.filter((pick) => {
-			return pick.user_id === userState?.id;
-		});
-		if (statUserPicks.length) {
-			setStatPicks(statUserPicks);
-			setIsStatSubmitted(statUserPicks);
-		} else {
-			setStatPicks([]);
-			setIsStatSubmitted([]);
+		console.log(baseUrl);
+		try {
+			const [gamesRes, teamsRes, allPicksRes, allStatPicksRes] = await Promise.all([
+				fetch(`${baseUrl}/api/games?sent=true`),
+				fetch(`${baseUrl}/api/teams`),
+				fetch(`${baseUrl}/api/picks`),
+				fetch(`${baseUrl}/api/stat-picks`)
+			]);
+	
+			const [upcomingGames, theTeams, theAllPicks, theAllStatPicks] = await Promise.all([
+				gamesRes.json(),
+				teamsRes.json(),
+				allPicksRes.json(),
+				allStatPicksRes.json()
+			]);
+	
+			setGames(upcomingGames);
+			console.log('after games call');
+			setTeams(theTeams);
+			console.log('after teams call');
+			setAllPicks(theAllPicks);
+			console.log('after picks call');
+			setAllStatPicks(theAllStatPicks);
+			console.log('after stat picks call');
+	
+			const userPicks = theAllPicks.filter((pick) => pick.user_id === userState?.id);
+			setPicks(userPicks.length ? userPicks : []);
+			setIsSubmitted(userPicks.length ? userPicks : []);
+	
+			const statUserPicks = theAllStatPicks.filter((pick) => pick.user_id === userState?.id);
+			setStatPicks(statUserPicks.length ? statUserPicks : []);
+			setIsStatSubmitted(statUserPicks.length ? statUserPicks : []);
+		} catch (error) {
+			console.error(error);
 		}
 	};
 
 	// const getTeams = async () => {
 	// 	// const results = await fetch(`${baseUrl}/api/teams`);
-	// 	const results = await fetch(`https://pickems-app.vercel.app/api/teams`);
+	// 	const results = await fetch(`${baseUrl}/api/teams`);
 	// 	const teams = await results.json();
 	// 	setTeams(teams);
 	// };
@@ -98,7 +95,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	// const getAllPicks = async () => {
 	// 	// // console.log("i Ran");
 	// 	// const results = await fetch(`${baseUrl}/api/picks`);
-	// 	const results = await fetch(`https://pickems-app.vercel.app/api/picks`);
+	// 	const results = await fetch(`${baseUrl}/api/picks`);
 	// 	const allPicks = await results.json();
 	// 	setAllPicks(allPicks);
 	// };
@@ -109,7 +106,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	// 	// come back and re-factor
 	// 	// console.log("stat pickin");
 	// 	// const results = await fetch(`${baseUrl}/api/stat-picks`);
-	// 	const results = await fetch(`https://pickems-app.vercel.app/api/stat-picks`);
+	// 	const results = await fetch(`${baseUrl}/api/stat-picks`);
 	// 	const allPicks = await results.json();
 	// 	setAllStatPicks(allPicks);
 	// };
@@ -118,7 +115,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	// 	// is it necessary to have another fetch here? feels like I should be fetching from
 	// 	// getAllPicks and then use that for this function...
 	// 	// const results = await fetch(`${baseUrl}/api/picks`);
-	// 	const results = await fetch(`https://pickems-app.vercel.app/api/picks`);
+	// 	const results = await fetch(`${baseUrl}/api/picks`);
 	// 	const prevPicks = await results.json();
 	// 	const userPicks = prevPicks.filter((pick) => {
 	// 		return pick.user_id === userId;
@@ -131,7 +128,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	// 		setIsSubmitted([]);
 	// 	}
 
-	// 	const statResults = await fetch(`https://pickems-app.vercel.app/api/stat-picks`);
+	// 	const statResults = await fetch(`${baseUrl}/api/stat-picks`);
 	// 	const statPrevPicks = await statResults.json();
 	// 	const statUserPicks = statPrevPicks.filter((pick) => {
 	// 		return pick.user_id === userId;
@@ -152,7 +149,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	// 	// come back and re-factor
 	// 	// console.log("user stat pickin", userId);
 	// 	// const results = await fetch(`${baseUrl}/api/stat-picks`);
-	// 	const results = await fetch(`https://pickems-app.vercel.app/api/stat-picks`);
+	// 	const results = await fetch(`${baseUrl}/api/stat-picks`);
 	// 	const prevPicks = await results.json();
 	// 	const userPicks = prevPicks.filter((pick) => {
 	// 		return pick.user_id === userId;
@@ -221,118 +218,114 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 			if (isStatSubmitted.length) {
 				// console.log("stat picks already made");
 
-				const comparePicks = async (picks) => {
-					// console.log("compared");
-					let updatedPicks = [];
-					for (const pick of picks) {
-						isStatSubmitted.forEach(function (submittedPick) {
-						if (pick.game_id === submittedPick.game_id) {
-							if (pick.chosen_team !== submittedPick.chosen_team) {
-								// console.log("different");
-								updatedPicks.push(pick);
-							}
-						}
-					});
-					}
+				// const comparePicks = async (picks) => {
+				// 	// console.log("compared");
+				// 	let updatedPicks = [];
+				// 	for (const pick of picks) {
+				// 		isStatSubmitted.forEach(function (submittedPick) {
+				// 		if (pick.game_id === submittedPick.game_id) {
+				// 			if (pick.chosen_team !== submittedPick.chosen_team) {
+				// 				// console.log("different");
+				// 				updatedPicks.push(pick);
+				// 			}
+				// 		}
+				// 	});
+				// 	}
 		
-					if (updatedPicks.length) {
-						// const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
-						// 	method: "PUT",
-						// 	body: JSON.stringify(updatedPicks),
-						// });
-						const postPicksRes = await fetch(
-							`https://pickems-app.vercel.app/api/submit-stat-picks`,
-							{
-								method: "PUT",
-								body: JSON.stringify(updatedPicks),
-							}
-						);
-						// this is NOT working as anticipated
-						if (postPicksRes) {
-							// console.log("something else stat happened");
-							// setIsStatSubmitted(statPicks);
-							// getAllStatPicks();
-							// const theStatPicks = await postPicksRes.json()
-							// setStatPicks(theStatPicks)
-							// START OF WHAT ALLISON CHANGED
-							console.log('🍇 215, PUT in comparePicks')
-							setIsStatSubmitted(statPicks);
-							const theStatPicks = await postPicksRes.json()
-							console.log('🍓 ALL STAT PICKS', allStatPicks, theStatPicks)
-							setStatPicks(theStatPicks)
-							// filtered all stat picks to not include the user's picks spread with the user's stat picks
-							// result is one less network call
-							const combinedStatPicks = [...allStatPicks.filter(x => x.user_id !== userState.id), ...theStatPicks]
-							setAllStatPicks(combinedStatPicks)
-							// END OF WHAT ALLISON CHANGED
-						}
-					}
-				};
+				// 	if (updatedPicks.length) {
+				// 		// const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
+				// 		// 	method: "PUT",
+				// 		// 	body: JSON.stringify(updatedPicks),
+				// 		// });
+				// 		const postPicksRes = await fetch(
+				// 			`${baseUrl}/api/submit-stat-picks`,
+				// 			{
+				// 				method: "PUT",
+				// 				body: JSON.stringify(updatedPicks),
+				// 			}
+				// 		);
+				// 		// this is NOT working as anticipated
+				// 		if (postPicksRes) {
+				// 			// console.log("something else stat happened");
+				// 			// setIsStatSubmitted(statPicks);
+				// 			// getAllStatPicks();
+				// 			// const theStatPicks = await postPicksRes.json()
+				// 			// setStatPicks(theStatPicks)
+				// 			// START OF WHAT ALLISON CHANGED
+				// 			console.log('🍇 215, PUT in comparePicks')
+				// 			setIsStatSubmitted(statPicks);
+				// 			const theStatPicks = await postPicksRes.json()
+				// 			console.log('🍓 ALL STAT PICKS', allStatPicks, theStatPicks)
+				// 			setStatPicks(theStatPicks)
+				// 			// filtered all stat picks to not include the user's picks spread with the user's stat picks
+				// 			// result is one less network call
+				// 			const combinedStatPicks = [...allStatPicks.filter(x => x.user_id !== userState.id), ...theStatPicks]
+				// 			setAllStatPicks(combinedStatPicks)
+				// 			// END OF WHAT ALLISON CHANGED
+				// 		}
+				// 	}
+				// };
 
 				const checkForGame = async (picks) => {
-					// leaving comments below in because I can't see where we talked about
-					// this in last code review:
-
-					// needed to POST data returned from this checkForGame, not PUT,
-					// so i seperated function from comparePicks to allow for different fetch methods
-					//
-					// are some variables, like declaring updatedPicks in both functions
-					// a bit redundant?
-					// kept them seperate because each function needs to run independantly
-					// of the other, but both need to be populated simultaneously AND if the
-					// results of either function were sent to the wrong fetch it would
-					// mess up the data...
-					//
-					// you mentioned an insert/update query though...is this a use case
-					// for something like that?
-					let updatedPicks = [];
-					// console.log("checking...", pick.game_id);
+					let newPicks = [];
+					let putPicks = []
 					for (const pick of picks) {
 						const submissionCheck = isStatSubmitted.some((obj) => obj.game_id === pick.game_id);
+						console.log(pick, isStatSubmitted)
 						if (!submissionCheck) {
-							// // console.log(pick);
-							updatedPicks.push(pick);
-						}
+							newPicks.push(pick)
+						} else {
+							isStatSubmitted.forEach(function (submittedPick) {
+								if (pick.game_id === submittedPick.game_id) {
+									if (pick.chosen_team !== submittedPick.chosen_team) {
+										// console.log("different");
+										putPicks.push(pick);
+									}
+								}
+						})}
 					}
-					// // console.log(submissionCheck);
-					
-					if (updatedPicks.length) {
-						console.log('THIS IS UPDATED PICKS', updatedPicks)
-						// const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
-						// 	method: "POST",
-						// 	body: JSON.stringify(updatedPicks),
-						// });
+					console.log('NEW PICKS', newPicks)
+					console.log('PUT PICKS', putPicks)
+					let theNewStatPicks = []
+					let thePutStatPicks = []
+					if (newPicks.length) {
+						console.log('THIS IS UPDATED PICKS', newPicks)
 						const postPicksRes = await fetch(
-							`https://pickems-app.vercel.app/api/submit-stat-picks`,
+							`${baseUrl}/api/submit-stat-picks`,
 							{
 								method: "POST",
-								body: JSON.stringify(updatedPicks),
+								body: JSON.stringify(newPicks),
 							}
 						);
-						// this is NOT working as anticipated
-						if (postPicksRes) {
-							// console.log("more stat somethings happened");
-							// setIsStatSubmitted(statPicks);
-							// getAllStatPicks();
-							// START OF WHAT ALLISON CHANGED
-							console.log('🍇 271, POST of some kind')
-							setIsStatSubmitted(statPicks);
-							const theStatPicks = await postPicksRes.json()
-							console.log('🍓 ALL STAT PICKS', allStatPicks, theStatPicks)
-							setStatPicks(theStatPicks)
-							// filtered all stat picks to not include the user's picks spread with the user's stat picks
-							// result is one less network call
-							const combinedStatPicks = [...allStatPicks.filter(x => x.user_id !== userState.id), ...theStatPicks]
-							setAllStatPicks(combinedStatPicks)
-							// END OF WHAT ALLISON CHANGED
-						}
+						theNewStatPicks = await postPicksRes.json()
 					}
+					if (putPicks.length) {
+						const postPicksRes = await fetch(
+							`${baseUrl}/api/submit-stat-picks`,
+							{
+								method: "PUT",
+								body: JSON.stringify(putPicks),
+							}
+						);
+						thePutStatPicks = await postPicksRes.json()
+					}
+
+						// START OF WHAT ALLISON CHANGED
+						console.log('🍇 271, POST of some kind')
+						setIsStatSubmitted(statPicks);
+						console.log('🍓 NEW STAT PICKS', allStatPicks, theNewStatPicks, thePutStatPicks)
+						setStatPicks([...theNewStatPicks, ...thePutStatPicks])
+						// filtered all stat picks to not include the user's picks spread with the user's stat picks
+						// result is one less network call
+						const combinedStatPicks = [...allStatPicks.filter(x => x.user_id !== userState.id), ...theNewStatPicks, ...thePutStatPicks]
+						setAllStatPicks(combinedStatPicks)
+						// END OF WHAT ALLISON CHANGED
+					
 				};
 
 				// BAD SHAME
 				// statPicks.forEach(comparePicks);
 				// statPicks.forEach(checkForGame);
-				comparePicks(statPicks);
 				checkForGame(statPicks);
 				// console.log("IStatS: ", isStatSubmitted);
 			} else {
@@ -343,7 +336,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 				// 	method: "POST",
 				// 	body: JSON.stringify(statPicks),
 				// });
-				const postPicksRes = await fetch(`https://pickems-app.vercel.app/api/submit-stat-picks`, {
+				const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
 					method: "POST",
 					body: JSON.stringify(statPicks),
 				});
@@ -389,15 +382,17 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					// 	method: "PUT",
 					// 	body: JSON.stringify(updatedPicks),
 					// });
-					const postPicksRes = await fetch(`https://pickems-app.vercel.app/api/submit-picks`, {
+					const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
 						method: "PUT",
 						body: JSON.stringify(updatedPicks),
 					});
 					// this is NOT working as anticipated
 					if (postPicksRes) {
 						// // console.log("something else happened");
+						console.log(picks)
 						setIsSubmitted(picks);
-						getAllPicks();
+						const updatedAllPicks = [...allPicks.filter(x => x.user_id !== userState.id), ...picks]
+						setAllPicks(updatedAllPicks)
 					}
 				}
 			};
@@ -431,15 +426,19 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					// 	method: "POST",
 					// 	body: JSON.stringify(updatedPicks),
 					// });
-					const postPicksRes = await fetch(`https://pickems-app.vercel.app/api/submit-picks`, {
+					const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
 						method: "POST",
 						body: JSON.stringify(updatedPicks),
 					});
 					// this is NOT working as anticipated
 					if (postPicksRes) {
 						// // console.log("more somethings happened");
+						// setIsSubmitted(picks);
+						// getAllPicks();
+						console.log(picks)
 						setIsSubmitted(picks);
-						getAllPicks();
+						const updatedAllPicks = [...allPicks.filter(x => x.user_id !== userState.id), ...picks]
+						setAllPicks(updatedAllPicks)
 					}
 				}
 			};
@@ -455,7 +454,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 			// 	method: "POST",
 			// 	body: JSON.stringify(picks),
 			// });
-			const postPicksRes = await fetch(`https://pickems-app.vercel.app/api/submit-picks`, {
+			const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
 				method: "POST",
 				body: JSON.stringify(picks),
 			});
@@ -467,14 +466,17 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 				// moved into this if statement to ensure that post was successful
 				// before setting picks to isSubmitted...did I do that right?
 				// I DID NOT!
+				console.log(picks)
 				setIsSubmitted(picks);
-				getAllPicks();
+				const updatedAllPicks = [...allPicks.filter(x => x.user_id !== userState.id), ...picks]
+				setAllPicks(updatedAllPicks)
 			}
 		}
 	};
 	// console.log("statPicks", statPicks);
 	// console.log("isStatS:", isStatSubmitted);
 	console.log('🍇 ALL STAT PICKS', allStatPicks)
+	console.log('ALL PICKS', allPicks)
 
 
 	return (
@@ -647,6 +649,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 						user={userState}
 						logout={() => logout()}
 						handleViewChange={() => handleViewChange()}
+						baseUrl={baseUrl}
 					/>
 				</div>
 			)}
