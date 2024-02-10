@@ -53,23 +53,23 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	console.log("stats:", stats);
 
 	const getGames = async () => {
-		// const results = await fetch(`${baseUrl}/api/games?sent=true`);
-		const results = await fetch(`https://pickems-app.vercel.app/api/games?sent=true`);
+		const results = await fetch(`${baseUrl}/api/games?sent=true`);
+		// const results = await fetch(`https://pickems-app.vercel.app/api/games?sent=true`);
 		const upcomingGames = await results.json();
 		setGames(upcomingGames);
 	};
 
 	const getTeams = async () => {
-		// const results = await fetch(`${baseUrl}/api/teams`);
-		const results = await fetch(`https://pickems-app.vercel.app/api/teams`);
+		const results = await fetch(`${baseUrl}/api/teams`);
+		// const results = await fetch(`https://pickems-app.vercel.app/api/teams`);
 		const teams = await results.json();
 		setTeams(teams);
 	};
 
 	const getAllPicks = async () => {
 		// console.log("i Ran");
-		// const results = await fetch(`${baseUrl}/api/picks`);
-		const results = await fetch(`https://pickems-app.vercel.app/api/picks`);
+		const results = await fetch(`${baseUrl}/api/picks`);
+		// const results = await fetch(`https://pickems-app.vercel.app/api/picks`);
 		const allPicks = await results.json();
 		setAllPicks(allPicks);
 	};
@@ -79,8 +79,8 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 		// in the picks endpoint. made additional endpoint for fast deployment and then need to
 		// come back and re-factor
 		console.log("stat pickin");
-		// const results = await fetch(`${baseUrl}/api/stat-picks`);
-		const results = await fetch(`https://pickems-app.vercel.app/api/stat-picks`);
+		const results = await fetch(`${baseUrl}/api/stat-picks`);
+		// const results = await fetch(`https://pickems-app.vercel.app/api/stat-picks`);
 		const allPicks = await results.json();
 		setAllStatPicks(allPicks);
 	};
@@ -88,8 +88,8 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	const getPicks = async (userId) => {
 		// is it necessary to have another fetch here? feels like I should be fetching from
 		// getAllPicks and then use that for this function...
-		// const results = await fetch(`${baseUrl}/api/picks`);
-		const results = await fetch(`https://pickems-app.vercel.app/api/picks`);
+		const results = await fetch(`${baseUrl}/api/picks`);
+		// const results = await fetch(`https://pickems-app.vercel.app/api/picks`);
 		const prevPicks = await results.json();
 		const userPicks = prevPicks.filter((pick) => {
 			return pick.user_id === userId;
@@ -108,8 +108,8 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 		// in the picks endpoint. made additional endpoint for fast deployment and then need to
 		// come back and re-factor
 		console.log("user stat pickin", userId);
-		// const results = await fetch(`${baseUrl}/api/stat-picks`);
-		const results = await fetch(`https://pickems-app.vercel.app/api/stat-picks`);
+		const results = await fetch(`${baseUrl}/api/stat-picks`);
+		// const results = await fetch(`https://pickems-app.vercel.app/api/stat-picks`);
 		const prevPicks = await results.json();
 		const userPicks = prevPicks.filter((pick) => {
 			return pick.user_id === userId;
@@ -193,17 +193,17 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 						}
 					});
 					if (updatedPicks.length) {
-						// const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
-						// 	method: "PUT",
-						// 	body: JSON.stringify(updatedPicks),
-						// });
-						const postPicksRes = await fetch(
-							`https://pickems-app.vercel.app/api/submit-stat-picks`,
-							{
-								method: "PUT",
-								body: JSON.stringify(updatedPicks),
-							}
-						);
+						const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
+							method: "PUT",
+							body: JSON.stringify(updatedPicks),
+						});
+						// const postPicksRes = await fetch(
+						// 	`https://pickems-app.vercel.app/api/submit-stat-picks`,
+						// 	{
+						// 		method: "PUT",
+						// 		body: JSON.stringify(updatedPicks),
+						// 	}
+						// );
 						// this is NOT working as anticipated
 						if (postPicksRes) {
 							console.log("something else stat happened");
@@ -238,17 +238,17 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 						updatedPicks.push(pick);
 					}
 					if (updatedPicks.length) {
-						// const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
-						// 	method: "POST",
-						// 	body: JSON.stringify(updatedPicks),
-						// });
-						const postPicksRes = await fetch(
-							`https://pickems-app.vercel.app/api/submit-stat-picks`,
-							{
-								method: "POST",
-								body: JSON.stringify(updatedPicks),
-							}
-						);
+						const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
+							method: "POST",
+							body: JSON.stringify(updatedPicks),
+						});
+						// const postPicksRes = await fetch(
+						// 	`https://pickems-app.vercel.app/api/submit-stat-picks`,
+						// 	{
+						// 		method: "POST",
+						// 		body: JSON.stringify(updatedPicks),
+						// 	}
+						// );
 						// this is NOT working as anticipated
 						if (postPicksRes) {
 							console.log("more stat somethings happened");
@@ -265,14 +265,14 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 				console.log("no stat picks yet");
 				console.log(statPicks);
 
-				// const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
-				// 	method: "POST",
-				// 	body: JSON.stringify(statPicks),
-				// });
-				const postPicksRes = await fetch(`https://pickems-app.vercel.app/api/submit-stat-picks`, {
+				const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
 					method: "POST",
 					body: JSON.stringify(statPicks),
 				});
+				// const postPicksRes = await fetch(`https://pickems-app.vercel.app/api/submit-stat-picks`, {
+				// 	method: "POST",
+				// 	body: JSON.stringify(statPicks),
+				// });
 				if (postPicksRes) {
 					console.log("something stat happened");
 					// feels like more can be done here to ensure confirmation of successful
@@ -300,14 +300,14 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					}
 				});
 				if (updatedPicks.length) {
-					// const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
-					// 	method: "PUT",
-					// 	body: JSON.stringify(updatedPicks),
-					// });
-					const postPicksRes = await fetch(`https://pickems-app.vercel.app/api/submit-picks`, {
+					const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
 						method: "PUT",
 						body: JSON.stringify(updatedPicks),
 					});
+					// const postPicksRes = await fetch(`https://pickems-app.vercel.app/api/submit-picks`, {
+					// 	method: "PUT",
+					// 	body: JSON.stringify(updatedPicks),
+					// });
 					// this is NOT working as anticipated
 					if (postPicksRes) {
 						// console.log("something else happened");
@@ -342,14 +342,14 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					updatedPicks.push(pick);
 				}
 				if (updatedPicks.length) {
-					// const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
-					// 	method: "POST",
-					// 	body: JSON.stringify(updatedPicks),
-					// });
-					const postPicksRes = await fetch(`https://pickems-app.vercel.app/api/submit-picks`, {
+					const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
 						method: "POST",
 						body: JSON.stringify(updatedPicks),
 					});
+					// const postPicksRes = await fetch(`https://pickems-app.vercel.app/api/submit-picks`, {
+					// 	method: "POST",
+					// 	body: JSON.stringify(updatedPicks),
+					// });
 					// this is NOT working as anticipated
 					if (postPicksRes) {
 						// console.log("more somethings happened");
@@ -366,14 +366,14 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 			console.log("no picks yet");
 			// console.log(picks);
 
-			// const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
-			// 	method: "POST",
-			// 	body: JSON.stringify(picks),
-			// });
-			const postPicksRes = await fetch(`https://pickems-app.vercel.app/api/submit-picks`, {
+			const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
 				method: "POST",
 				body: JSON.stringify(picks),
 			});
+			// const postPicksRes = await fetch(`https://pickems-app.vercel.app/api/submit-picks`, {
+			// 	method: "POST",
+			// 	body: JSON.stringify(picks),
+			// });
 			if (postPicksRes) {
 				// console.log("something happened");
 				// feels like more can be done here to ensure confirmation of successful
