@@ -12,6 +12,7 @@ import { UserDropdown } from "../components/UserDropdown";
 import baseUrl from "../constants/baseUrl";
 import { PickView } from "../components/PickView";
 import stats from "../constants/stats";
+import superbowlStats from "../constants/superbowl-stats";
 
 export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	const [teams, setTeams] = useState([]);
@@ -27,6 +28,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	const [user, setUser] = useState(null);
 
 	console.log("logging out of the client", baseUrl);
+	console.log("teams:", teams);
 
 	const selectUser = (user) => {
 		// console.log("in main", user);
@@ -45,7 +47,8 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 		}
 	};
 
-	const remaingTeams = [{ id: "33" }, { id: "25" }, { id: "8" }, { id: "12" }];
+	// const remaingTeams = [{ id: "33" }, { id: "25" }, { id: "8" }, { id: "12" }];
+	const remaingTeams = [{ id: "25" }, { id: "12" }];
 
 	console.log("stats:", stats);
 
@@ -162,9 +165,9 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 			chosen_team: id,
 			game_id: gameId,
 			// this key allows me to hard code the week for now
-			week: 3,
+			week: 5,
 		};
-		console.log(pick);
+		console.log("STATPICK:", pick);
 		const tempStatPicks = statPicks?.filter((pick) => pick.game_id !== gameId);
 		console.log("temp", tempStatPicks);
 		setStatPicks([...tempStatPicks, pick]);
@@ -418,14 +421,20 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					</div>
 					<div className='bg-lime-300 bg-opacity-80 m-4 p-1 rounded'>
 						<h1 className='text-3xl text-lime-800 font-bold m-2'>Welcome {user.name}!</h1>
-						<p className='text-black m-2'>
-							Click on the team you think will win this weeks game. When you're happy with your
-							picks, click submit!
+						<p className='text-black m-2 ml-4'>
+							It's the Super Bowl baby!!
+							<br />
+							<br />
+							Lots of stat categories for this week so it is still anyone's game.
+							<br />
+							<br />
+							Remember, click on the team you think will win the game/stat category. When you're
+							happy with your picks, click submit!
 						</p>
 					</div>
 
 					<div className='bg-lime-700 bg-opacity-80 m-6 pt-1 mb-6 rounded-lg'>
-						<p className='text-xl text-lime-300 font-bold ml-8 m-2 underline'>Game Picks:</p>
+						<p className='text-xl text-lime-300 font-bold ml-8 m-2 underline'>Game Winner:</p>
 						{games.map((game) => (
 							<div
 								key={game.id}
@@ -446,9 +455,31 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 								/>
 							</div>
 						))}
-						<div>
+						{/* <div>
 							<p className='text-xl text-lime-300 font-bold ml-8 m-2 underline'>Stat Picks:</p>
 							{stats.map((stat) => (
+								<div
+									key={stat.id}
+									className='flex flex-col justify-around m-2'
+								>
+									<p className='text-lg text-lime-300 font-bold ml-8 m-2'>{stat.name}</p>
+									<div className='flex flex-col justify-center items-center m-2 mx-12'>
+										{remaingTeams.map((team) => (
+											<TeamCard
+												key={team.id}
+												team={teams?.find((t) => t.id === team.id)}
+												clicked={statClicked}
+												game={stat}
+												picks={statPicks}
+											/>
+										))}
+									</div>
+								</div>
+							))}
+						</div> */}
+						<div>
+							<p className='text-xl text-lime-300 font-bold ml-8 m-2 underline'>Stat Picks:</p>
+							{superbowlStats.map((stat) => (
 								<div
 									key={stat.id}
 									className='flex flex-col justify-around m-2'
@@ -475,8 +506,8 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 										WAIT! <span classname='underline'>HOW</span> are you {user.name}?
 									</p>
 									<p className='text-sm text-white m-2'>
-										It's been about a week since we've heard from you...just want to make sure you
-										are doing okay. Do anything fun this week?
+										It's been about two weeks since we last saw you and those voluptuous
+										hands...Here's hoping this week's picks are better than your last ones!
 									</p>
 								</div>
 							) : (
@@ -525,6 +556,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 				<div>
 					<ScoreView
 						allPicks={allPicks}
+						allStatPicks={allStatPicks}
 						user={user}
 						logout={() => logout()}
 						handleViewChange={() => handleViewChange()}
