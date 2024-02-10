@@ -12,7 +12,7 @@ export const UserDropdown = ({ users, selectUser }) => {
 	return (
 		<div className='bg-football-on-field bg-cover h-screen'>
 			<div className='flex flex-col justify-center items-center text-center '>
-				<div className='bg-gradient-to-l from-amber-300 to-amber-500 m-8 mt-32 rounded-3xl'>
+				<div className='bg-gradient-to-l from-amber-300 to-amber-500 m-8 mt-6 rounded-3xl'>
 					<p className='text-4xl font-bold mb-4 mt-4'>Brett's</p>
 					<img
 						className='h-48 bg-gradient-to-r from-gray-100 to-gray-400'
