@@ -66,7 +66,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 		setAllStatPicks(theAllStatPicks);
 
 		const userPicks = theAllPicks.filter((pick) => {
-			return pick.user_id === userState.id;
+			return pick.user_id === userState?.id;
 		});
 		if (userPicks.length) {
 			setPicks(userPicks);
@@ -77,7 +77,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 		}
 
 		const statUserPicks = allStatPicks.filter((pick) => {
-			return pick.user_id === userState.id;
+			return pick.user_id === userState?.id;
 		});
 		if (statUserPicks.length) {
 			setStatPicks(statUserPicks);
@@ -168,7 +168,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	// };
 
 	useEffect(() => {
-		getData()
+		if (userState) {getData()}
 	}, [userState]);
 
 	// // add useEffect listening to user to update whenever dropdown changed
