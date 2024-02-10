@@ -12,6 +12,7 @@ import { UserDropdown } from "../components/UserDropdown";
 import baseUrl from "../constants/baseUrl";
 import { PickView } from "../components/PickView";
 import stats from "../constants/stats";
+import superbowlStats from "../constants/superbowl-stats";
 
 export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	const [teams, setTeams] = useState([]);
@@ -46,7 +47,8 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 		}
 	};
 
-	const remaingTeams = [{ id: "33" }, { id: "25" }, { id: "8" }, { id: "12" }];
+	// const remaingTeams = [{ id: "33" }, { id: "25" }, { id: "8" }, { id: "12" }];
+	const remaingTeams = [{ id: "25" }, { id: "12" }];
 
 	console.log("stats:", stats);
 
@@ -163,9 +165,9 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 			chosen_team: id,
 			game_id: gameId,
 			// this key allows me to hard code the week for now
-			week: 3,
+			week: 5,
 		};
-		console.log(pick);
+		console.log("STATPICK:", pick);
 		const tempStatPicks = statPicks?.filter((pick) => pick.game_id !== gameId);
 		console.log("temp", tempStatPicks);
 		setStatPicks([...tempStatPicks, pick]);
@@ -447,9 +449,31 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 								/>
 							</div>
 						))}
-						<div>
+						{/* <div>
 							<p className='text-xl text-lime-300 font-bold ml-8 m-2 underline'>Stat Picks:</p>
 							{stats.map((stat) => (
+								<div
+									key={stat.id}
+									className='flex flex-col justify-around m-2'
+								>
+									<p className='text-lg text-lime-300 font-bold ml-8 m-2'>{stat.name}</p>
+									<div className='flex flex-col justify-center items-center m-2 mx-12'>
+										{remaingTeams.map((team) => (
+											<TeamCard
+												key={team.id}
+												team={teams?.find((t) => t.id === team.id)}
+												clicked={statClicked}
+												game={stat}
+												picks={statPicks}
+											/>
+										))}
+									</div>
+								</div>
+							))}
+						</div> */}
+						<div>
+							<p className='text-xl text-lime-300 font-bold ml-8 m-2 underline'>Stat Picks:</p>
+							{superbowlStats.map((stat) => (
 								<div
 									key={stat.id}
 									className='flex flex-col justify-around m-2'
