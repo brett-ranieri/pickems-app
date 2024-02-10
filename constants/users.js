@@ -2,6 +2,7 @@
 const users = [
 	{ id: 1, name: "Allison" },
 	{ id: 2, name: "Andrew" },
+	{ id: 12, name: "Brandon" },
 	{ id: 3, name: "Brett" },
 	{ id: 4, name: "Dave" },
 	{ id: 5, name: "Hannah" },
