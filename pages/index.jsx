@@ -76,7 +76,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 			setIsSubmitted([]);
 		}
 
-		const statUserPicks = allStatPicks.filter((pick) => {
+		const statUserPicks = theAllStatPicks.filter((pick) => {
 			return pick.user_id === userState?.id;
 		});
 		if (statUserPicks.length) {
