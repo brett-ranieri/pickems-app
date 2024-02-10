@@ -30,11 +30,6 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	// console.log("logging out of the client", baseUrl);
 	// console.log("teams:", teams);
 
-	const selectUser = (user) => {
-		console.log("in main", user);
-		setUserState(user);
-	};
-
 	const logout = () => {
 		setUserState(null);
 	};
@@ -446,7 +441,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 						// handleUserChange={() => handleUserChange()}
 						// need to pass the user to selectUser otherwise it just retuns
 						// undefined when function is called.
-						selectUser={selectUser}
+						setUserState={setUserState}
 					/>
 				</div>
 			) : view ? (
