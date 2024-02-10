@@ -181,10 +181,11 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 			if (isStatSubmitted.length) {
 				// console.log("stat picks already made");
 
-				const comparePicks = async (pick) => {
+				const comparePicks = async (picks) => {
 					// console.log("compared");
 					let updatedPicks = [];
-					isStatSubmitted.forEach(function (submittedPick) {
+					for (const pick of picks) {
+						isStatSubmitted.forEach(function (submittedPick) {
 						if (pick.game_id === submittedPick.game_id) {
 							if (pick.chosen_team !== submittedPick.chosen_team) {
 								// console.log("different");
@@ -192,6 +193,8 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 							}
 						}
 					});
+					}
+		
 					if (updatedPicks.length) {
 						const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
 							method: "PUT",
@@ -207,16 +210,26 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 						// this is NOT working as anticipated
 						if (postPicksRes) {
 							// console.log("something else stat happened");
-							setIsStatSubmitted(statPicks);
+							// setIsStatSubmitted(statPicks);
 							// getAllStatPicks();
+							// const theStatPicks = await postPicksRes.json()
+							// setStatPicks(theStatPicks)
+							// START OF WHAT ALLISON CHANGED
+							console.log('🍇 215, PUT in comparePicks')
+							setIsStatSubmitted(statPicks);
 							const theStatPicks = await postPicksRes.json()
-							// console.log('🍇 ALL STAT PICKS', allStatPicks)
+							console.log('🍓 ALL STAT PICKS', allStatPicks, theStatPicks)
 							setStatPicks(theStatPicks)
+							// filtered all stat picks to not include the user's picks spread with the user's stat picks
+							// result is one less network call
+							const combinedStatPicks = [...allStatPicks.filter(x => x.user_id !== user.id), ...theStatPicks]
+							setAllStatPicks(combinedStatPicks)
+							// END OF WHAT ALLISON CHANGED
 						}
 					}
 				};
 
-				const checkForGame = async (pick) => {
+				const checkForGame = async (picks) => {
 					// leaving comments below in because I can't see where we talked about
 					// this in last code review:
 
@@ -234,13 +247,17 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					// for something like that?
 					let updatedPicks = [];
 					// console.log("checking...", pick.game_id);
-					const submissionCheck = isStatSubmitted.some((obj) => obj.game_id === pick.game_id);
-					// // console.log(submissionCheck);
-					if (!submissionCheck) {
-						// // console.log(pick);
-						updatedPicks.push(pick);
+					for (const pick of picks) {
+						const submissionCheck = isStatSubmitted.some((obj) => obj.game_id === pick.game_id);
+						if (!submissionCheck) {
+							// // console.log(pick);
+							updatedPicks.push(pick);
+						}
 					}
+					// // console.log(submissionCheck);
+					
 					if (updatedPicks.length) {
+						console.log('THIS IS UPDATED PICKS', updatedPicks)
 						const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
 							method: "POST",
 							body: JSON.stringify(updatedPicks),
@@ -255,14 +272,28 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 						// this is NOT working as anticipated
 						if (postPicksRes) {
 							// console.log("more stat somethings happened");
+							// setIsStatSubmitted(statPicks);
+							// getAllStatPicks();
+							// START OF WHAT ALLISON CHANGED
+							console.log('🍇 271, POST of some kind')
 							setIsStatSubmitted(statPicks);
-							getAllStatPicks();
+							const theStatPicks = await postPicksRes.json()
+							console.log('🍓 ALL STAT PICKS', allStatPicks, theStatPicks)
+							setStatPicks(theStatPicks)
+							// filtered all stat picks to not include the user's picks spread with the user's stat picks
+							// result is one less network call
+							const combinedStatPicks = [...allStatPicks.filter(x => x.user_id !== user.id), ...theStatPicks]
+							setAllStatPicks(combinedStatPicks)
+							// END OF WHAT ALLISON CHANGED
 						}
 					}
 				};
 
-				statPicks.forEach(comparePicks);
-				statPicks.forEach(checkForGame);
+				// BAD SHAME
+				// statPicks.forEach(comparePicks);
+				// statPicks.forEach(checkForGame);
+				comparePicks(statPicks);
+				checkForGame(statPicks);
 				// console.log("IStatS: ", isStatSubmitted);
 			} else {
 				// // console.log("no stat picks yet");
@@ -284,17 +315,21 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					// moved into this if statement to ensure that post was successful
 					// before setting picks to isSubmitted...did I do that right?
 					// I DID NOT!
+					// START OF WHAT ALLISON CHANGED
+					console.log('🍇 309, a different POST')
 					setIsStatSubmitted(statPicks);
 					const theStatPicks = await postPicksRes.json()
-					console.log('🍇 ALL STAT PICKS', allStatPicks)
+					console.log('🍓 ALL STAT PICKS', allStatPicks, theStatPicks)
 					setStatPicks(theStatPicks)
-					const filteredAllStats = allStatPicks.filter(x => x.user_id !== user.id)
-					setAllStatPicks(() => [...filteredAllStats, ...theStatPicks])
+					// filtered all stat picks to not include the user's picks spread with the user's stat picks
+					// result is one less network call
+					const combinedStatPicks = [...allStatPicks.filter(x => x.user_id !== user.id), ...theStatPicks]
+					setAllStatPicks(combinedStatPicks)
+					// END OF WHAT ALLISON CHANGED
 					// getAllStatPicks();
 				}
 			}
 		}
-		console.log('🍇 ALL STAT PICKS', allStatPicks)
 
 		// handling picks from here down
 		if (isSubmitted.length) {
@@ -399,6 +434,8 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	};
 	// console.log("statPicks", statPicks);
 	// console.log("isStatS:", isStatSubmitted);
+	console.log('🍇 ALL STAT PICKS', allStatPicks)
+
 
 	return (
 		<>
