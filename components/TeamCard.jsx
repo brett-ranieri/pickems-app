@@ -54,7 +54,7 @@ export const TeamCard = ({ team, clicked, game, picks, history }) => {
 					// https://stackoverflow.com/questions/70903204/tailwindcss-custom-background-color-not-working
 					style={{ backgroundColor: `#${team?.color}`, color: `#${team?.alt_color}` }}
 				>
-					{team.display_name}
+					{team?.display_name}
 				</div>
 			) : (
 				// this is basically isPicked === false
