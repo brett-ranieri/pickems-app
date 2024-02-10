@@ -421,14 +421,20 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					</div>
 					<div className='bg-lime-300 bg-opacity-80 m-4 p-1 rounded'>
 						<h1 className='text-3xl text-lime-800 font-bold m-2'>Welcome {user.name}!</h1>
-						<p className='text-black m-2'>
-							Click on the team you think will win this weeks game. When you're happy with your
-							picks, click submit!
+						<p className='text-black m-2 ml-4'>
+							It's the Super Bowl baby!!
+							<br />
+							<br />
+							Lots of stat categories for this week so it is still anyone's game.
+							<br />
+							<br />
+							Remember, click on the team you think will win the game/stat category. When you're
+							happy with your picks, click submit!
 						</p>
 					</div>
 
 					<div className='bg-lime-700 bg-opacity-80 m-6 pt-1 mb-6 rounded-lg'>
-						<p className='text-xl text-lime-300 font-bold ml-8 m-2 underline'>Game Picks:</p>
+						<p className='text-xl text-lime-300 font-bold ml-8 m-2 underline'>Game Winner:</p>
 						{games.map((game) => (
 							<div
 								key={game.id}
@@ -500,8 +506,8 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 										WAIT! <span classname='underline'>HOW</span> are you {user.name}?
 									</p>
 									<p className='text-sm text-white m-2'>
-										It's been about a week since we've heard from you...just want to make sure you
-										are doing okay. Do anything fun this week?
+										It's been about two weeks since we last saw you and those voluptuous
+										hands...Here's hoping this week's picks are better than your last ones!
 									</p>
 								</div>
 							) : (
