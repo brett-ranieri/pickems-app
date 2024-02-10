@@ -10,8 +10,8 @@ export const PickView = ({ allPicks, allStatPicks, user, teams }) => {
 
 	const initialPicks = allPicks?.filter((pick) => pick.user_id === user.id);
 	const initialStatPicks = allStatPicks?.filter((pick) => pick.user_id === user.id);
-	// console.log(initialPicks);
-	console.log(initialStatPicks);
+	// // console.log(initialPicks);
+	// console.log(initialStatPicks);
 	const week1Picks = initialPicks.filter((x) => x.week === 1);
 	const week2Picks = initialPicks.filter((x) => x.week === 2);
 	const week3Picks = initialPicks.filter((x) => x.week === 3);
@@ -20,26 +20,26 @@ export const PickView = ({ allPicks, allStatPicks, user, teams }) => {
 	const week3StatPicks = initialStatPicks.filter((x) => x.week === 3);
 	const week5StatPicks = initialStatPicks.filter((x) => x.week === 5);
 	// const addDetails = (pick) => {
-	// 	console.log("wk:", pick.week, pick, teams);
+	// 	// // console.log("wk:", pick.week, pick, teams);
 	// 	const matchingTeam = teams.find((team) => team.id === pick.chosen_team);
 	// 	//add week key:value to object before adding to array
 	// 	matchingTeam.week = pick.week;
 	// 	matchingTeam.game_id = pick.game_id;
-	// 	console.log(matchingTeam);
+	// 	// // console.log(matchingTeam);
 	// 	userPicks.push(matchingTeam);
 
 	// 	// tried using state...didn't work
 	// 	// const tempPicks = userPicks?.filter((p) => p.game_id !== pick.game_id);
-	// 	// console.log(tempPicks);
+	// 	// // // console.log(tempPicks);
 	// 	// setUserPicks([...tempPicks, pick]);
 	// };
 
 	// initialPicks.forEach(addDetails);
 	// const week1Picks = userPicks?.filter((pick) => pick.week === 1);
-	// console.log(week1Picks);
+	// // // console.log(week1Picks);
 	// const week2Picks = userPicks?.filter((pick) => pick.week === 2);
-	// console.log(week2Picks);
-	// console.log(userPicks);
+	// // console.log(week2Picks);
+	// // console.log(userPicks);
 
 	return (
 		<>
