@@ -61,7 +61,7 @@ export const PickView = ({ allPicks, allStatPicks, user, teams }) => {
 					</div>
 				) : (
 					<div className='flex flex-col justify-around items-center 6'>
-						<p className='text-md text-black m-2'>No picks have been saved to the Database yet.</p>
+						<p className='text-md text-black m-2'>No picks have been saved yet.</p>
 					</div>
 				)}
 				<h5 className='text-lg text-lime-900 font-bold m-2'>Stat Picks:</h5>
@@ -82,9 +82,7 @@ export const PickView = ({ allPicks, allStatPicks, user, teams }) => {
 					</div>
 				) : (
 					<div className='flex flex-col justify-around items-center 6'>
-						<p className='text-md text-black m-2'>
-							No stat picks have been saved to the Database yet.
-						</p>
+						<p className='text-md text-black m-2'>No stat picks have been saved yet.</p>
 					</div>
 				)}
 			</div>
@@ -107,7 +105,7 @@ export const PickView = ({ allPicks, allStatPicks, user, teams }) => {
 					</div>
 				) : (
 					<div className='flex flex-col justify-around items-center 6'>
-						<p className='text-md text-black m-2'>No picks have been saved to the Database yet.</p>
+						<p className='text-md text-black m-2'>No picks have been saved yet.</p>
 					</div>
 				)}
 				<h5 className='text-lg text-lime-900 font-bold m-2'>Stat Picks:</h5>
@@ -128,9 +126,7 @@ export const PickView = ({ allPicks, allStatPicks, user, teams }) => {
 					</div>
 				) : (
 					<div className='flex flex-col justify-around items-center 6'>
-						<p className='text-md text-black m-2'>
-							No stat picks have been saved to the Database yet.
-						</p>
+						<p className='text-md text-black m-2'>No stat picks have been saved yet.</p>
 					</div>
 				)}
 
@@ -148,7 +144,7 @@ export const PickView = ({ allPicks, allStatPicks, user, teams }) => {
 					</div>
 				) : (
 					<div className='flex flex-col justify-around items-center 6'>
-						<p className='text-md text-black m-2'>No picks have been saved to the Database yet.</p>
+						<p className='text-md text-black m-2'>No picks have been saved yet.</p>
 					</div>
 				)}
 				<h3 className='text-lg text-lime-900 font-bold m-2 mt-4'>Super Wildcard Weekend:</h3>
@@ -165,9 +161,7 @@ export const PickView = ({ allPicks, allStatPicks, user, teams }) => {
 					</div>
 				) : (
 					<div className='flex flex-col justify-around items-center 6'>
-						<p className='text-md text-black m-2 mb-6'>
-							No picks have been saved to the Database yet.
-						</p>
+						<p className='text-md text-black m-2 mb-6'>No picks have been saved yet.</p>
 					</div>
 				)}
 			</div>
