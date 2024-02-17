@@ -21,6 +21,46 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 		setGames(upcomingGames);
 	};
 
+	const sortGames = (games) => {
+		let extrudedGames = [];
+		function checkWeek(game) {
+			if (extrudedGames.filter((e) => e.week === game.week).length > 0) {
+			} else {
+				let weekToPush = { week: game.week, games: [] };
+				extrudedGames.push(weekToPush);
+			}
+		}
+		games.forEach(checkWeek);
+		extrudedGames.sort((a, b) => parseInt(a.week) - parseInt(b.week));
+
+		function loadWeek(extrudedGames) {
+			// need weird i parameters because week 4 is skipped and week 5 is super bowl
+			for (let i = 1; i < extrudedGames.length + 2; i++) {
+				let week = extrudedGames.find((e) => e.week === i);
+				if (week?.week === undefined) {
+					// return OR break ends the entire loop and it doesn't continue to 5
+					// is there a way to stop a specific "lap" of a loop and move on to next?
+					// should I just leave this if statement blank to handle this case with no
+					// action?
+				} else {
+					const gamesToPush = games.filter((e) => e.week === week?.week);
+					// this feels stupid/too specific to this weird data...
+					// thinking I should go in and update week 5 to week 4 so I can write
+					// code that will work for next season
+					if (week?.week === 5) {
+						let index = i - 2;
+						extrudedGames[index]?.games.push(gamesToPush);
+					} else {
+						let index = i - 1;
+						extrudedGames[index]?.games.push(gamesToPush);
+					}
+				}
+			}
+		}
+		loadWeek(extrudedGames);
+		console.log("EXT:", extrudedGames);
+	};
+
 	// re-factored all previous functions to all run in a loop
 	const getUserScore = async (user) => {
 		let score = 0;
@@ -77,6 +117,9 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 		// getAllPicks();
 	}, []);
 
+	useEffect(() => {
+		sortGames(games);
+	}, [games]);
 	// // console.log("SV", allPicks);
 	// // console.log(games);
 
