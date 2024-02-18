@@ -11,9 +11,6 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 	let allStatScores = [];
 	let allOverallScores = [];
 
-	// // console.log("SV:", user);
-	// // console.log("logging out of SV", baseUrl);
-
 	const getGames = async () => {
 		// const results = await fetch(`${baseUrl}/api/games`);
 		const results = await fetch(`${baseUrl}/api/games`);
@@ -58,9 +55,57 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 			}
 		}
 		loadWeek(extrudedGames);
-		console.log("EXT:", extrudedGames);
+		// console.log("EXT:", extrudedGames);
 	};
 
+	const sortAllUserPicks = (users) => {
+		let extrudedUsers = [];
+		function checkUser(user) {
+			if (!extrudedUsers.filter((e) => e.user_id === user.id).length) {
+				let userToPush = { user_id: user.id, user_picks: [] };
+				extrudedUsers.push(userToPush);
+			}
+		}
+		users.forEach(checkUser);
+		extrudedUsers.sort((a, b) => parseInt(a.user_id) - parseInt(b.user_id));
+
+		function loadPicks(extrudedUsers) {
+			for (let i = 1; i < extrudedUsers.length + 1; i++) {
+				const userToLoad = extrudedUsers.find((e) => e.user_id === i);
+
+				const filteredPicksToPush = allPicks.filter((e) => e.user_id === userToLoad?.user_id);
+				const lastWeekofPicks = Math.max(...filteredPicksToPush.map((o) => o.week));
+				// console.log(i, userToLoad, lastWeekofPicks);
+				for (let j = 1; j <= lastWeekofPicks; j++) {
+					const picksFilteredByWeek = filteredPicksToPush.filter((e) => e.week === j);
+					// console.log(j, picksFilteredByWeek);
+					if (picksFilteredByWeek.length) {
+						const picksToPush = {
+							week: j,
+							picks: picksFilteredByWeek,
+						};
+						// console.log(picksToPush);
+						const index = i - 1;
+						extrudedUsers[index]?.user_picks.push(picksToPush);
+					}
+				}
+			}
+		}
+		loadPicks(extrudedUsers);
+		console.log("EX:", extrudedUsers);
+	};
+
+	useEffect(() => {
+		getGames();
+		sortAllUserPicks(users);
+		// getAllPicks();
+	}, []);
+
+	useEffect(() => {
+		sortGames(games);
+	}, [games]);
+
+	/////////// OLD CODE BELOW //////////////////////
 	// re-factored all previous functions to all run in a loop
 	const getUserScore = async (user) => {
 		let score = 0;
@@ -112,14 +157,6 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 	};
 	users.forEach(calcOverallScore);
 
-	useEffect(() => {
-		getGames();
-		// getAllPicks();
-	}, []);
-
-	useEffect(() => {
-		sortGames(games);
-	}, [games]);
 	// // console.log("SV", allPicks);
 	// // console.log(games);
 
