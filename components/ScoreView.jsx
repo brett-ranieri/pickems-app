@@ -21,8 +21,7 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 	const sortGames = (games) => {
 		let extrudedGames = [];
 		function checkWeek(game) {
-			if (extrudedGames.filter((e) => e.week === game.week).length > 0) {
-			} else {
+			if (!extrudedGames.filter((e) => e.week === game.week).length) {
 				let weekToPush = { week: game.week, games: [] };
 				extrudedGames.push(weekToPush);
 			}
@@ -55,7 +54,7 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 			}
 		}
 		loadWeek(extrudedGames);
-		// console.log("EXT:", extrudedGames);
+		console.log("EXT GAMES:", extrudedGames);
 	};
 
 	const sortAllUserPicks = (users) => {
@@ -92,7 +91,7 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 			}
 		}
 		loadPicks(extrudedUsers);
-		console.log("EX:", extrudedUsers);
+		console.log("EX Users:", extrudedUsers);
 	};
 
 	useEffect(() => {
