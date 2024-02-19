@@ -5,6 +5,9 @@ import stat_results from "../constants/stats-results";
 
 export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewChange, logout }) => {
 	const [games, setGames] = useState([]);
+	const [formattedGames, setFormattedGames] = useState([]);
+	const [formattedPicks, setFormattedPicks] = useState([]);
+
 	// const [picks, setPicks] = useState([]);
 	// const [allPicks, setAllPicks] = useState([]);
 	let allGameScores = [];
@@ -17,6 +20,8 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 		const upcomingGames = await results.json();
 		setGames(upcomingGames);
 	};
+
+	//////////////////// SORT AND FORMAT ALL GAMES ///////////////////////////////////////
 
 	const sortGames = (games) => {
 		let extrudedGames = [];
@@ -54,8 +59,11 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 			}
 		}
 		loadWeek(extrudedGames);
-		console.log("EXT GAMES:", extrudedGames);
+		// console.log("EXT", extrudedGames);
+		setFormattedGames(extrudedGames);
 	};
+
+	//////////////////// SORT AND FORMAT ALL USER PICKS ///////////////////////////////////////
 
 	const sortAllUserPicks = (users) => {
 		let extrudedUsers = [];
@@ -73,36 +81,62 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 				const userToLoad = extrudedUsers.find((e) => e.user_id === i);
 
 				const filteredPicksToPush = allPicks.filter((e) => e.user_id === userToLoad?.user_id);
-				const lastWeekofPicks = Math.max(...filteredPicksToPush.map((o) => o.week));
-				// console.log(i, userToLoad, lastWeekofPicks);
-				for (let j = 1; j <= lastWeekofPicks; j++) {
-					const picksFilteredByWeek = filteredPicksToPush.filter((e) => e.week === j);
-					// console.log(j, picksFilteredByWeek);
-					if (picksFilteredByWeek.length) {
-						const picksToPush = {
-							week: j,
-							picks: picksFilteredByWeek,
+				const filteredStatPicksToPush = allStatPicks.filter(
+					(e) => e.user_id === userToLoad?.user_id
+				);
+
+				////////////////// USING MAPS - replacing loop in loop ////////////////////////////////////////////
+
+				// get array of weeks that will need to be mapped for picks
+				const weeksToMap = formattedGames.map(function (game) {
+					return game.week;
+				});
+
+				// use map to return object that is all picks that match each week
+				const mappedPicks = weeksToMap.map(function (week) {
+					const picksMappedByWeek = filteredPicksToPush.filter((e) => e.week === week);
+					const statPicksMappedByWeek = filteredStatPicksToPush.filter((e) => e.week === week);
+					// is splitting picks and statPicks leading to some redundancy in code?
+					// would it be better to store all types of picks in same place and use
+					// something in the id value to ultimately distinguish difference?
+					// example: make all stat picks ids start with 99- and then write logic
+					// if (pick.id.includes("99-"))
+					if (picksMappedByWeek.length || statPicksMappedByWeek.length) {
+						return {
+							week: week,
+							picks: picksMappedByWeek,
+							stat_picks: statPicksMappedByWeek,
 						};
-						// console.log(picksToPush);
-						const index = i - 1;
-						extrudedUsers[index]?.user_picks.push(picksToPush);
 					}
-				}
+				});
+				// console.log("%%%%%%%%%%", userToLoad?.user_id, mappedPicks);
+
+				const index = i - 1;
+				extrudedUsers[index]?.user_picks.push(mappedPicks);
 			}
 		}
+
 		loadPicks(extrudedUsers);
-		console.log("EX Users:", extrudedUsers);
+		// console.log("EX Users:", extrudedUsers);
+		setFormattedPicks(extrudedUsers);
 	};
+
+	console.log(formattedPicks);
 
 	useEffect(() => {
 		getGames();
-		sortAllUserPicks(users);
-		// getAllPicks();
 	}, []);
 
 	useEffect(() => {
 		sortGames(games);
 	}, [games]);
+
+	// setting to run once formattedGames is updated
+	// before this would run sortAllUserPicks before formattedGames
+	// leading to empty arrays...
+	useEffect(() => {
+		sortAllUserPicks(users);
+	}, [formattedGames]);
 
 	/////////// OLD CODE BELOW //////////////////////
 	// re-factored all previous functions to all run in a loop
