@@ -155,6 +155,11 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 		scoreAndFormatPicks(users);
 	}, [formattedGames]);
 
+	// scoringBreakdown is always populating from initial load but Picks are not
+	// on fourth try is the first time that Picks populate. this is behavior similar
+	// to what is happening with ALL PICKS and ALL STAT PICKS in logs from index.
+	// Not currently sure what is causing this, but assuming it has something to do with
+	// getOverall() and calcAndFormatByWeek() functions
 	console.log("@@*@@ Scoring:", scoringBreakdown);
 	console.log("$$$ Picks:", formattedPicks);
 
