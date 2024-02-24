@@ -2,7 +2,6 @@
 const users = [
 	{ id: 1, name: "Allison" },
 	{ id: 2, name: "Andrew" },
-	{ id: 12, name: "Brandon" },
 	{ id: 3, name: "Brett" },
 	{ id: 4, name: "Dave" },
 	{ id: 5, name: "Hannah" },
@@ -12,6 +11,7 @@ const users = [
 	{ id: 9, name: "Ron" },
 	{ id: 10, name: "Tim" },
 	{ id: 11, name: "Travis" },
+	{ id: 12, name: "Brandon" },
 ];
 
 export default users;

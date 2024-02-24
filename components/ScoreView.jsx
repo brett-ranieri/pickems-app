@@ -7,12 +7,20 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 	const [games, setGames] = useState([]);
 	const [formattedGames, setFormattedGames] = useState([]);
 	const [formattedPicks, setFormattedPicks] = useState([]);
+	const [scoringBreakdown, setScoringBreakdown] = useState([]);
 
-	// const [picks, setPicks] = useState([]);
-	// const [allPicks, setAllPicks] = useState([]);
+	/////// Old Code Arrays... ////////////////
 	let allGameScores = [];
 	let allStatScores = [];
 	let allOverallScores = [];
+	///////////////////////////////////////////
+
+	//////////////////// SORT AND FORMAT ALL GAMES ///////////////////////////////////////
+
+	// honestly I am not sure why I am sorting the games here...they are not used
+	// for scoring at all. Index is only displaying most recent games because it
+	// is using conditional in endpoint...so having ALL the games is useful but
+	// I feel like it doesnt belong here and I'm not sure where to move it to yet
 
 	const getGames = async () => {
 		// const results = await fetch(`${baseUrl}/api/games`);
@@ -20,8 +28,6 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 		const upcomingGames = await results.json();
 		setGames(upcomingGames);
 	};
-
-	//////////////////// SORT AND FORMAT ALL GAMES ///////////////////////////////////////
 
 	const sortGames = (games) => {
 		let extrudedGames = [];
@@ -63,65 +69,79 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 		setFormattedGames(extrudedGames);
 	};
 
-	//////////////////// SORT AND FORMAT ALL USER PICKS ///////////////////////////////////////
+	// make global to have accessible in other functions
+	// get array of weeks that will need to be mapped for picks
+	const weeksToMap = formattedGames.map(function (game) {
+		return game.week;
+	});
 
-	const sortAllUserPicks = (users) => {
-		let extrudedUsers = [];
-		function checkUser(user) {
-			if (!extrudedUsers.filter((e) => e.user_id === user.id).length) {
-				let userToPush = { user_id: user.id, user_picks: [] };
-				extrudedUsers.push(userToPush);
-			}
-		}
-		users.forEach(checkUser);
-		extrudedUsers.sort((a, b) => parseInt(a.user_id) - parseInt(b.user_id));
+	//////////////////// SCORE AND FORMAT ALL USER PICKS ///////////////////////////////////////
 
-		function loadPicks(extrudedUsers) {
-			for (let i = 1; i < extrudedUsers.length + 1; i++) {
-				const userToLoad = extrudedUsers.find((e) => e.user_id === i);
+	const scoreAndFormatPicks = (users) => {
+		let restructuredPicks = [];
+		let totalScores = [];
+		function calculateScore(user) {
+			const picksToScore = allPicks.filter((e) => e.user_id === user.id);
+			const statPicksToScore = allStatPicks.filter((e) => e.user_id === user.id);
 
-				const filteredPicksToPush = allPicks.filter((e) => e.user_id === userToLoad?.user_id);
-				const filteredStatPicksToPush = allStatPicks.filter(
-					(e) => e.user_id === userToLoad?.user_id
-				);
-
-				////////////////// USING MAPS - replacing loop in loop ////////////////////////////////////////////
-
-				// get array of weeks that will need to be mapped for picks
-				const weeksToMap = formattedGames.map(function (game) {
-					return game.week;
-				});
-
-				// use map to return object that is all picks that match each week
-				const mappedPicks = weeksToMap.map(function (week) {
-					const picksMappedByWeek = filteredPicksToPush.filter((e) => e.week === week);
-					const statPicksMappedByWeek = filteredStatPicksToPush.filter((e) => e.week === week);
-					// is splitting picks and statPicks leading to some redundancy in code?
-					// would it be better to store all types of picks in same place and use
-					// something in the id value to ultimately distinguish difference?
-					// example: make all stat picks ids start with 99- and then write logic
-					// if (pick.id.includes("99-"))
-					if (picksMappedByWeek.length || statPicksMappedByWeek.length) {
-						return {
-							week: week,
-							picks: picksMappedByWeek,
-							stat_picks: statPicksMappedByWeek,
-						};
+			// written to be used multiple times in different ways
+			function doTheMaths(picks, statPicks, week) {
+				let gameScore = 0;
+				let statScore = 0;
+				picks.map(function (pick) {
+					if (pick.chosen_team === pick.winner) {
+						gameScore++;
 					}
 				});
-				// console.log("%%%%%%%%%%", userToLoad?.user_id, mappedPicks);
+				// hate that this feels pretty damp and redundant, must be a better
+				// way to be able to calculate two scores seperately. currently can only
+				// think of options that involve restructuring data...
+				// example: make all stat picks ids start with 99- and then write logic
+				// if (pick.id.includes("99-"))
+				statPicks.map(function (statPick) {
+					if (statPick.chosen_team === statPick.winner) {
+						statScore++;
+					}
+				});
 
-				const index = i - 1;
-				extrudedUsers[index]?.user_picks.push(mappedPicks);
+				const scoresToPush = {
+					// only return user id if no week
+					...(!week && { user_id: user.id }),
+					// conditionally add the week key/value pair IF the week property is passed
+					...(week && { week: week }),
+					gameScore: gameScore,
+					statScore: statScore,
+					totalScore: gameScore + statScore,
+				};
+				return scoresToPush;
 			}
+
+			// populate totalScores
+			function getOverall() {
+				const forTotalScore = doTheMaths(picksToScore, statPicksToScore);
+				totalScores.push(forTotalScore);
+			}
+			getOverall();
+
+			// populate scoresByWeek
+			function calcAndFormatByWeek(picks, statPicks) {
+				let weekPicksToPush = { user_id: user.id, allPicks: [], allStatPicks: [], scores: [] };
+				weeksToMap.map(function (week) {
+					const eachGameWeek = picks.filter((e) => e.week === week);
+					const eachStatWeek = statPicks.filter((e) => e.week === week);
+					const thisWeek = doTheMaths(eachGameWeek, eachStatWeek, week);
+					weekPicksToPush.scores.push(thisWeek);
+					weekPicksToPush.allPicks.push({ week: week, picks: eachGameWeek });
+					weekPicksToPush.allStatPicks.push({ week: week, statPicks: eachStatWeek });
+				});
+				restructuredPicks.push(weekPicksToPush);
+			}
+			calcAndFormatByWeek(picksToScore, statPicksToScore);
 		}
-
-		loadPicks(extrudedUsers);
-		// console.log("EX Users:", extrudedUsers);
-		setFormattedPicks(extrudedUsers);
+		users.forEach(calculateScore);
+		setScoringBreakdown(totalScores);
+		setFormattedPicks(restructuredPicks);
 	};
-
-	console.log(formattedPicks);
 
 	useEffect(() => {
 		getGames();
@@ -131,12 +151,12 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 		sortGames(games);
 	}, [games]);
 
-	// setting to run once formattedGames is updated
-	// before this would run sortAllUserPicks before formattedGames
-	// leading to empty arrays...
 	useEffect(() => {
-		sortAllUserPicks(users);
+		scoreAndFormatPicks(users);
 	}, [formattedGames]);
+
+	console.log("@@*@@ Scoring:", scoringBreakdown);
+	console.log("$$$ Picks:", formattedPicks);
 
 	/////////// OLD CODE BELOW //////////////////////
 	// re-factored all previous functions to all run in a loop
