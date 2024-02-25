@@ -2,13 +2,22 @@ import React, { useEffect, useState } from "react";
 import { ScoreCard } from "../components/ScoreCard";
 import users from "../constants/users";
 import stat_results from "../constants/stats-results";
+import { PickHistoryView } from "./PickHistoryView";
 
 export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewChange, logout }) => {
 	const [games, setGames] = useState([]);
 	const [formattedGames, setFormattedGames] = useState([]);
 	const [formattedPicks, setFormattedPicks] = useState([]);
 	const [scoringBreakdown, setScoringBreakdown] = useState([]);
+	const [historyView, setHistoryView] = useState(false);
 
+	const handleHistoryView = () => {
+		if (historyView === false) {
+			setHistoryView(true);
+		} else {
+			setHistoryView(false);
+		}
+	};
 	//////////////////// SORT AND FORMAT ALL GAMES ///////////////////////////////////////
 
 	// honestly I am not sure why I am sorting the games here...they are not used
@@ -190,80 +199,100 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 					Logout
 				</button>
 			</div>
-			<div className='bg-lime-300 bg-opacity-70 m-4 p-1 rounded'>
-				<p className='text-3xl text-lime-800 font-black underline m-4'>Overall Scores:</p>
-				<div className='mb-6'>
-					{overallBreakdown.map((score) => (
-						<div
-							key={score.user_id}
-							className='text-lg'
-						>
-							<ScoreCard
-								score={score}
-								// add type property for conditional rendering purposes
-								type={"overall"}
-								user={user}
-							/>
+			<button
+				className='bg-amber-500 hover:bg-amber-200 hover:text-black text-white font-bold py-2 px-4 rounded m-2'
+				onClick={() => handleHistoryView()}
+			>
+				History View
+			</button>
+			{historyView ? (
+				<div>
+					<PickHistoryView
+						user={user}
+						picks={formattedPicks.find((e) => e.user_id === user.id)}
+						week={"week to come"}
+						teams={["teams", "will", "be", "here"]}
+						handleHistoryView={handleHistoryView}
+					/>
+				</div>
+			) : (
+				<>
+					<div className='bg-lime-300 bg-opacity-70 m-4 p-1 rounded'>
+						<p className='text-3xl text-lime-800 font-black underline m-4'>Overall Scores:</p>
+						<div className='mb-6'>
+							{overallBreakdown.map((score) => (
+								<div
+									key={score.user_id}
+									className='text-lg'
+								>
+									<ScoreCard
+										score={score}
+										// add type property for conditional rendering purposes
+										type={"overall"}
+										user={user}
+									/>
+								</div>
+							))}
 						</div>
-					))}
-				</div>
-			</div>
-			<div className='bg-lime-300 bg-opacity-70 m-4 p-1 rounded'>
-				<p className='text-3xl text-lime-800 font-black underline m-4'>Game Scores:</p>
-				<div className='mb-6'>
-					{gamesBreakdown.map((score) => (
-						<div
-							key={score.user_id}
-							className='text-lg'
-						>
-							<ScoreCard
-								score={score}
-								type={"game"}
-								user={user}
-							/>
+					</div>
+					<div className='bg-lime-300 bg-opacity-70 m-4 p-1 rounded'>
+						<p className='text-3xl text-lime-800 font-black underline m-4'>Game Scores:</p>
+						<div className='mb-6'>
+							{gamesBreakdown.map((score) => (
+								<div
+									key={score.user_id}
+									className='text-lg'
+								>
+									<ScoreCard
+										score={score}
+										type={"game"}
+										user={user}
+									/>
+								</div>
+							))}
 						</div>
-					))}
-				</div>
-			</div>
-			<div className='bg-lime-300 bg-opacity-70 m-4 p-1 rounded'>
-				<p className='text-3xl text-lime-800 font-black underline m-4'>Stat Scores:</p>
-				<div className='mb-6'>
-					{statsBreakdown.map((score) => (
-						<div
-							key={score.user_id}
-							className='text-lg'
-						>
-							<ScoreCard
-								score={score}
-								type={"stat"}
-								user={user}
-							/>
+					</div>
+					<div className='bg-lime-300 bg-opacity-70 m-4 p-1 rounded'>
+						<p className='text-3xl text-lime-800 font-black underline m-4'>Stat Scores:</p>
+						<div className='mb-6'>
+							{statsBreakdown.map((score) => (
+								<div
+									key={score.user_id}
+									className='text-lg'
+								>
+									<ScoreCard
+										score={score}
+										type={"stat"}
+										user={user}
+									/>
+								</div>
+							))}
 						</div>
-					))}
-				</div>
-			</div>
-			<div className='bg-lime-300 bg-opacity-70 m-4 p-1 rounded'>
-				<p className='text-3xl text-lime-800 font-black underline m-4'>
-					Conference Championship Stat Results:
-				</p>
-				<div className='flex flex-col justify-around text-center font-bold pt-2 pb-2 mb-6'>
-					<h3 className='text-2xl mb-2'>Total Points:</h3>
-					<ul className='mb-2'>
-						<li>49ers - 34</li>
-						<li>Lions - 31</li>
-						<li>Chiefs - 17</li>
-						<li>Ravens - 10</li>
-					</ul>
-					<h3 className='text-2xl mb-2'>Total Yards:</h3>
-					<ul className='mb-2'>
-						<li>Lions - 442</li>
-						<li>49ers - 413</li>
-						<li>Ravens - 336</li>
-						<li>Cheifs - 319</li>
-					</ul>
-				</div>
-			</div>
-			<div className='mt-80'>.</div>
+					</div>
+					<div className='bg-lime-300 bg-opacity-70 m-4 p-1 rounded'>
+						<p className='text-3xl text-lime-800 font-black underline m-4'>
+							Conference Championship Stat Results:
+						</p>
+						<div className='flex flex-col justify-around text-center font-bold pt-2 pb-2 mb-6'>
+							<h3 className='text-2xl mb-2'>Total Points:</h3>
+							<ul className='mb-2'>
+								<li>49ers - 34</li>
+								<li>Lions - 31</li>
+								<li>Chiefs - 17</li>
+								<li>Ravens - 10</li>
+							</ul>
+							<h3 className='text-2xl mb-2'>Total Yards:</h3>
+							<ul className='mb-2'>
+								<li>Lions - 442</li>
+								<li>49ers - 413</li>
+								<li>Ravens - 336</li>
+								<li>Cheifs - 319</li>
+							</ul>
+						</div>
+					</div>
+					<div className='mt-80'>.</div>
+				</>
+			)}
 		</div>
 	);
 };
