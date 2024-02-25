@@ -9,12 +9,6 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 	const [formattedPicks, setFormattedPicks] = useState([]);
 	const [scoringBreakdown, setScoringBreakdown] = useState([]);
 
-	/////// Old Code Arrays... ////////////////
-	let allGameScores = [];
-	let allStatScores = [];
-	let allOverallScores = [];
-	///////////////////////////////////////////
-
 	//////////////////// SORT AND FORMAT ALL GAMES ///////////////////////////////////////
 
 	// honestly I am not sure why I am sorting the games here...they are not used
@@ -109,6 +103,7 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 					...(!week && { user_id: user.id }),
 					// conditionally add the week key/value pair IF the week property is passed
 					...(week && { week: week }),
+					name: user.name,
 					gameScore: gameScore,
 					statScore: statScore,
 					totalScore: gameScore + statScore,
@@ -163,66 +158,21 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 	console.log("@@*@@ Scoring:", scoringBreakdown);
 	console.log("$$$ Picks:", formattedPicks);
 
-	/////////// OLD CODE BELOW //////////////////////
-	// re-factored all previous functions to all run in a loop
-	const getUserScore = async (user) => {
-		let score = 0;
-		const userPicks = allPicks.filter((pick) => {
-			return pick.user_id === user.id;
-		});
-		const checkForWinner = (pick) => {
-			if (pick.winner === pick.chosen_team) {
-				score++;
-			}
-		};
-		if (userPicks.length) {
-			userPicks.forEach(checkForWinner);
-		}
-		allGameScores.push({ user: user.id, name: user.name, score: score });
-	};
-	users.forEach(getUserScore);
+	// feels like there is likely a better way to do this, but I decided to sort
+	// by score category before passing area to map in return
+	const overallBreakdown = [...scoringBreakdown].sort(
+		(a, b) => parseInt(b.totalScore) - parseInt(a.totalScore)
+	);
+	const gamesBreakdown = [...scoringBreakdown].sort(
+		(a, b) => parseInt(b.gameScore) - parseInt(a.gameScore)
+	);
+	const statsBreakdown = [...scoringBreakdown].sort(
+		(a, b) => parseInt(b.statScore) - parseInt(a.statScore)
+	);
 
-	const calcStatScore = async (user) => {
-		// // console.log(user);
-		let statScore = 0;
-		const userPicks = allStatPicks.filter((pick) => {
-			return pick.user_id === user.id;
-		});
-		const checkForWinner = (pick) => {
-			if (pick.winner === pick.chosen_team) {
-				statScore++;
-			}
-		};
-		if (userPicks.length) {
-			userPicks.forEach(checkForWinner);
-		}
-		allStatScores.push({ user: user.id, name: user.name, score: statScore });
-	};
-	users.forEach(calcStatScore);
-
-	const calcOverallScore = async (user) => {
-		const userGameScore = allGameScores.find((score) => {
-			return score.user === user.id;
-		});
-		// console.log(userGameScore);
-		const userStatScore = allStatScores.find((score) => {
-			return score.user === user.id;
-		});
-		// console.log(userStatScore);
-		const userOverallScore = userGameScore.score + userStatScore.score;
-		// console.log(userOverallScore);
-		allOverallScores.push({ user: user.id, name: user.name, score: userOverallScore });
-	};
-	users.forEach(calcOverallScore);
-
-	// // console.log("SV", allPicks);
-	// // console.log(games);
-
-	//sort scores in descending order
-	allGameScores.sort((a, b) => parseInt(b.score) - parseInt(a.score));
-	allStatScores.sort((a, b) => parseInt(b.score) - parseInt(a.score));
-	allOverallScores.sort((a, b) => parseInt(b.score) - parseInt(a.score));
-	// console.log(allOverallScores);
+	// console.log("O", overallBreakdown);
+	// console.log("G", gamesBreakdown);
+	// console.log("S", statsBreakdown);
 
 	return (
 		<div className='bg-side-line bg-cover'>
@@ -243,13 +193,15 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 			<div className='bg-lime-300 bg-opacity-70 m-4 p-1 rounded'>
 				<p className='text-3xl text-lime-800 font-black underline m-4'>Overall Scores:</p>
 				<div className='mb-6'>
-					{allOverallScores.map((score) => (
+					{overallBreakdown.map((score) => (
 						<div
-							key={score.user}
+							key={score.user_id}
 							className='text-lg'
 						>
 							<ScoreCard
 								score={score}
+								// add type property for conditional rendering purposes
+								type={"overall"}
 								user={user}
 							/>
 						</div>
@@ -259,13 +211,14 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 			<div className='bg-lime-300 bg-opacity-70 m-4 p-1 rounded'>
 				<p className='text-3xl text-lime-800 font-black underline m-4'>Game Scores:</p>
 				<div className='mb-6'>
-					{allGameScores.map((score) => (
+					{gamesBreakdown.map((score) => (
 						<div
-							key={score.user}
+							key={score.user_id}
 							className='text-lg'
 						>
 							<ScoreCard
 								score={score}
+								type={"game"}
 								user={user}
 							/>
 						</div>
@@ -275,13 +228,14 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 			<div className='bg-lime-300 bg-opacity-70 m-4 p-1 rounded'>
 				<p className='text-3xl text-lime-800 font-black underline m-4'>Stat Scores:</p>
 				<div className='mb-6'>
-					{allStatScores.map((score) => (
+					{statsBreakdown.map((score) => (
 						<div
-							key={score.user}
+							key={score.user_id}
 							className='text-lg'
 						>
 							<ScoreCard
 								score={score}
+								type={"stat"}
 								user={user}
 							/>
 						</div>
