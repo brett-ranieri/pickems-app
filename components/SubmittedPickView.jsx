@@ -4,7 +4,7 @@ import { StatCard } from "./StatCard";
 import stats from "../constants/stats";
 import superbowlStats from "../constants/superbowl-stats";
 
-export const PickView = ({ allPicks, allStatPicks, user, teams }) => {
+export const SubmittedPickView = ({ allPicks, allStatPicks, user, teams }) => {
 	// const [userPicks, setUserPicks] = useState([]);
 	let userPicks = [];
 

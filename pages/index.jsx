@@ -10,7 +10,7 @@ import { UserDropdown } from "../components/UserDropdown";
 // because, on vercel, the baseUrl is an environment variable and so it can't be read by the client side
 // directly without being first passed through a server side function
 import baseUrl from "../constants/baseUrl";
-import { PickView } from "../components/PickView";
+import { SubmittedPickView } from "../components/SubmittedPickView";
 import stats from "../constants/stats";
 import superbowlStats from "../constants/superbowl-stats";
 
@@ -47,25 +47,24 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 
 	// console.log("stats:", stats);
 
-
 	/////////////// ASYNC/AWAIT OPTION OF INITIAL DATA FETCH
 	const getData = async () => {
 		const gamesRes = await fetch(`${baseUrl}/api/games?sent=true`);
 		const upcomingGames = await gamesRes.json();
 		setGames(upcomingGames);
-console.log('after games call')
+		console.log("after games call");
 		const teamsRes = await fetch(`${baseUrl}/api/teams`);
 		const theTeams = await teamsRes.json();
 		setTeams(theTeams);
-console.log('after teams call')
+		console.log("after teams call");
 		const allPicksRes = await fetch(`${baseUrl}/api/picks`);
 		const theAllPicks = await allPicksRes.json();
 		setAllPicks(theAllPicks);
-console.log('after picks call')
+		console.log("after picks call");
 		const allStatPicksRes = await fetch(`${baseUrl}/api/stat-picks`);
 		const theAllStatPicks = await allStatPicksRes.json();
 		setAllStatPicks(theAllStatPicks);
-console.log('after stat picks call')
+		console.log("after stat picks call");
 		const userPicks = theAllPicks.filter((pick) => {
 			return pick.user_id === userState?.id;
 		});
@@ -98,14 +97,14 @@ console.log('after stat picks call')
 	// 			fetch(`${baseUrl}/api/picks`),
 	// 			fetch(`${baseUrl}/api/stat-picks`)
 	// 		]);
-	
+
 	// 		const [upcomingGames, theTeams, theAllPicks, theAllStatPicks] = await Promise.all([
 	// 			gamesRes.json(),
 	// 			teamsRes.json(),
 	// 			allPicksRes.json(),
 	// 			allStatPicksRes.json()
 	// 		]);
-	
+
 	// 		setGames(upcomingGames);
 	// 		console.log('after games call');
 	// 		setTeams(theTeams);
@@ -114,11 +113,11 @@ console.log('after stat picks call')
 	// 		console.log('after picks call');
 	// 		setAllStatPicks(theAllStatPicks);
 	// 		console.log('after stat picks call');
-	
+
 	// 		const userPicks = theAllPicks.filter((pick) => pick.user_id === userState?.id);
 	// 		setPicks(userPicks.length ? userPicks : []);
 	// 		setIsSubmitted(userPicks.length ? userPicks : []);
-	
+
 	// 		const statUserPicks = theAllStatPicks.filter((pick) => pick.user_id === userState?.id);
 	// 		setStatPicks(statUserPicks.length ? statUserPicks : []);
 	// 		setIsStatSubmitted(statUserPicks.length ? statUserPicks : []);
@@ -126,7 +125,6 @@ console.log('after stat picks call')
 	// 		console.error(error);
 	// 	}
 	// };
-
 
 	// ////////// OG INITIAL DATA FETCH
 	// const getTeams = async () => {
@@ -209,7 +207,9 @@ console.log('after stat picks call')
 	// };
 
 	useEffect(() => {
-		if (userState) {getData()}
+		if (userState) {
+			getData();
+		}
 	}, [userState]);
 
 	// // add useEffect listening to user to update whenever dropdown changed
@@ -275,7 +275,7 @@ console.log('after stat picks call')
 				// 		}
 				// 	});
 				// 	}
-		
+
 				// 	if (updatedPicks.length) {
 				// 		// const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
 				// 		// 	method: "PUT",
@@ -312,13 +312,13 @@ console.log('after stat picks call')
 
 				const checkForGame = async (picks) => {
 					let newPicks = [];
-					let putPicks = []
-					let otherPicks = []
+					let putPicks = [];
+					let otherPicks = [];
 					for (const pick of picks) {
 						const submissionCheck = isStatSubmitted.some((obj) => obj.game_id === pick.game_id);
-						console.log(pick, submissionCheck)
+						console.log(pick, submissionCheck);
 						if (!submissionCheck) {
-							newPicks.push(pick)
+							newPicks.push(pick);
 						} else {
 							isStatSubmitted.forEach(function (submittedPick) {
 								if (pick.game_id === submittedPick.game_id) {
@@ -326,50 +326,49 @@ console.log('after stat picks call')
 										// console.log("different");
 										putPicks.push(pick);
 									} else {
-										otherPicks.push(pick)
+										otherPicks.push(pick);
 									}
 								}
-						})}
+							});
+						}
 					}
-					console.log('NEW PICKS', newPicks)
-					console.log('PUT PICKS', putPicks)
-					let theNewStatPicks = []
-					let thePutStatPicks = []
+					console.log("NEW PICKS", newPicks);
+					console.log("PUT PICKS", putPicks);
+					let theNewStatPicks = [];
+					let thePutStatPicks = [];
 					if (newPicks.length) {
-						console.log('THIS IS UPDATED PICKS', newPicks)
-						const postPicksRes = await fetch(
-							`${baseUrl}/api/submit-stat-picks`,
-							{
-								method: "POST",
-								body: JSON.stringify(newPicks),
-							}
-						);
-						theNewStatPicks = await postPicksRes.json()
+						console.log("THIS IS UPDATED PICKS", newPicks);
+						const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
+							method: "POST",
+							body: JSON.stringify(newPicks),
+						});
+						theNewStatPicks = await postPicksRes.json();
 					}
 					if (putPicks.length) {
-						const postPicksRes = await fetch(
-							`${baseUrl}/api/submit-stat-picks`,
-							{
-								method: "PUT",
-								body: JSON.stringify(putPicks),
-							}
-						);
-						thePutStatPicks = await postPicksRes.json()
+						const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
+							method: "PUT",
+							body: JSON.stringify(putPicks),
+						});
+						thePutStatPicks = await postPicksRes.json();
 					}
 
-						// START OF WHAT ALLISON CHANGED
-						console.log('🍇 271, POST of some kind')
-						setIsStatSubmitted(statPicks);
+					// START OF WHAT ALLISON CHANGED
+					console.log("🍇 271, POST of some kind");
+					setIsStatSubmitted(statPicks);
 
-						console.log('OTHER PICKS HERE!!!!', otherPicks)
-						console.log('🍓 NEW STAT PICKS', allStatPicks, theNewStatPicks, thePutStatPicks)
-						setStatPicks([...otherPicks, ...theNewStatPicks, ...thePutStatPicks])
-						// filtered all stat picks to not include the user's picks spread with the user's stat picks
-						// result is one less network call
-						const combinedStatPicks = [...allStatPicks.filter(x => x.user_id !== userState.id), ...otherPicks, ...theNewStatPicks, ...thePutStatPicks]
-						setAllStatPicks(combinedStatPicks)
-						// END OF WHAT ALLISON CHANGED
-					
+					console.log("OTHER PICKS HERE!!!!", otherPicks);
+					console.log("🍓 NEW STAT PICKS", allStatPicks, theNewStatPicks, thePutStatPicks);
+					setStatPicks([...otherPicks, ...theNewStatPicks, ...thePutStatPicks]);
+					// filtered all stat picks to not include the user's picks spread with the user's stat picks
+					// result is one less network call
+					const combinedStatPicks = [
+						...allStatPicks.filter((x) => x.user_id !== userState.id),
+						...otherPicks,
+						...theNewStatPicks,
+						...thePutStatPicks,
+					];
+					setAllStatPicks(combinedStatPicks);
+					// END OF WHAT ALLISON CHANGED
 				};
 
 				// BAD SHAME
@@ -398,15 +397,18 @@ console.log('after stat picks call')
 					// before setting picks to isSubmitted...did I do that right?
 					// I DID NOT!
 					// START OF WHAT ALLISON CHANGED
-					console.log('🍇 309, a different POST')
+					console.log("🍇 309, a different POST");
 					setIsStatSubmitted(statPicks);
-					const theStatPicks = await postPicksRes.json()
-					console.log('🍓 ALL STAT PICKS', allStatPicks, theStatPicks)
-					setStatPicks(theStatPicks)
+					const theStatPicks = await postPicksRes.json();
+					console.log("🍓 ALL STAT PICKS", allStatPicks, theStatPicks);
+					setStatPicks(theStatPicks);
 					// filtered all stat picks to not include the user's picks spread with the user's stat picks
 					// result is one less network call
-					const combinedStatPicks = [...allStatPicks.filter(x => x.user_id !== userState.id), ...theStatPicks]
-					setAllStatPicks(combinedStatPicks)
+					const combinedStatPicks = [
+						...allStatPicks.filter((x) => x.user_id !== userState.id),
+						...theStatPicks,
+					];
+					setAllStatPicks(combinedStatPicks);
 					// END OF WHAT ALLISON CHANGED
 					// getAllStatPicks();
 				}
@@ -438,10 +440,13 @@ console.log('after stat picks call')
 					// this is NOT working as anticipated
 					if (postPicksRes) {
 						// // console.log("something else happened");
-						console.log(picks)
+						console.log(picks);
 						setIsSubmitted(picks);
-						const updatedAllPicks = [...allPicks.filter(x => x.user_id !== userState.id), ...picks]
-						setAllPicks(updatedAllPicks)
+						const updatedAllPicks = [
+							...allPicks.filter((x) => x.user_id !== userState.id),
+							...picks,
+						];
+						setAllPicks(updatedAllPicks);
 					}
 				}
 			};
@@ -484,10 +489,13 @@ console.log('after stat picks call')
 						// // console.log("more somethings happened");
 						// setIsSubmitted(picks);
 						// getAllPicks();
-						console.log(picks)
+						console.log(picks);
 						setIsSubmitted(picks);
-						const updatedAllPicks = [...allPicks.filter(x => x.user_id !== userState.id), ...picks]
-						setAllPicks(updatedAllPicks)
+						const updatedAllPicks = [
+							...allPicks.filter((x) => x.user_id !== userState.id),
+							...picks,
+						];
+						setAllPicks(updatedAllPicks);
 					}
 				}
 			};
@@ -515,18 +523,17 @@ console.log('after stat picks call')
 				// moved into this if statement to ensure that post was successful
 				// before setting picks to isSubmitted...did I do that right?
 				// I DID NOT!
-				console.log(picks)
+				console.log(picks);
 				setIsSubmitted(picks);
-				const updatedAllPicks = [...allPicks.filter(x => x.user_id !== userState.id), ...picks]
-				setAllPicks(updatedAllPicks)
+				const updatedAllPicks = [...allPicks.filter((x) => x.user_id !== userState.id), ...picks];
+				setAllPicks(updatedAllPicks);
 			}
 		}
 	};
 	// console.log("statPicks", statPicks);
 	// console.log("isStatS:", isStatSubmitted);
-	console.log('🍇 ALL STAT PICKS', allStatPicks)
-	console.log('ALL PICKS', allPicks)
-
+	console.log("🍇 ALL STAT PICKS", allStatPicks);
+	console.log("ALL PICKS", allPicks);
 
 	return (
 		<>
@@ -650,7 +657,9 @@ console.log('after stat picks call')
 								</div>
 							) : (
 								<div>
-									<p className='text-lg text-white font-bold m-2'>WAIT! Are you {userState.name}?</p>
+									<p className='text-lg text-white font-bold m-2'>
+										WAIT! Are you {userState.name}?
+									</p>
 									<p className='text-sm text-lime-300 m-2'>
 										If not, logout to go back to the menu and be sure to select the right user in
 										the dropdown.
@@ -681,7 +690,7 @@ console.log('after stat picks call')
 					</div>
 					{/* temp add to provide space at bottom of page */}
 					<div>
-						<PickView
+						<SubmittedPickView
 							allPicks={allPicks}
 							allStatPicks={allStatPicks}
 							user={userState}
