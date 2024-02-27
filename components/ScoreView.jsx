@@ -9,14 +9,15 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 	const [formattedGames, setFormattedGames] = useState([]);
 	const [formattedPicks, setFormattedPicks] = useState([]);
 	const [scoringBreakdown, setScoringBreakdown] = useState([]);
-	const [historyView, setHistoryView] = useState(false);
+	const [selectedWeek, setSelectedWeek] = useState(null);
 
-	const handleHistoryView = () => {
-		if (historyView === false) {
-			setHistoryView(true);
+	const handleWeekSelection = (week) => {
+		if (!week) {
+			setSelectedWeek(null);
 		} else {
-			setHistoryView(false);
+			setSelectedWeek(week);
 		}
+		console.log("^%^", formattedPicks);
 	};
 	//////////////////// SORT AND FORMAT ALL GAMES ///////////////////////////////////////
 
@@ -77,6 +78,7 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 	const weeksToMap = formattedGames.map(function (game) {
 		return game.week;
 	});
+	console.log(weeksToMap);
 
 	//////////////////// SCORE AND FORMAT ALL USER PICKS ///////////////////////////////////////
 
@@ -149,6 +151,9 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 
 	useEffect(() => {
 		getGames();
+		if (formattedPicks) {
+			console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@", formattedPicks);
+		}
 	}, []);
 
 	useEffect(() => {
@@ -159,13 +164,17 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 		scoreAndFormatPicks(users);
 	}, [formattedGames]);
 
+	useEffect(() => {
+		console.log("**************************", formattedPicks);
+	}, [formattedPicks]);
+
 	// scoringBreakdown is always populating from initial load but Picks are not
 	// on fourth try is the first time that Picks populate. this is behavior similar
 	// to what is happening with ALL PICKS and ALL STAT PICKS in logs from index.
 	// Not currently sure what is causing this, but assuming it has something to do with
 	// getOverall() and calcAndFormatByWeek() functions
-	console.log("@@*@@ Scoring:", scoringBreakdown);
-	console.log("$$$ Picks:", formattedPicks);
+	// console.log("@@*@@ Scoring:", scoringBreakdown);
+	// console.log("$$$ Picks:", formattedPicks);
 
 	// feels like there is likely a better way to do this, but I decided to sort
 	// by score category before passing area to map in return
@@ -179,6 +188,7 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 		(a, b) => parseInt(b.statScore) - parseInt(a.statScore)
 	);
 
+	// console.log(formattedPicks);
 	// console.log("O", overallBreakdown);
 	// console.log("G", gamesBreakdown);
 	// console.log("S", statsBreakdown);
@@ -199,20 +209,25 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 					Logout
 				</button>
 			</div>
-			<button
-				className='bg-amber-500 hover:bg-amber-200 hover:text-black text-white font-bold py-2 px-4 rounded m-2'
-				onClick={() => handleHistoryView()}
-			>
-				History View
-			</button>
-			{historyView ? (
+			<div>
+				{weeksToMap.map((week) => (
+					<button
+						key={week}
+						className='bg-amber-500 hover:bg-amber-200 hover:text-black text-white font-bold py-2 px-4 rounded m-2'
+						onClick={() => handleWeekSelection(week)}
+					>
+						Week {week}
+					</button>
+				))}
+			</div>
+			{selectedWeek ? (
 				<div>
 					<PickHistoryView
 						user={user}
 						picks={formattedPicks.find((e) => e.user_id === user.id)}
-						week={"week to come"}
+						week={selectedWeek}
 						teams={["teams", "will", "be", "here"]}
-						handleHistoryView={handleHistoryView}
+						handleWeekSelection={handleWeekSelection}
 					/>
 				</div>
 			) : (
