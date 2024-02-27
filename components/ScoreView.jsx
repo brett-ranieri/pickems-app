@@ -44,6 +44,7 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 		games.forEach(checkWeek);
 		extrudedGames.sort((a, b) => parseInt(a.week) - parseInt(b.week));
 
+		////////////////// BELOW NEEDS TO BE REFACTORED ////////////////////////////
 		function loadWeek(extrudedGames) {
 			// need weird i parameters because week 4 is skipped and week 5 is super bowl
 			for (let i = 1; i < extrudedGames.length + 2; i++) {
@@ -72,6 +73,7 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 		// console.log("EXT", extrudedGames);
 		setFormattedGames(extrudedGames);
 	};
+	//////////////// END REFACTOR NEED //////////////////////////////////////
 
 	// make global to have accessible in other functions
 	// get array of weeks that will need to be mapped for picks

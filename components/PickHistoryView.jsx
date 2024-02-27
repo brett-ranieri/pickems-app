@@ -8,8 +8,8 @@ export const PickHistoryView = ({ user, picks, week, teams, handleWeekSelection 
 	const [picksToDisplay, setPicksToDisplay] = useState([]);
 	const [statPicksToDisplay, setStatPicksToDisplay] = useState([]);
 	// console.log("In PHV - ID", user.id);
-	console.log("In PHV - week", week);
-	console.log("In PHV - picks", picks);
+	// console.log("In PHV - week", week);
+	// console.log("In PHV - picks", picks);
 	// console.log("In PHV - teams", teams);
 
 	///////////////////////////// WEIRD CODE STUFF BELOW //////////////////////////////////////////////////
@@ -29,7 +29,7 @@ export const PickHistoryView = ({ user, picks, week, teams, handleWeekSelection 
 	///////////////////////////// WEIRD CODE STUFF END ///////////////////////////////////////
 
 	const findSelectedWeeksPicks = () => {
-		console.log("used");
+		// console.log("used");
 		setPicksToDisplay(picks.allPicks.find((e) => e.week === week));
 		setStatPicksToDisplay(picks.allStatPicks.find((e) => e.week === week));
 	};
