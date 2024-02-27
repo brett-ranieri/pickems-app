@@ -8,7 +8,7 @@ const GameViewPage = () => {
 	const [picks, setPicks] = useState([]);
 	const [isSubmitted, setIsSubmitted] = useState([]);
 	const [user, setUser] = useState("Select a User");
-
+	
 	// test Users table
 	const users = [
 		{ id: 1, name: "Allison" },
