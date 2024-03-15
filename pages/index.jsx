@@ -27,9 +27,6 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	// needed to set to null for initial load
 	const [user, setUser] = useState(null);
 
-	console.log("logging out of the client", baseUrl);
-	console.log("teams:", teams);
-
 	const selectUser = (user) => {
 		setUser(user);
 	};
@@ -48,33 +45,26 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 
 	const remaingTeams = [{ id: "25" }, { id: "12" }];
 
-	console.log("stats:", stats);
-
 	const getGames = async () => {
-		// const results = await fetch(`${baseUrl}/api/games?sent=true`);
-		const results = await fetch(`https://pickems-app.vercel.app/api/games?sent=true`);
+		const results = await fetch(`${baseUrl}/api/games?sent=true`);
 		const upcomingGames = await results.json();
 		setGames(upcomingGames);
 	};
 
 	const getTeams = async () => {
-		// const results = await fetch(`${baseUrl}/api/teams`);
-		const results = await fetch(`https://pickems-app.vercel.app/api/teams`);
+		const results = await fetch(`${baseUrl}/api/teams`);
 		const teams = await results.json();
 		setTeams(teams);
 	};
 
 	const getAllPicks = async () => {
-		// const results = await fetch(`${baseUrl}/api/picks`);
-		const results = await fetch(`https://pickems-app.vercel.app/api/picks`);
+		const results = await fetch(`${baseUrl}/api/picks`);
 		const allPicks = await results.json();
 		setAllPicks(allPicks);
 	};
 
 	const getAllStatPicks = async () => {
-		console.log("stat pickin");
-		// const results = await fetch(`${baseUrl}/api/stat-picks`);
-		const results = await fetch(`https://pickems-app.vercel.app/api/stat-picks`);
+		const results = await fetch(`${baseUrl}/api/stat-picks`);
 		const allPicks = await results.json();
 		setAllStatPicks(allPicks);
 	};
@@ -82,8 +72,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	const getPicks = async (userId) => {
 		// is it necessary to have another fetch here? feels like I should be fetching from
 		// getAllPicks and then use that for this function...
-		// const results = await fetch(`${baseUrl}/api/picks`);
-		const results = await fetch(`https://pickems-app.vercel.app/api/picks`);
+		const results = await fetch(`${baseUrl}/api/picks`);
 		const prevPicks = await results.json();
 		const userPicks = prevPicks.filter((pick) => {
 			return pick.user_id === userId;
@@ -101,14 +90,11 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 		// wanted to do this with conditional but wasn't sure how to handle that with the join
 		// in the picks endpoint. made additional endpoint for fast deployment and then need to
 		// come back and re-factor
-		console.log("user stat pickin", userId);
-		// const results = await fetch(`${baseUrl}/api/stat-picks`);
-		const results = await fetch(`https://pickems-app.vercel.app/api/stat-picks`);
+		const results = await fetch(`${baseUrl}/api/stat-picks`);
 		const prevPicks = await results.json();
 		const userPicks = prevPicks.filter((pick) => {
 			return pick.user_id === userId;
 		});
-		console.log("33:", userPicks);
 		if (userPicks.length) {
 			setStatPicks(userPicks);
 			setIsStatSubmitted(userPicks);
@@ -167,20 +153,14 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 			// this key allows me to hard code the week for now
 			week: 5,
 		};
-		console.log("STATPICK:", pick);
 		const tempStatPicks = statPicks?.filter((pick) => pick.game_id !== gameId);
-		console.log("temp", tempStatPicks);
 		setStatPicks([...tempStatPicks, pick]);
-		console.log(statPicks);
 	};
 
 	const handleSubmit = async () => {
 		//if statement to handle statPicks
 		if (statPicks.length) {
-			console.log("GOT STATS TO SUBMIT");
 			if (isStatSubmitted.length) {
-				console.log("stat picks already made");
-
 				const comparePicks = async (pick) => {
 					// 4th
 					// now you're passing this `picks`, instead of `pick`, so change your variable name
@@ -197,7 +177,6 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					// put method in the endpoint to handle an array
 					// bring the `post` method up here and do like a `if updatedPicks.length run this put` type of logic for both your "picks to update" and "new picks" arrays
 
-					console.log("compared");
 					let updatedPicks = [];
 					isStatSubmitted.forEach(function (submittedPick) {
 						if (pick.game_id === submittedPick.game_id) {
@@ -208,17 +187,10 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 						}
 					});
 					if (updatedPicks.length) {
-						// const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
-						// 	method: "PUT",
-						// 	body: JSON.stringify(updatedPicks),
-						// });
-						const postPicksRes = await fetch(
-							`https://pickems-app.vercel.app/api/submit-stat-picks`,
-							{
-								method: "PUT",
-								body: JSON.stringify(updatedPicks),
-							}
-						);
+						const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
+							method: "PUT",
+							body: JSON.stringify(updatedPicks),
+						});
 						if (postPicksRes) {
 							// 5th
 							// now you need to actually get the responses that your put and post are sending and use them
@@ -227,7 +199,6 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 							// THEN, you need to spread the responses from both calls, plus the other picks that weren't sent to the db into an array
 							// and set that array to state
 							// DO NOT CALL getAllStatPicks here. we're gonna refactor that into a page load function anyway. or gssp. tbd.
-							console.log("something else stat happened");
 							setIsStatSubmitted(statPicks);
 							getAllStatPicks();
 						}
@@ -251,23 +222,15 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					// you mentioned an insert/update query though...is this a use case
 					// for something like that?
 					let updatedPicks = [];
-					console.log("checking...", pick.game_id);
 					const submissionCheck = isStatSubmitted.some((obj) => obj.game_id === pick.game_id);
 					if (!submissionCheck) {
 						updatedPicks.push(pick);
 					}
 					if (updatedPicks.length) {
-						// const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
-						// 	method: "POST",
-						// 	body: JSON.stringify(updatedPicks),
-						// });
-						const postPicksRes = await fetch(
-							`https://pickems-app.vercel.app/api/submit-stat-picks`,
-							{
-								method: "POST",
-								body: JSON.stringify(updatedPicks),
-							}
-						);
+						const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
+							method: "POST",
+							body: JSON.stringify(updatedPicks),
+						});
 						if (postPicksRes) {
 							setIsStatSubmitted(statPicks);
 							getAllStatPicks();
@@ -291,11 +254,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 				statPicks.forEach(comparePicks);
 				statPicks.forEach(checkForGame);
 			} else {
-				// const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
-				// 	method: "POST",
-				// 	body: JSON.stringify(statPicks),
-				// });
-				const postPicksRes = await fetch(`https://pickems-app.vercel.app/api/submit-stat-picks`, {
+				const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
 					method: "POST",
 					body: JSON.stringify(statPicks),
 				});
@@ -317,11 +276,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					}
 				});
 				if (updatedPicks.length) {
-					// const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
-					// 	method: "PUT",
-					// 	body: JSON.stringify(updatedPicks),
-					// });
-					const postPicksRes = await fetch(`https://pickems-app.vercel.app/api/submit-picks`, {
+					const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
 						method: "PUT",
 						body: JSON.stringify(updatedPicks),
 					});
@@ -339,11 +294,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					updatedPicks.push(pick);
 				}
 				if (updatedPicks.length) {
-					// const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
-					// 	method: "POST",
-					// 	body: JSON.stringify(updatedPicks),
-					// });
-					const postPicksRes = await fetch(`https://pickems-app.vercel.app/api/submit-picks`, {
+					const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
 						method: "POST",
 						body: JSON.stringify(updatedPicks),
 					});
@@ -357,11 +308,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 			picks.forEach(comparePicks);
 			picks.forEach(checkForGame);
 		} else {
-			// const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
-			// 	method: "POST",
-			// 	body: JSON.stringify(picks),
-			// });
-			const postPicksRes = await fetch(`https://pickems-app.vercel.app/api/submit-picks`, {
+			const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
 				method: "POST",
 				body: JSON.stringify(picks),
 			});
@@ -371,8 +318,6 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 			}
 		}
 	};
-	console.log("statPicks", statPicks);
-	console.log("isStatS:", isStatSubmitted);
 
 	return (
 		<>

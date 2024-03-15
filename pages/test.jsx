@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
+import baseUrl from "../constants/baseUrl";
 
 const TestPage = () => {
 	// const [games, setGames] = useState([]);
 	const getTeams = async () => {
-		const teams = await fetch(`http://localhost:3000/api/teams`);
+		const teams = await fetch(`${baseUrl}/api/teams`);
 		console.log(await teams.json());
 	};
 
 	// const getGames = async () => {
 	// 	console.log("hello??");
-	// 	const games = await fetch(`http://localhost:3000/api/games`);
+	// 	const games = await fetch(`${baseUrl}/api/games`);
 	// 	let upcomingGames = await games.json();
 	// 	console.log(upcomingGames);
 	// 	setGames(upcomingGames);
@@ -26,7 +27,7 @@ const TestPage = () => {
 	};
 
 	const postTeam = async () => {
-		const teams = await fetch(`http://localhost:3000/api/teams`, {
+		const teams = await fetch(`${baseUrl}/api/teams`, {
 			method: "POST",
 			body: JSON.stringify({
 				color: "yellow",
@@ -50,7 +51,7 @@ const TestPage = () => {
 
 	return (
 		<>
-			<p>Pickems App!</p>
+			<p>Pickems App Test Page Here!</p>
 			{/* <button onClick={() => getTeams()}>Click me!</button> */}
 			<form
 				action=''
