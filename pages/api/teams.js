@@ -1,7 +1,6 @@
 const client = require("./elephantsql.js");
 
 export default async function teams(req, res) {
-	// console.log("request: ", req);
 	const allowedReqTypes = ["GET", "POST"];
 	if (!allowedReqTypes.includes(req.method)) {
 		// idk if 401 is right
@@ -10,7 +9,6 @@ export default async function teams(req, res) {
 	try {
 		let results;
 		if (req.method === "GET") {
-			// console.log("request: ", req);
 			console.log("got got");
 			results = await client.query("select * from public.teams");
 		}
@@ -34,7 +32,6 @@ export default async function teams(req, res) {
 		// *****************************************
 
 		res.json(results.rows);
-		// console.log(results);
 	} catch (err) {
 		console.log(err);
 	}

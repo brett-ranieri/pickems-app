@@ -31,7 +31,6 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	console.log("teams:", teams);
 
 	const selectUser = (user) => {
-		// console.log("in main", user);
 		setUser(user);
 	};
 
@@ -47,7 +46,6 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 		}
 	};
 
-	// const remaingTeams = [{ id: "33" }, { id: "25" }, { id: "8" }, { id: "12" }];
 	const remaingTeams = [{ id: "25" }, { id: "12" }];
 
 	console.log("stats:", stats);
@@ -67,7 +65,6 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	};
 
 	const getAllPicks = async () => {
-		// console.log("i Ran");
 		// const results = await fetch(`${baseUrl}/api/picks`);
 		const results = await fetch(`https://pickems-app.vercel.app/api/picks`);
 		const allPicks = await results.json();
@@ -75,9 +72,6 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	};
 
 	const getAllStatPicks = async () => {
-		// wanted to do this with conditional but wasn't sure how to handle that with the join
-		// in the picks endpoint. made additional endpoint for fast deployment and then need to
-		// come back and re-factor
 		console.log("stat pickin");
 		// const results = await fetch(`${baseUrl}/api/stat-picks`);
 		const results = await fetch(`https://pickems-app.vercel.app/api/stat-picks`);
@@ -147,20 +141,12 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 		getAllStatPicks();
 	}, []);
 
-	// add useEffect listening to user to update whenever dropdown changed
 	useEffect(() => {
-		// console.log(user);
 		if (user) {
 			getPicks(user.id);
 			getStatPicks(user.id);
 		}
 	}, [user]);
-
-	// console.log(games);
-	// console.log(allPicks);
-	console.log(picks);
-	console.log(allStatPicks);
-	console.log("user:", statPicks);
 
 	const clicked = async (id, gameId, week) => {
 		const pick = {
@@ -169,13 +155,11 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 			game_id: gameId,
 			week: week,
 		};
-		console.log("p", pick);
 		const tempPicks = picks?.filter((pick) => pick.game_id !== gameId);
 		setPicks([...tempPicks, pick]);
 	};
 
 	const statClicked = async (id, gameId, week) => {
-		console.log("wk", week);
 		const pick = {
 			user_id: user.id,
 			chosen_team: id,
@@ -235,7 +219,6 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 								body: JSON.stringify(updatedPicks),
 							}
 						);
-						// this is NOT working as anticipated
 						if (postPicksRes) {
 							// 5th
 							// now you need to actually get the responses that your put and post are sending and use them
@@ -243,7 +226,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 							// console log putResponse and make sure it is what you're expecting (an array of the picks that were updated)
 							// THEN, you need to spread the responses from both calls, plus the other picks that weren't sent to the db into an array
 							// and set that array to state
-							// DO NOT CALL getAllStatPicks here. we're gonna refactor that into a page load function anyway. or gssp. tbd. 
+							// DO NOT CALL getAllStatPicks here. we're gonna refactor that into a page load function anyway. or gssp. tbd.
 							console.log("something else stat happened");
 							setIsStatSubmitted(statPicks);
 							getAllStatPicks();
@@ -270,9 +253,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					let updatedPicks = [];
 					console.log("checking...", pick.game_id);
 					const submissionCheck = isStatSubmitted.some((obj) => obj.game_id === pick.game_id);
-					// console.log(submissionCheck);
 					if (!submissionCheck) {
-						// console.log(pick);
 						updatedPicks.push(pick);
 					}
 					if (updatedPicks.length) {
@@ -287,9 +268,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 								body: JSON.stringify(updatedPicks),
 							}
 						);
-						// this is NOT working as anticipated
 						if (postPicksRes) {
-							console.log("more stat somethings happened");
 							setIsStatSubmitted(statPicks);
 							getAllStatPicks();
 						}
@@ -301,21 +280,17 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 				// where the function contains a network call, NEEDS TO GO AWAY
 				// all functions that contain a network call that are currently being called in a loop need to be passed the full data set,
 				// meaning the array, and handle that, NOT BY looping over the array inside the function and making network calls in that loop
-				// no network calls in any loops. 
+				// no network calls in any loops.
 
 				// so that means here, you need to call comparePicks(picks), and same thing for checkForGame, and the two other functions
-				// there's 4 functions that need basically the same refactor, and they need to become 2 functions in this pass, 
-				// and ultimately 1 function if you really want to dry it up. when i stopped touching things i had left 2 functions but 
+				// there's 4 functions that need basically the same refactor, and they need to become 2 functions in this pass,
+				// and ultimately 1 function if you really want to dry it up. when i stopped touching things i had left 2 functions but
 				// thats just because i was over it, i wouldve refactored it into one function if it was my code. you should leave it as 2 for now
-				// and do the rest of this work then come back to it. 
+				// and do the rest of this work then come back to it.
 				// im going to put notes in comparePicks.
 				statPicks.forEach(comparePicks);
 				statPicks.forEach(checkForGame);
-				console.log("IStatS: ", isStatSubmitted);
 			} else {
-				console.log("no stat picks yet");
-				console.log(statPicks);
-
 				// const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
 				// 	method: "POST",
 				// 	body: JSON.stringify(statPicks),
@@ -325,13 +300,6 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					body: JSON.stringify(statPicks),
 				});
 				if (postPicksRes) {
-					console.log("something stat happened");
-					// feels like more can be done here to ensure confirmation of successful
-					// pikc submission
-
-					// moved into this if statement to ensure that post was successful
-					// before setting picks to isSubmitted...did I do that right?
-					// I DID NOT!
 					setIsStatSubmitted(statPicks);
 					getAllStatPicks();
 				}
@@ -339,8 +307,6 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 		}
 		// handling picks from here down
 		if (isSubmitted.length) {
-			// console.log("picks already made");
-
 			const comparePicks = async (pick) => {
 				let updatedPicks = [];
 				isSubmitted.forEach(function (submittedPick) {
@@ -359,9 +325,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 						method: "PUT",
 						body: JSON.stringify(updatedPicks),
 					});
-					// this is NOT working as anticipated
 					if (postPicksRes) {
-						// console.log("something else happened");
 						setIsSubmitted(picks);
 						getAllPicks();
 					}
@@ -369,27 +333,9 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 			};
 
 			const checkForGame = async (pick) => {
-				// leaving comments below in because I can't see where we talked about
-				// this in last code review:
-
-				// needed to POST data returned from this checkForGame, not PUT,
-				// so i seperated function from comparePicks to allow for different fetch methods
-				//
-				// are some variables, like declaring updatedPicks in both functions
-				// a bit redundant?
-				// kept them seperate because each function needs to run independantly
-				// of the other, but both need to be populated simultaneously AND if the
-				// results of either function were sent to the wrong fetch it would
-				// mess up the data...
-				//
-				// you mentioned an insert/update query though...is this a use case
-				// for something like that?
 				let updatedPicks = [];
-				// console.log("checking...", pick.game_id);
 				const submissionCheck = isSubmitted.some((obj) => obj.game_id === pick.game_id);
-				// console.log(submissionCheck);
 				if (!submissionCheck) {
-					// console.log(pick);
 					updatedPicks.push(pick);
 				}
 				if (updatedPicks.length) {
@@ -401,9 +347,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 						method: "POST",
 						body: JSON.stringify(updatedPicks),
 					});
-					// this is NOT working as anticipated
 					if (postPicksRes) {
-						// console.log("more somethings happened");
 						setIsSubmitted(picks);
 						getAllPicks();
 					}
@@ -412,11 +356,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 
 			picks.forEach(comparePicks);
 			picks.forEach(checkForGame);
-			// console.log("IS: ", isSubmitted);
 		} else {
-			console.log("no picks yet");
-			// console.log(picks);
-
 			// const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
 			// 	method: "POST",
 			// 	body: JSON.stringify(picks),
@@ -426,13 +366,6 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 				body: JSON.stringify(picks),
 			});
 			if (postPicksRes) {
-				// console.log("something happened");
-				// feels like more can be done here to ensure confirmation of successful
-				// pikc submission
-
-				// moved into this if statement to ensure that post was successful
-				// before setting picks to isSubmitted...did I do that right?
-				// I DID NOT!
 				setIsSubmitted(picks);
 				getAllPicks();
 			}
@@ -592,7 +525,6 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 							* If successfully submitted, picks will appear below in the "Pick History" section.
 						</p>
 					</div>
-					{/* temp add to provide space at bottom of page */}
 					<div>
 						<PickView
 							allPicks={allPicks}
@@ -601,6 +533,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 							teams={teams}
 						/>
 					</div>
+					{/* temp add to provide space at bottom of page */}
 					<div className='mt-8'>.</div>
 				</div>
 			) : (

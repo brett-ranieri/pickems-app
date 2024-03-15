@@ -1,4 +1,3 @@
-// test Users table
 const stats = [
 	{ id: "101", name: "Team with Most Points" },
 	{ id: "201", name: "Team with Least Points" },

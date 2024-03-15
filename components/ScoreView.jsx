@@ -12,9 +12,6 @@ export const ScoreView = ({ allPicks, allStatPicks, user, handleViewChange, logo
 	let allStatScores = [];
 	let allOverallScores = [];
 
-	// console.log("SV:", user);
-	// console.log("logging out of SV", baseUrl);
-
 	const getGames = async () => {
 		// const results = await fetch(`${baseUrl}/api/games`);
 		const results = await fetch(`https://pickems-app.vercel.app/api/games`);
@@ -48,7 +45,6 @@ export const ScoreView = ({ allPicks, allStatPicks, user, handleViewChange, logo
 	users.forEach(getUserScore);
 
 	const calcStatScore = async (user) => {
-		console.log(user);
 		let statScore = 0;
 		const userPicks = allStatPicks.filter((pick) => {
 			return pick.user_id === user.id;
@@ -69,13 +65,10 @@ export const ScoreView = ({ allPicks, allStatPicks, user, handleViewChange, logo
 		const userGameScore = allGameScores.find((score) => {
 			return score.user === user.id;
 		});
-		console.log(userGameScore);
 		const userStatScore = allStatScores.find((score) => {
 			return score.user === user.id;
 		});
-		console.log(userStatScore);
 		const userOverallScore = userGameScore.score + userStatScore.score;
-		console.log(userOverallScore);
 		allOverallScores.push({ user: user.id, name: user.name, score: userOverallScore });
 	};
 	users.forEach(calcOverallScore);
@@ -84,9 +77,6 @@ export const ScoreView = ({ allPicks, allStatPicks, user, handleViewChange, logo
 		getGames();
 		// getAllPicks();
 	}, []);
-
-	// console.log("SV", allPicks);
-	// console.log(games);
 
 	//sort scores in descending order
 	allGameScores.sort((a, b) => parseInt(b.score) - parseInt(a.score));

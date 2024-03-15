@@ -1,7 +1,6 @@
 const client = require("./elephantsql.js");
 
 export default async function statPicks(req, res) {
-	// console.log("request: ", req);
 	const allowedReqTypes = ["GET"];
 	if (!allowedReqTypes.includes(req.method)) {
 		// idk if 401 is right

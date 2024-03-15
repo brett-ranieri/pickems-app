@@ -1,7 +1,6 @@
 const client = require("./elephantsql.js");
 
 export default async function submitPicks(req, res) {
-	// console.log("request: ", req);
 	const allowedReqTypes = ["POST", "PUT"];
 	if (!allowedReqTypes.includes(req.method)) {
 		// idk if 401 is right
@@ -35,7 +34,6 @@ export default async function submitPicks(req, res) {
 			// moved return up into this if statement because it wants results.rows
 			res.json(results.rows);
 		} else if (req.method === "PUT") {
-			console.log(req.body);
 			const updatedPicks = JSON.parse(req.body);
 			// is it bad form to parse here and not stringify again before query?
 			updatedPicks.forEach(async function (updatedPick) {
