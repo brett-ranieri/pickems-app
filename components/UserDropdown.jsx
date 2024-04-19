@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 
+
 export const UserDropdown = ({ users, selectUser }) => {
 	const handleUserChange = (e) => {
 		const value = parseInt(e.target.value);
 		const selectedUser = users.filter((user) => user.id === value);
+
 		//need index here...why?
-		selectUser(selectedUser[0]);
+		setUserState(selectedUser);
 	};
 	return (
 		<div className='bg-football-on-field bg-cover h-screen'>

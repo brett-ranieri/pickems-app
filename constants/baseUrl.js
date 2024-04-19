@@ -1,4 +1,5 @@
 const baseUrl =
+
 	process.env.VERCEL_ENV === "production"
 		? `https://pickems-app.vercel.app`
 		: "http://localhost:3000";
@@ -9,5 +10,6 @@ const baseUrl =
 // replace the production variable with your hard coded vercel production url
 // then go all through the code and make everything baseurl. and commit. and test on vercel.
 export default baseUrl;
+
 
 // https://vercel.com/docs/projects/environment-variables/system-environment-variables

@@ -25,14 +25,16 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	const [isSubmitted, setIsSubmitted] = useState([]);
 	const [isStatSubmitted, setIsStatSubmitted] = useState([]);
 	// needed to set to null for initial load
-	const [user, setUser] = useState(null);
+	const [userState, setUserState] = useState(null);
+
 
 	const selectUser = (user) => {
 		setUser(user);
 	};
 
+
 	const logout = () => {
-		setUser(null);
+		setUserState(null);
 	};
 
 	const handleViewChange = () => {
@@ -44,6 +46,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	};
 
 	const remaingTeams = [{ id: "25" }, { id: "12" }];
+
 
 	const getGames = async () => {
 		const results = await fetch(`${baseUrl}/api/games?sent=true`);
@@ -76,6 +79,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 		const prevPicks = await results.json();
 		const userPicks = prevPicks.filter((pick) => {
 			return pick.user_id === userId;
+
 		});
 		if (userPicks.length) {
 			setPicks(userPicks);
@@ -84,7 +88,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 			setPicks([]);
 			setIsSubmitted([]);
 		}
-	};
+
 
 	const getStatPicks = async (userId) => {
 		// wanted to do this with conditional but wasn't sure how to handle that with the join
@@ -98,11 +102,13 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 		if (userPicks.length) {
 			setStatPicks(userPicks);
 			setIsStatSubmitted(userPicks);
+
 		} else {
 			setStatPicks([]);
 			setIsStatSubmitted([]);
 		}
 	};
+
 
 	// 6th
 	// these two useeffects are a problem for a number of reasons
@@ -134,32 +140,38 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 		}
 	}, [user]);
 
+
 	const clicked = async (id, gameId, week) => {
 		const pick = {
-			user_id: user.id,
+			user_id: userState.id,
 			chosen_team: id,
 			game_id: gameId,
 			week: week,
 		};
+
 		const tempPicks = picks?.filter((pick) => pick.game_id !== gameId);
 		setPicks([...tempPicks, pick]);
 	};
 
 	const statClicked = async (id, gameId, week) => {
+
 		const pick = {
-			user_id: user.id,
+			user_id: userState.id,
 			chosen_team: id,
 			game_id: gameId,
 			// this key allows me to hard code the week for now
 			week: 5,
 		};
+
 		const tempStatPicks = statPicks?.filter((pick) => pick.game_id !== gameId);
 		setStatPicks([...tempStatPicks, pick]);
+
 	};
 
 	const handleSubmit = async () => {
 		//if statement to handle statPicks
 		if (statPicks.length) {
+
 			if (isStatSubmitted.length) {
 				const comparePicks = async (pick) => {
 					// 4th
@@ -235,8 +247,24 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 							setIsStatSubmitted(statPicks);
 							getAllStatPicks();
 						}
+
 					}
+
+						// START OF WHAT ALLISON CHANGED
+						console.log('🍇 271, POST of some kind')
+						setIsStatSubmitted(statPicks);
+
+						console.log('OTHER PICKS HERE!!!!', otherPicks)
+						console.log('🍓 NEW STAT PICKS', allStatPicks, theNewStatPicks, thePutStatPicks)
+						setStatPicks([...otherPicks, ...theNewStatPicks, ...thePutStatPicks])
+						// filtered all stat picks to not include the user's picks spread with the user's stat picks
+						// result is one less network call
+						const combinedStatPicks = [...allStatPicks.filter(x => x.user_id !== userState.id), ...otherPicks, ...theNewStatPicks, ...thePutStatPicks]
+						setAllStatPicks(combinedStatPicks)
+						// END OF WHAT ALLISON CHANGED
+					
 				};
+
 
 				// 3rd
 				// any function that you're calling in a foreach or a for of or any loop
@@ -254,18 +282,30 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 				statPicks.forEach(comparePicks);
 				statPicks.forEach(checkForGame);
 			} else {
+
 				const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
 					method: "POST",
 					body: JSON.stringify(statPicks),
 				});
 				if (postPicksRes) {
+
 					setIsStatSubmitted(statPicks);
-					getAllStatPicks();
+					const theStatPicks = await postPicksRes.json()
+					console.log('🍓 ALL STAT PICKS', allStatPicks, theStatPicks)
+					setStatPicks(theStatPicks)
+					// filtered all stat picks to not include the user's picks spread with the user's stat picks
+					// result is one less network call
+					const combinedStatPicks = [...allStatPicks.filter(x => x.user_id !== userState.id), ...theStatPicks]
+					setAllStatPicks(combinedStatPicks)
+					// END OF WHAT ALLISON CHANGED
+					// getAllStatPicks();
 				}
 			}
 		}
+
 		// handling picks from here down
 		if (isSubmitted.length) {
+
 			const comparePicks = async (pick) => {
 				let updatedPicks = [];
 				isSubmitted.forEach(function (submittedPick) {
@@ -276,59 +316,71 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					}
 				});
 				if (updatedPicks.length) {
+
 					const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
 						method: "PUT",
 						body: JSON.stringify(updatedPicks),
 					});
 					if (postPicksRes) {
+
 						setIsSubmitted(picks);
-						getAllPicks();
+						const updatedAllPicks = [...allPicks.filter(x => x.user_id !== userState.id), ...picks]
+						setAllPicks(updatedAllPicks)
 					}
 				}
 			};
 
 			const checkForGame = async (pick) => {
 				let updatedPicks = [];
+
 				const submissionCheck = isSubmitted.some((obj) => obj.game_id === pick.game_id);
 				if (!submissionCheck) {
 					updatedPicks.push(pick);
 				}
 				if (updatedPicks.length) {
+
 					const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
 						method: "POST",
 						body: JSON.stringify(updatedPicks),
 					});
 					if (postPicksRes) {
+
 						setIsSubmitted(picks);
-						getAllPicks();
+						const updatedAllPicks = [...allPicks.filter(x => x.user_id !== userState.id), ...picks]
+						setAllPicks(updatedAllPicks)
 					}
 				}
 			};
 
 			picks.forEach(comparePicks);
 			picks.forEach(checkForGame);
+
 		} else {
+
 			const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
 				method: "POST",
 				body: JSON.stringify(picks),
 			});
 			if (postPicksRes) {
+
 				setIsSubmitted(picks);
-				getAllPicks();
+				const updatedAllPicks = [...allPicks.filter(x => x.user_id !== userState.id), ...picks]
+				setAllPicks(updatedAllPicks)
 			}
 		}
 	};
 
+
 	return (
 		<>
-			{!user ? (
+			{!userState ? (
 				<div>
 					<UserDropdown
 						users={users}
-						handleUserChange={() => handleUserChange()}
+						// handleUserChange={() => handleUserChange()}
 						// need to pass the user to selectUser otherwise it just retuns
 						// undefined when function is called.
-						selectUser={(user) => selectUser(user)}
+						setUserState={setUserState}
 					/>
 				</div>
 			) : view ? (
@@ -349,7 +401,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 						</button>
 					</div>
 					<div className='bg-lime-300 bg-opacity-80 m-4 p-1 rounded'>
-						<h1 className='text-3xl text-lime-800 font-bold m-2'>Welcome {user.name}!</h1>
+						<h1 className='text-3xl text-lime-800 font-bold m-2'>Welcome {userState.name}!</h1>
 						<p className='text-black m-2 ml-4'>
 							It's the Super Bowl baby!!
 							<br />
@@ -429,10 +481,10 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 							))}
 						</div>
 						<div className='m-2 mr-8 ml-8 mb-4'>
-							{user.id === 10 ? (
+							{userState.id === 10 ? (
 								<div>
 									<p className='text-lg text-white font-bold m-2'>
-										WAIT! <span classname='underline'>HOW</span> are you {user.name}?
+										WAIT! <span classname='underline'>HOW</span> are you {userState.name}?
 									</p>
 									<p className='text-sm text-white m-2'>
 										It's been about two weeks since we last saw you and those voluptuous
@@ -441,7 +493,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 								</div>
 							) : (
 								<div>
-									<p className='text-lg text-white font-bold m-2'>WAIT! Are you {user.name}?</p>
+									<p className='text-lg text-white font-bold m-2'>WAIT! Are you {userState.name}?</p>
 									<p className='text-sm text-lime-300 m-2'>
 										If not, logout to go back to the menu and be sure to select the right user in
 										the dropdown.
@@ -474,7 +526,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 						<PickView
 							allPicks={allPicks}
 							allStatPicks={allStatPicks}
-							user={user}
+							user={userState}
 							teams={teams}
 						/>
 					</div>
@@ -486,9 +538,10 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					<ScoreView
 						allPicks={allPicks}
 						allStatPicks={allStatPicks}
-						user={user}
+						user={userState}
 						logout={() => logout()}
 						handleViewChange={() => handleViewChange()}
+						baseUrl={baseUrl}
 					/>
 				</div>
 			)}
@@ -508,18 +561,18 @@ export async function getServerSideProps() {
 		// const gamesResults = await fetch(`${baseUrl}/api/games?sent=true`);
 		// if (!gamesResults.ok) {
 		// 	const errObj = await gamesResults.json()
-		// 	console.log(errObj)
+		// 	// console.log(errObj)
 		//   }
 		// const upcomingGames = await gamesResults.json();
 
 		// const teamsResults = await fetch(`${baseUrl}/api/teams`);
 		// if (!teamsResults.ok) {
 		// 	const errObj = await teamsResults.json()
-		// 	console.log(errObj)
+		// 	// console.log(errObj)
 		//   }
 		// const teams = await teamsResults.json();
 
-		console.log(baseUrl);
+		// console.log(baseUrl);
 
 		return {
 			props: {
@@ -529,6 +582,6 @@ export async function getServerSideProps() {
 			},
 		};
 	} catch (error) {
-		console.log(error);
+		// console.log(error);
 	}
 }

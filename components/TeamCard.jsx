@@ -46,7 +46,7 @@ export const TeamCard = ({ team, clicked, game, picks, history }) => {
 					className='w-80 h-10 mt-4 font-bold flex items-center justify-center rounded hover:cursor-pointer border-white border-4'
 					style={{ backgroundColor: `#${team?.color}`, color: `#${team?.alt_color}` }}
 				>
-					{team.display_name}
+					{team?.display_name}
 				</div>
 			) : (
 				// this is basically isPicked === false

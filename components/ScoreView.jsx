@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { ScoreCard } from "../components/ScoreCard";
 import users from "../constants/users";
-import baseUrl from "../constants/baseUrl";
 import stat_results from "../constants/stats-results";
 
-export const ScoreView = ({ allPicks, allStatPicks, user, handleViewChange, logout }) => {
+export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewChange, logout }) => {
 	const [games, setGames] = useState([]);
 	// const [picks, setPicks] = useState([]);
 	// const [allPicks, setAllPicks] = useState([]);
@@ -12,18 +11,13 @@ export const ScoreView = ({ allPicks, allStatPicks, user, handleViewChange, logo
 	let allStatScores = [];
 	let allOverallScores = [];
 
+
 	const getGames = async () => {
+
 		const results = await fetch(`${baseUrl}/api/games`);
 		const upcomingGames = await results.json();
 		setGames(upcomingGames);
 	};
-
-	// const getAllPicks = async () => {
-	// 	const results = await fetch(`${baseUrl}/api/picks`);
-	// 	// const results = await fetch(`https://pickems-app.vercel.app/api/picks`);
-	// 	const allPicks = await results.json();
-	// 	setAllPicks(allPicks);
-	// };
 
 	// re-factored all previous functions to all run in a loop
 	const getUserScore = async (user) => {
@@ -44,6 +38,7 @@ export const ScoreView = ({ allPicks, allStatPicks, user, handleViewChange, logo
 	users.forEach(getUserScore);
 
 	const calcStatScore = async (user) => {
+
 		let statScore = 0;
 		const userPicks = allStatPicks.filter((pick) => {
 			return pick.user_id === user.id;
@@ -64,10 +59,12 @@ export const ScoreView = ({ allPicks, allStatPicks, user, handleViewChange, logo
 		const userGameScore = allGameScores.find((score) => {
 			return score.user === user.id;
 		});
+
 		const userStatScore = allStatScores.find((score) => {
 			return score.user === user.id;
 		});
 		const userOverallScore = userGameScore.score + userStatScore.score;
+
 		allOverallScores.push({ user: user.id, name: user.name, score: userOverallScore });
 	};
 	users.forEach(calcOverallScore);
@@ -77,11 +74,12 @@ export const ScoreView = ({ allPicks, allStatPicks, user, handleViewChange, logo
 		// getAllPicks();
 	}, []);
 
+
 	//sort scores in descending order
 	allGameScores.sort((a, b) => parseInt(b.score) - parseInt(a.score));
 	allStatScores.sort((a, b) => parseInt(b.score) - parseInt(a.score));
 	allOverallScores.sort((a, b) => parseInt(b.score) - parseInt(a.score));
-	console.log(allOverallScores);
+	// console.log(allOverallScores);
 
 	return (
 		<div className='bg-side-line bg-cover'>
