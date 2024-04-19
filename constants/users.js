@@ -1,4 +1,3 @@
-// test Users table
 const users = [
 	{ id: 1, name: "Allison" },
 	{ id: 2, name: "Andrew" },

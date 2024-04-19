@@ -9,7 +9,6 @@ export const TeamCard = ({ team, clicked, game, picks, history }) => {
 		} else if (picks.filter((pick) => pick.game_id === game.id).length > 0) {
 			const pick = picks.filter((pick) => pick.game_id === game.id);
 			const chosenTeam = pick[0].chosen_team;
-			// optional chaining used on team throughout component
 			if (chosenTeam === team?.id) {
 				setIsPicked(true);
 			} else {
@@ -19,7 +18,6 @@ export const TeamCard = ({ team, clicked, game, picks, history }) => {
 			setIsPicked(null);
 		}
 	};
-	// // console.log(team.display_name, isPicked);
 
 	useEffect(() => {
 		checkPick();
@@ -30,8 +28,6 @@ export const TeamCard = ({ team, clicked, game, picks, history }) => {
 			{isPicked === null ? (
 				<div
 					className='w-80 h-10 mt-4 font-bold flex items-center justify-center rounded hover:cursor-pointer bg-white'
-					// seemed easier to do outside of tailwind, found solution here:
-					// https://stackoverflow.com/questions/70903204/tailwindcss-custom-background-color-not-working
 					style={{ color: `#${team?.color}` }}
 					onClick={() => clicked(team.id, game.id, game.week)}
 				>
@@ -40,8 +36,6 @@ export const TeamCard = ({ team, clicked, game, picks, history }) => {
 			) : isPicked === true ? (
 				<div
 					className='w-80 h-10 mt-4 font-bold flex items-center justify-center rounded hover:cursor-pointer border-white border-4'
-					// seemed easier to do outside of tailwind, found solution here:
-					// https://stackoverflow.com/questions/70903204/tailwindcss-custom-background-color-not-working
 					style={{ backgroundColor: `#${team?.color}`, color: `#${team?.alt_color}` }}
 					onClick={() => clicked(team.id, game.id, game.week)}
 				>
@@ -50,8 +44,6 @@ export const TeamCard = ({ team, clicked, game, picks, history }) => {
 			) : isPicked === "history" ? (
 				<div
 					className='w-80 h-10 mt-4 font-bold flex items-center justify-center rounded hover:cursor-pointer border-white border-4'
-					// seemed easier to do outside of tailwind, found solution here:
-					// https://stackoverflow.com/questions/70903204/tailwindcss-custom-background-color-not-working
 					style={{ backgroundColor: `#${team?.color}`, color: `#${team?.alt_color}` }}
 				>
 					{team?.display_name}
@@ -68,8 +60,3 @@ export const TeamCard = ({ team, clicked, game, picks, history }) => {
 		</>
 	);
 };
-
-// ENDED UP DOING OUTSIDE OF TAILWIND...
-// tailwind color syntax: declare outside of the style prop
-// const bgColor = `bg-[#${team.color}]`
-// in the div: style={`${bgColor} mt-2`}

@@ -11,11 +11,9 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 	let allStatScores = [];
 	let allOverallScores = [];
 
-	// // console.log("SV:", user);
-	// // console.log("logging out of SV", baseUrl);
 
 	const getGames = async () => {
-		// const results = await fetch(`${baseUrl}/api/games`);
+
 		const results = await fetch(`${baseUrl}/api/games`);
 		const upcomingGames = await results.json();
 		setGames(upcomingGames);
@@ -40,7 +38,7 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 	users.forEach(getUserScore);
 
 	const calcStatScore = async (user) => {
-		// // console.log(user);
+
 		let statScore = 0;
 		const userPicks = allStatPicks.filter((pick) => {
 			return pick.user_id === user.id;
@@ -61,13 +59,12 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 		const userGameScore = allGameScores.find((score) => {
 			return score.user === user.id;
 		});
-		// console.log(userGameScore);
+
 		const userStatScore = allStatScores.find((score) => {
 			return score.user === user.id;
 		});
-		// console.log(userStatScore);
 		const userOverallScore = userGameScore.score + userStatScore.score;
-		// console.log(userOverallScore);
+
 		allOverallScores.push({ user: user.id, name: user.name, score: userOverallScore });
 	};
 	users.forEach(calcOverallScore);
@@ -77,8 +74,6 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 		// getAllPicks();
 	}, []);
 
-	// // console.log("SV", allPicks);
-	// // console.log(games);
 
 	//sort scores in descending order
 	allGameScores.sort((a, b) => parseInt(b.score) - parseInt(a.score));

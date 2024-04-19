@@ -4,7 +4,6 @@ export const ScoreCard = ({ score, user }) => {
 	const [current, setCurrent] = useState(false);
 
 	const checkCurrent = (score, user) => {
-		// add optional chaining to fix undefined error on selected for initial load
 		if (user?.id === score.user) {
 			setCurrent(true);
 		}
@@ -14,8 +13,6 @@ export const ScoreCard = ({ score, user }) => {
 		}
 	};
 
-	// used same solution to race effect that I used in score_view...
-	// have useEffect listen for user, if exists then run checkCurrent
 	useEffect(() => {
 		if (user) {
 			checkCurrent(score, user);
