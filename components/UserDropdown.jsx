@@ -19,6 +19,12 @@ export const UserDropdown = ({ users, selectUser }) => {
 					<p className='text-4xl font-bold mt-4 mb-4'>SUPER BOWL</p>
 					<p className='text-4xl font-bold mt-4 mb-4'>Pick'ems</p>
 				</div>
+				<div className='flex flex-col justify-center items-center text-center bg-gradient-to-l from-slate-400 to-slate-700 w-3/5 rounded-2xl p-4 mb-4'>
+					<p className='text-4xl font-bold mb-4 mt-4 text-red-600'>UNDER CONSTRUCTION!</p>
+					<p className='mb-2 font-bold text-red-200'>
+						Expected functionality may not work at this time. Check back for updates...
+					</p>
+				</div>
 				<div className='flex flex-col justify-center items-center text-center bg-gradient-to-r from-amber-300 to-amber-500 w-3/5 rounded-2xl'>
 					<p className='m-2 mt-4 font-bold'>Who the heck are ya?</p>
 					{/* needed to pass e to handleUserChange to prevent 'e.target.value' from returning undefined */}
