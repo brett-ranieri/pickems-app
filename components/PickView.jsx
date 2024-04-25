@@ -4,20 +4,14 @@ import { StatCard } from "./StatCard";
 import stats from "../constants/stats";
 import superbowlStats from "../constants/superbowl-stats";
 
-export const PickView = ({ allPicks, allStatPicks, user, teams }) => {
-	// const [userPicks, setUserPicks] = useState([]);
-	let userPicks = [];
+export const PickView = ({ userPicks, userStatPicks, user, teams }) => {
+	const week1Picks = userPicks.filter((x) => x.week === 1);
+	const week2Picks = userPicks.filter((x) => x.week === 2);
+	const week3Picks = userPicks.filter((x) => x.week === 3);
+	const week5Picks = userPicks.filter((x) => x.week === 5);
 
-	const initialPicks = allPicks?.filter((pick) => pick.user_id === user.id);
-	const initialStatPicks = allStatPicks?.filter((pick) => pick.user_id === user.id);
-
-	const week1Picks = initialPicks.filter((x) => x.week === 1);
-	const week2Picks = initialPicks.filter((x) => x.week === 2);
-	const week3Picks = initialPicks.filter((x) => x.week === 3);
-	const week5Picks = initialPicks.filter((x) => x.week === 5);
-
-	const week3StatPicks = initialStatPicks.filter((x) => x.week === 3);
-	const week5StatPicks = initialStatPicks.filter((x) => x.week === 5);
+	const week3StatPicks = userStatPicks.filter((x) => x.week === 3);
+	const week5StatPicks = userStatPicks.filter((x) => x.week === 5);
 
 	return (
 		<>

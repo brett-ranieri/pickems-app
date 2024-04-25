@@ -547,8 +547,8 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					</div>
 					<div>
 						<PickView
-							allPicks={allPicks}
-							allStatPicks={allStatPicks}
+							userPicks={picks}
+							userStatPicks={statPicks}
 							user={userState}
 							teams={teams}
 						/>
