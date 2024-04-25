@@ -25,11 +25,13 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	const [isSubmitted, setIsSubmitted] = useState([]);
 	const [isStatSubmitted, setIsStatSubmitted] = useState([]);
 	// needed to set to null for initial load
-	const [user, setUser] = useState(null);
 	const [userState, setUserState] = useState(null);
 
+	console.log(baseUrl);
+	console.log(userState);
+
 	const selectUser = (user) => {
-		setUser(user);
+		setUserState(user);
 	};
 
 	const logout = () => {
@@ -46,64 +48,99 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 
 	const remaingTeams = [{ id: "25" }, { id: "12" }];
 
-	const getGames = async () => {
-		const results = await fetch(`${baseUrl}/api/games?sent=true`);
-		const upcomingGames = await results.json();
-		setGames(upcomingGames);
-	};
+	///////////////////////////// PROD: Async/Await Option of fetch /////////////////////////////////////
+	// const getData = async () => {
+	// 	const gamesRes = await fetch(`${baseUrl}/api/games?sent=true`);
+	// 	const upcomingGames = await gamesRes.json();
+	// 	setGames(upcomingGames);
+	// 	console.log("games ran");
+	// 	const teamsRes = await fetch(`${baseUrl}/api/teams`);
+	// 	const theTeams = await teamsRes.json();
+	// 	setTeams(theTeams);
+	// 	console.log("teams ran");
+	// 	const allPicksRes = await fetch(`${baseUrl}/api/picks`);
+	// 	const theAllPicks = await allPicksRes.json();
+	// 	setAllPicks(theAllPicks);
+	// 	console.log("picks ran");
+	// 	const allStatPicksRes = await fetch(`${baseUrl}/api/stat-picks`);
+	// 	const theAllStatPicks = await allStatPicksRes.json();
+	// 	setAllStatPicks(theAllStatPicks);
+	// 	console.log("stat picks ran");
 
-	const getTeams = async () => {
-		const results = await fetch(`${baseUrl}/api/teams`);
-		const teams = await results.json();
-		setTeams(teams);
-	};
+	// 	const userPicks = theAllPicks.filter((pick) => {
+	// 		return pick.user_id === userState?.id;
+	// 	});
+	// 	console.log(userPicks);
+	// 	if (userPicks.length) {
+	// 		console.log("i have length");
+	// 		setPicks(userPicks);
+	// 		setIsSubmitted(userPicks);
+	// 	}
+	// 	const userStatPicks = theAllStatPicks.filter((pick) => {
+	// 		return pick.user_id === userState?.id;
+	// 	});
+	// 	console.log(userStatPicks);
+	// 	if (userStatPicks.length) {
+	// 		console.log("I also have length");
+	// 		setStatPicks(userStatPicks);
+	// 		setIsStatSubmitted(userStatPicks);
+	// 	}
+	// };
 
-	const getAllPicks = async () => {
-		const results = await fetch(`${baseUrl}/api/picks`);
-		const allPicks = await results.json();
-		setAllPicks(allPicks);
-	};
-
-	const getAllStatPicks = async () => {
-		const results = await fetch(`${baseUrl}/api/stat-picks`);
-		const allPicks = await results.json();
-		setAllStatPicks(allPicks);
-	};
-
-	const getPicks = async (userId) => {
-		// is it necessary to have another fetch here? feels like I should be fetching from
-		// getAllPicks and then use that for this function...
-		const results = await fetch(`${baseUrl}/api/picks`);
-		const prevPicks = await results.json();
-		const userPicks = prevPicks.filter((pick) => {
-			return pick.user_id === userId;
-		});
-		if (userPicks.length) {
-			setPicks(userPicks);
-			setIsSubmitted(userPicks);
-		} else {
-			setPicks([]);
-			setIsSubmitted([]);
+	////////////////////////////// DEV: Promise.all Option of fetch //////////////////////////////////
+	const getData = async () => {
+		try {
+			const [gamesRes, teamsRes, allPicksRes, allStatPicksRes] = await Promise.all([
+				fetch(`${baseUrl}/api/games?sent=true`),
+				fetch(`${baseUrl}/api/teams`),
+				fetch(`${baseUrl}/api/picks`),
+				fetch(`${baseUrl}/api/stat-picks`),
+			]);
+			const [upcomingGames, theTeams, theAllPicks, theAllStatPicks] = await Promise.all([
+				gamesRes.json(),
+				teamsRes.json(),
+				allPicksRes.json(),
+				allStatPicksRes.json(),
+			]);
+			setGames(upcomingGames);
+			console.log("games set");
+			setTeams(theTeams);
+			console.log("teams set");
+			setAllPicks(theAllPicks);
+			console.log("picks set");
+			setStatPicks(theAllStatPicks);
+			console.log("stat picks set");
+			console.log(theAllPicks);
+			console.log(userState);
+			const userPicks = theAllPicks.filter((pick) => {
+				return pick.user_id === userState?.id;
+			});
+			console.log(userPicks);
+			if (userPicks.length) {
+				console.log("i have length");
+				setPicks(userPicks);
+				setIsSubmitted(userPicks);
+			}
+			const userStatPicks = theAllStatPicks.filter((pick) => {
+				return pick.user_id === userState?.id;
+			});
+			console.log(userStatPicks);
+			if (userStatPicks.length) {
+				console.log("I also have length");
+				setStatPicks(userStatPicks);
+				setIsStatSubmitted(userStatPicks);
+			}
+		} catch (error) {
+			console.log(error);
 		}
 	};
 
-	const getStatPicks = async (userId) => {
-		// wanted to do this with conditional but wasn't sure how to handle that with the join
-		// in the picks endpoint. made additional endpoint for fast deployment and then need to
-		// come back and re-factor
-		const results = await fetch(`${baseUrl}/api/stat-picks`);
-		const prevPicks = await results.json();
-		const userPicks = prevPicks.filter((pick) => {
-			return pick.user_id === userId;
-		});
-		if (userPicks.length) {
-			setStatPicks(userPicks);
-			setIsStatSubmitted(userPicks);
-		} else {
-			setStatPicks([]);
-			setIsStatSubmitted([]);
-		}
-	};
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	console.log(picks);
+	console.log("sub", isSubmitted);
+	console.log("stat", statPicks);
+	console.log("stat sub", isStatSubmitted);
 
 	// 6th
 	// these two useeffects are a problem for a number of reasons
@@ -122,18 +159,10 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	// you can have both async await and promise.all in the gssp. its very much the same as up here
 	// theres some examples down there already
 	useEffect(() => {
-		getTeams();
-		getGames();
-		getAllPicks();
-		getAllStatPicks();
-	}, []);
-
-	useEffect(() => {
-		if (user) {
-			getPicks(user.id);
-			getStatPicks(user.id);
+		if (userState) {
+			getData();
 		}
-	}, [user]);
+	}, [userState]);
 
 	const clicked = async (id, gameId, week) => {
 		const pick = {
