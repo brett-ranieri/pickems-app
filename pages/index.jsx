@@ -28,7 +28,6 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	const [userState, setUserState] = useState(null);
 
 	console.log(baseUrl);
-	console.log(userState);
 
 	const selectUser = (user) => {
 		setUserState(user);
