@@ -48,91 +48,91 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	const remaingTeams = [{ id: "25" }, { id: "12" }];
 
 	///////////////////////////// PROD: Async/Await Option of fetch /////////////////////////////////////
-	const getData = async () => {
-		const gamesRes = await fetch(`${baseUrl}/api/games?sent=true`);
-		const upcomingGames = await gamesRes.json();
-		setGames(upcomingGames);
-		console.log("games ran");
-		const teamsRes = await fetch(`${baseUrl}/api/teams`);
-		const theTeams = await teamsRes.json();
-		setTeams(theTeams);
-		console.log("teams ran");
-		const allPicksRes = await fetch(`${baseUrl}/api/picks`);
-		const theAllPicks = await allPicksRes.json();
-		setAllPicks(theAllPicks);
-		console.log("picks ran");
-		const allStatPicksRes = await fetch(`${baseUrl}/api/stat-picks`);
-		const theAllStatPicks = await allStatPicksRes.json();
-		setAllStatPicks(theAllStatPicks);
-		console.log("stat picks ran");
-
-		const userPicks = theAllPicks.filter((pick) => {
-			return pick.user_id === userState?.id;
-		});
-		console.log(userPicks);
-		if (userPicks.length) {
-			console.log("i have length");
-			setPicks(userPicks);
-			setIsSubmitted(userPicks);
-		}
-		const userStatPicks = theAllStatPicks.filter((pick) => {
-			return pick.user_id === userState?.id;
-		});
-		console.log(userStatPicks);
-		if (userStatPicks.length) {
-			console.log("I also have length");
-			setStatPicks(userStatPicks);
-			setIsStatSubmitted(userStatPicks);
-		}
-	};
-
-	////////////////////////////// DEV: Promise.all Option of fetch //////////////////////////////////
 	// const getData = async () => {
-	// 	try {
-	// 		const [gamesRes, teamsRes, allPicksRes, allStatPicksRes] = await Promise.all([
-	// 			fetch(`${baseUrl}/api/games?sent=true`),
-	// 			fetch(`${baseUrl}/api/teams`),
-	// 			fetch(`${baseUrl}/api/picks`),
-	// 			fetch(`${baseUrl}/api/stat-picks`),
-	// 		]);
-	// 		const [upcomingGames, theTeams, theAllPicks, theAllStatPicks] = await Promise.all([
-	// 			gamesRes.json(),
-	// 			teamsRes.json(),
-	// 			allPicksRes.json(),
-	// 			allStatPicksRes.json(),
-	// 		]);
-	// 		setGames(upcomingGames);
-	// 		console.log("games set");
-	// 		setTeams(theTeams);
-	// 		console.log("teams set");
-	// 		setAllPicks(theAllPicks);
-	// 		console.log("picks set");
-	// 		setStatPicks(theAllStatPicks);
-	// 		console.log("stat picks set");
-	// 		console.log(theAllPicks);
-	// 		console.log(userState);
-	// 		const userPicks = theAllPicks.filter((pick) => {
-	// 			return pick.user_id === userState?.id;
-	// 		});
-	// 		console.log(userPicks);
-	// 		if (userPicks.length) {
-	// 			console.log("i have length");
-	// 			setPicks(userPicks);
-	// 			setIsSubmitted(userPicks);
-	// 		}
-	// 		const userStatPicks = theAllStatPicks.filter((pick) => {
-	// 			return pick.user_id === userState?.id;
-	// 		});
-	// 		console.log(userStatPicks);
-	// 		if (userStatPicks.length) {
-	// 			console.log("I also have length");
-	// 			setStatPicks(userStatPicks);
-	// 			setIsStatSubmitted(userStatPicks);
-	// 		}
-	// 	} catch (error) {
-	// 		console.log(error);
+	// 	const gamesRes = await fetch(`${baseUrl}/api/games?sent=true`);
+	// 	const upcomingGames = await gamesRes.json();
+	// 	setGames(upcomingGames);
+	// 	console.log("games ran");
+	// 	const teamsRes = await fetch(`${baseUrl}/api/teams`);
+	// 	const theTeams = await teamsRes.json();
+	// 	setTeams(theTeams);
+	// 	console.log("teams ran");
+	// 	const allPicksRes = await fetch(`${baseUrl}/api/picks`);
+	// 	const theAllPicks = await allPicksRes.json();
+	// 	setAllPicks(theAllPicks);
+	// 	console.log("picks ran");
+	// 	const allStatPicksRes = await fetch(`${baseUrl}/api/stat-picks`);
+	// 	const theAllStatPicks = await allStatPicksRes.json();
+	// 	setAllStatPicks(theAllStatPicks);
+	// 	console.log("stat picks ran");
+
+	// 	const userPicks = theAllPicks.filter((pick) => {
+	// 		return pick.user_id === userState?.id;
+	// 	});
+	// 	console.log(userPicks);
+	// 	if (userPicks.length) {
+	// 		console.log("i have length");
+	// 		setPicks(userPicks);
+	// 		setIsSubmitted(userPicks);
+	// 	}
+	// 	const userStatPicks = theAllStatPicks.filter((pick) => {
+	// 		return pick.user_id === userState?.id;
+	// 	});
+	// 	console.log(userStatPicks);
+	// 	if (userStatPicks.length) {
+	// 		console.log("I also have length");
+	// 		setStatPicks(userStatPicks);
+	// 		setIsStatSubmitted(userStatPicks);
 	// 	}
 	// };
+
+	////////////////////////////// DEV: Promise.all Option of fetch //////////////////////////////////
+	const getData = async () => {
+		try {
+			const [gamesRes, teamsRes, allPicksRes, allStatPicksRes] = await Promise.all([
+				fetch(`${baseUrl}/api/games?sent=true`),
+				fetch(`${baseUrl}/api/teams`),
+				fetch(`${baseUrl}/api/picks`),
+				fetch(`${baseUrl}/api/stat-picks`),
+			]);
+			const [upcomingGames, theTeams, theAllPicks, theAllStatPicks] = await Promise.all([
+				gamesRes.json(),
+				teamsRes.json(),
+				allPicksRes.json(),
+				allStatPicksRes.json(),
+			]);
+			setGames(upcomingGames);
+			console.log("games set");
+			setTeams(theTeams);
+			console.log("teams set");
+			setAllPicks(theAllPicks);
+			console.log("picks set");
+			setStatPicks(theAllStatPicks);
+			console.log("stat picks set");
+			console.log(theAllPicks);
+			console.log(userState);
+			const userPicks = theAllPicks.filter((pick) => {
+				return pick.user_id === userState?.id;
+			});
+			console.log(userPicks);
+			if (userPicks.length) {
+				console.log("i have length");
+				setPicks(userPicks);
+				setIsSubmitted(userPicks);
+			}
+			const userStatPicks = theAllStatPicks.filter((pick) => {
+				return pick.user_id === userState?.id;
+			});
+			console.log(userStatPicks);
+			if (userStatPicks.length) {
+				console.log("I also have length");
+				setStatPicks(userStatPicks);
+				setIsStatSubmitted(userStatPicks);
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -231,7 +231,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 							// and set that array to state
 							// DO NOT CALL getAllStatPicks here. we're gonna refactor that into a page load function anyway. or gssp. tbd.
 							setIsStatSubmitted(statPicks);
-							getAllStatPicks();
+							// getAllStatPicks();
 						}
 					}
 				};
