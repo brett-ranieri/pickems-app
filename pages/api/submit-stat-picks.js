@@ -36,6 +36,19 @@ export default async function submitPicks(req, res) {
 			res.json(results.rows);
 		} else if (req.method === "PUT") {
 			console.log("putting");
+			const updatedPicks = JSON.parse(req.body);
+			console.log(updatedPicks);
+			const gameIdsToDelete = updatedPicks.map((x) => x.game_id);
+			console.log(gameIdsToDelete);
+			const paramCount = updatedPicks.map((_, index) => "$" + (index + 2)).join(",");
+			console.log(paramCount);
+			await client.query(
+				`
+				delete from public.stat_picks where user_id=$1 and game_id in (${paramCount})
+				`,
+				[updatedPicks[0].user_id, ...gameIdsToDelete]
+			);
+			console.log("deleted");
 			// 2nd
 			// here you need to be able to update more than one pick at once
 			// the way this is set up you need to make these network calls in a loop becuas e ou cant pass an array via json_populate_recordset
@@ -55,6 +68,7 @@ export default async function submitPicks(req, res) {
 			// then after your delete query you need to take the req.body and insert it into public.stat_picks as a json_populate_recordset
 			// this is the same query as your post. if you wanna be a good developer, abstract the query as a string and just call it in both locations.
 			// then return results.rows
+			res.json();
 		}
 	} catch (err) {
 		console.log(err);
