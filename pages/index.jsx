@@ -264,7 +264,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 						});
 						if (postPicksRes) {
 							setIsStatSubmitted(statPicks);
-							getAllStatPicks();
+							// getAllStatPicks();
 						}
 					}
 
