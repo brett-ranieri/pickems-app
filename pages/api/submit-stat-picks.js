@@ -51,22 +51,22 @@ export default async function submitPicks(req, res) {
 			console.log("deleted");
 			results = await client.query(
 				`
-        INSERT INTO public.stat_picks
-          ( 
-            user_id,
-            chosen_team,
-            game_id,
+			  INSERT INTO public.stat_picks
+			    (
+			      user_id,
+			      chosen_team,
+			      game_id,
 						week
-          )
-        SELECT
-            user_id,
-            chosen_team,
-            game_id,
+			    )
+			  SELECT
+			      user_id,
+			      chosen_team,
+			      game_id,
 						week
-        FROM
-            json_populate_recordset(null::public.stat_picks, $1)
-        RETURNING *
-        `,
+			  FROM
+			      json_populate_recordset(null::public.stat_picks, $1)
+			  RETURNING *
+			  `,
 				[req.body]
 			);
 			console.log(results.rows);
