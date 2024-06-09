@@ -204,7 +204,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					(pick) => pick.game_id === submittedPick.game_id
 				);
 				if (pickInQuestion) {
-					if (pickInQuestion.winner === submittedPick.winner) {
+					if (pickInQuestion.chosen_team === submittedPick.chosen_team) {
 						// console.log("I'm untouched!");
 						untouchedPicks.push(submittedPick);
 					} else {
@@ -270,7 +270,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 		reviewStatPicks(statPicks);
 
 		const reviewPicks = async (picks) => {
-			console.log("game comparing");
+			// console.log("game comparing");
 			let newPicks = [];
 			let updatedPicks = [];
 			let untouchedPicks = [];
@@ -281,23 +281,23 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 				// console.log("GAMEEEEEEE", pickInQuestion);
 				if (pickInQuestion) {
 					if (pickInQuestion.chosen_team === submittedPick.chosen_team) {
-						console.log("NO CHANGE");
-						console.log(submittedPick);
-						console.log(pickInQuestion);
+						// console.log("NO CHANGE");
+						// console.log(submittedPick);
+						// console.log(pickInQuestion);
 						untouchedPicks.push(submittedPick);
 					} else {
-						console.log("I've been changed!!");
-						console.log(submittedPick);
-						console.log(pickInQuestion);
+						// console.log("I've been changed!!");
+						// console.log(submittedPick);
+						// console.log(pickInQuestion);
 						updatedPicks.push(submittedPick);
 					}
 				} else {
 					// console.log("new game baby!");
 					newPicks.push(submittedPick);
 				}
-				console.log("game new", newPicks.length);
-				console.log("game updated", updatedPicks.length);
-				console.log("game untouched", untouchedPicks.length);
+				// console.log("game new", newPicks.length);
+				// console.log("game updated", updatedPicks.length);
+				// console.log("game untouched", untouchedPicks.length);
 			});
 			if (newPicks.length) {
 				// console.log("I'm new");
