@@ -191,34 +191,34 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	const handleSubmit = async () => {
 		//if statement to handle statPicks
 		// if (statPicks.length) {
-		const reviewStatPicks = async (picks) => {
-			console.log("comparing");
+		const reviewStatPicks = async (statPicks) => {
+			// console.log("comparing");
 			let newPicks = [];
 			let updatedPicks = [];
 			let untouchedPicks = [];
 			let postedPicks = [];
 			let puttedPicks = [];
 
-			picks.forEach(function (submittedPick) {
+			statPicks.forEach(function (submittedPick) {
 				const pickInQuestion = isStatSubmitted.find(
 					(pick) => pick.game_id === submittedPick.game_id
 				);
 				if (pickInQuestion) {
 					if (pickInQuestion.winner === submittedPick.winner) {
-						console.log("I'm untouched!");
+						// console.log("I'm untouched!");
 						untouchedPicks.push(submittedPick);
 					} else {
-						console.log("I was changed!");
+						// console.log("I was changed!");
 						updatedPicks.push(submittedPick);
 					}
 				} else {
-					console.log("I dont exist");
+					// console.log("I dont exist");
 					newPicks.push(submittedPick);
 				}
 			});
-			console.log("new", newPicks.length);
-			console.log("updated", updatedPicks.length);
-			console.log("untouched", untouchedPicks.length);
+			// console.log("new", newPicks.length);
+			// console.log("updated", updatedPicks.length);
+			// console.log("untouched", untouchedPicks.length);
 			// 4th
 			// now you're passing this `picks`, instead of `pick`, so change your variable name
 			// loop over picks, for each pick run your isStatSubmitted code - that function is good
@@ -234,7 +234,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 			// put method in the endpoint to handle an array
 			// bring the `post` method up here and do like a `if updatedPicks.length run this put` type of logic for both your "picks to update" and "new picks" arrays
 			if (newPicks.length) {
-				console.log("I'm new");
+				// console.log("I'm new");
 				const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
 					method: "POST",
 					body: JSON.stringify(newPicks),
@@ -242,7 +242,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 				postedPicks = await postPicksRes.json();
 			}
 			if (updatedPicks.length) {
-				console.log("I'm long");
+				// console.log("I'm long");
 				const putPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
 					method: "PUT",
 					body: JSON.stringify(updatedPicks),
@@ -268,6 +268,60 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 		};
 
 		reviewStatPicks(statPicks);
+
+		const reviewPicks = async (picks) => {
+			console.log("game comparing");
+			let newPicks = [];
+			let updatedPicks = [];
+			let untouchedPicks = [];
+			let postedPicks = [];
+			let puttedPicks = [];
+			picks.forEach(function (submittedPick) {
+				const pickInQuestion = isSubmitted.find((pick) => pick.game_id === submittedPick.game_id);
+				// console.log("GAMEEEEEEE", pickInQuestion);
+				if (pickInQuestion) {
+					if (pickInQuestion.chosen_team === submittedPick.chosen_team) {
+						console.log("NO CHANGE");
+						console.log(submittedPick);
+						console.log(pickInQuestion);
+						untouchedPicks.push(submittedPick);
+					} else {
+						console.log("I've been changed!!");
+						console.log(submittedPick);
+						console.log(pickInQuestion);
+						updatedPicks.push(submittedPick);
+					}
+				} else {
+					// console.log("new game baby!");
+					newPicks.push(submittedPick);
+				}
+				console.log("game new", newPicks.length);
+				console.log("game updated", updatedPicks.length);
+				console.log("game untouched", untouchedPicks.length);
+			});
+			if (newPicks.length) {
+				// console.log("I'm new");
+				const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
+					method: "POST",
+					body: JSON.stringify(newPicks),
+				});
+				postedPicks = await postPicksRes.json();
+			}
+			if (updatedPicks.length) {
+				// console.log("I'm long");
+				const putPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
+					method: "PUT",
+					body: JSON.stringify(updatedPicks),
+				});
+				puttedPicks = await putPicksRes.json();
+			}
+			console.log("game posted", postedPicks.length, postedPicks);
+			console.log("game putted", puttedPicks.length, puttedPicks);
+			console.log("game untouched", untouchedPicks.length);
+			setPicks([...postedPicks, ...puttedPicks, ...untouchedPicks]);
+			setIsSubmitted([...postedPicks, ...puttedPicks, ...untouchedPicks]);
+		};
+		reviewPicks(picks);
 		// if (isStatSubmitted.length) {
 		// 	const checkForGame = async (pick) => {
 		// 		// leaving comments below in because I can't see where we talked about
@@ -338,68 +392,68 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 		// }
 
 		// handling picks from here down
-		if (isSubmitted.length) {
-			const comparePicks = async (pick) => {
-				let updatedPicks = [];
-				isSubmitted.forEach(function (submittedPick) {
-					if (pick.game_id === submittedPick.game_id) {
-						if (pick.chosen_team !== submittedPick.chosen_team) {
-							updatedPicks.push(pick);
-						}
-					}
-				});
-				if (updatedPicks.length) {
-					const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
-						method: "PUT",
-						body: JSON.stringify(updatedPicks),
-					});
-					if (postPicksRes) {
-						setIsSubmitted(picks);
-						const updatedAllPicks = [
-							...allPicks.filter((x) => x.user_id !== userState.id),
-							...picks,
-						];
-						setAllPicks(updatedAllPicks);
-					}
-				}
-			};
+		// if (isSubmitted.length) {
+		// 	const comparePicks = async (pick) => {
+		// 		let updatedPicks = [];
+		// 		isSubmitted.forEach(function (submittedPick) {
+		// 			if (pick.game_id === submittedPick.game_id) {
+		// 				if (pick.chosen_team !== submittedPick.chosen_team) {
+		// 					updatedPicks.push(pick);
+		// 				}
+		// 			}
+		// 		});
+		// 		if (updatedPicks.length) {
+		// 			const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
+		// 				method: "PUT",
+		// 				body: JSON.stringify(updatedPicks),
+		// 			});
+		// 			if (postPicksRes) {
+		// 				setIsSubmitted(picks);
+		// 				const updatedAllPicks = [
+		// 					...allPicks.filter((x) => x.user_id !== userState.id),
+		// 					...picks,
+		// 				];
+		// 				setAllPicks(updatedAllPicks);
+		// 			}
+		// 		}
+		// 	};
 
-			const checkForGame = async (pick) => {
-				let updatedPicks = [];
+		// 	const checkForGame = async (pick) => {
+		// 		let updatedPicks = [];
 
-				const submissionCheck = isSubmitted.some((obj) => obj.game_id === pick.game_id);
-				if (!submissionCheck) {
-					updatedPicks.push(pick);
-				}
-				if (updatedPicks.length) {
-					const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
-						method: "POST",
-						body: JSON.stringify(updatedPicks),
-					});
-					if (postPicksRes) {
-						setIsSubmitted(picks);
-						const updatedAllPicks = [
-							...allPicks.filter((x) => x.user_id !== userState.id),
-							...picks,
-						];
-						setAllPicks(updatedAllPicks);
-					}
-				}
-			};
+		// 		const submissionCheck = isSubmitted.some((obj) => obj.game_id === pick.game_id);
+		// 		if (!submissionCheck) {
+		// 			updatedPicks.push(pick);
+		// 		}
+		// 		if (updatedPicks.length) {
+		// 			const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
+		// 				method: "POST",
+		// 				body: JSON.stringify(updatedPicks),
+		// 			});
+		// 			if (postPicksRes) {
+		// 				setIsSubmitted(picks);
+		// 				const updatedAllPicks = [
+		// 					...allPicks.filter((x) => x.user_id !== userState.id),
+		// 					...picks,
+		// 				];
+		// 				setAllPicks(updatedAllPicks);
+		// 			}
+		// 		}
+		// 	};
 
-			picks.forEach(comparePicks);
-			picks.forEach(checkForGame);
-		} else {
-			const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
-				method: "POST",
-				body: JSON.stringify(picks),
-			});
-			if (postPicksRes) {
-				setIsSubmitted(picks);
-				const updatedAllPicks = [...allPicks.filter((x) => x.user_id !== userState.id), ...picks];
-				setAllPicks(updatedAllPicks);
-			}
-		}
+		// 	picks.forEach(comparePicks);
+		// 	picks.forEach(checkForGame);
+		// } else {
+		// 	const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
+		// 		method: "POST",
+		// 		body: JSON.stringify(picks),
+		// 	});
+		// 	if (postPicksRes) {
+		// 		setIsSubmitted(picks);
+		// 		const updatedAllPicks = [...allPicks.filter((x) => x.user_id !== userState.id), ...picks];
+		// 		setAllPicks(updatedAllPicks);
+		// 	}
+		// }
 	};
 
 	return (
