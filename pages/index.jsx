@@ -189,36 +189,55 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	};
 
 	const handleSubmit = async () => {
+		let newPicks = [];
+		let updatedPicks = [];
+		let untouchedPicks = [];
+		let postedPicks = [];
+		let puttedPicks = [];
+		let newStatPicks = [];
+		let updatedStatPicks = [];
+		let untouchedStatPicks = [];
+		let postedStatPicks = [];
+		let puttedStatPicks = [];
 		//if statement to handle statPicks
-		// if (statPicks.length) {
-		const reviewStatPicks = async (statPicks) => {
-			// console.log("comparing");
-			let newPicks = [];
-			let updatedPicks = [];
-			let untouchedPicks = [];
-			let postedPicks = [];
-			let puttedPicks = [];
-
+		if (statPicks.length) {
 			statPicks.forEach(function (submittedPick) {
+				console.log(submittedPick.type);
 				const pickInQuestion = isStatSubmitted.find(
 					(pick) => pick.game_id === submittedPick.game_id
 				);
 				if (pickInQuestion) {
+					console.log(pickInQuestion);
 					if (pickInQuestion.chosen_team === submittedPick.chosen_team) {
-						// console.log("I'm untouched!");
-						untouchedPicks.push(submittedPick);
+						console.log("I'm untouched!");
+						untouchedStatPicks.push(submittedPick);
 					} else {
 						// console.log("I was changed!");
-						updatedPicks.push(submittedPick);
+						updatedStatPicks.push(submittedPick);
 					}
 				} else {
 					// console.log("I dont exist");
-					newPicks.push(submittedPick);
+					newStatPicks.push(submittedPick);
 				}
 			});
-			// console.log("new", newPicks.length);
-			// console.log("updated", updatedPicks.length);
-			// console.log("untouched", untouchedPicks.length);
+			console.log("new", newStatPicks.length);
+			console.log("updated", updatedStatPicks.length);
+			console.log("untouched", untouchedStatPicks.length);
+
+			// 	// 3rd
+			// 	// any function that you're calling in a foreach or a for of or any loop
+			// 	// where the function contains a network call, NEEDS TO GO AWAY
+			// 	// all functions that contain a network call that are currently being called in a loop need to be passed the full data set,
+			// 	// meaning the array, and handle that, NOT BY looping over the array inside the function and making network calls in that loop
+			// 	// no network calls in any loops.
+
+			// 	// so that means here, you need to call comparePicks(picks), and same thing for checkForGame, and the two other functions
+			// 	// there's 4 functions that need basically the same refactor, and they need to become 2 functions in this pass,
+			// 	// and ultimately 1 function if you really want to dry it up. when i stopped touching things i had left 2 functions but
+			// 	// thats just because i was over it, i wouldve refactored it into one function if it was my code. you should leave it as 2 for now
+			// 	// and do the rest of this work then come back to it.
+			// 	// im going to put notes in comparePicks.
+
 			// 4th
 			// now you're passing this `picks`, instead of `pick`, so change your variable name
 			// loop over picks, for each pick run your isStatSubmitted code - that function is good
@@ -233,21 +252,21 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 			// your put method is also good, because updatedPicks is now an array of picks, but you've already updated your
 			// put method in the endpoint to handle an array
 			// bring the `post` method up here and do like a `if updatedPicks.length run this put` type of logic for both your "picks to update" and "new picks" arrays
-			if (newPicks.length) {
+			if (newStatPicks.length) {
 				// console.log("I'm new");
 				const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
 					method: "POST",
-					body: JSON.stringify(newPicks),
+					body: JSON.stringify(newStatPicks),
 				});
-				postedPicks = await postPicksRes.json();
+				postedStatPicks = await postPicksRes.json();
 			}
-			if (updatedPicks.length) {
+			if (updatedStatPicks.length) {
 				// console.log("I'm long");
 				const putPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
 					method: "PUT",
-					body: JSON.stringify(updatedPicks),
+					body: JSON.stringify(updatedStatPicks),
 				});
-				puttedPicks = await putPicksRes.json();
+				puttedStatPicks = await putPicksRes.json();
 				// if (postPicksRes) {
 				// 	// 5th
 				// 	// now you need to actually get the responses that your put and post are sending and use them
@@ -260,22 +279,13 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 				// 	// getAllStatPicks();
 				// }
 			}
-			console.log("posted", postedPicks.length, postedPicks);
-			console.log("putted", puttedPicks.length, puttedPicks);
-			console.log("untouched", untouchedPicks.length);
-			setStatPicks([...postedPicks, ...puttedPicks, ...untouchedPicks]);
-			setIsStatSubmitted([...postedPicks, ...puttedPicks, ...untouchedPicks]);
-		};
-
-		reviewStatPicks(statPicks);
-
-		const reviewPicks = async (picks) => {
-			// console.log("game comparing");
-			let newPicks = [];
-			let updatedPicks = [];
-			let untouchedPicks = [];
-			let postedPicks = [];
-			let puttedPicks = [];
+			console.log("posted", postedStatPicks.length, postedPicks);
+			console.log("putted", puttedStatPicks.length, puttedPicks);
+			console.log("untouched", untouchedStatPicks.length);
+			setStatPicks([...postedStatPicks, ...puttedStatPicks, ...untouchedStatPicks]);
+			setIsStatSubmitted([...postedStatPicks, ...puttedStatPicks, ...untouchedStatPicks]);
+		}
+		if (picks.length) {
 			picks.forEach(function (submittedPick) {
 				const pickInQuestion = isSubmitted.find((pick) => pick.game_id === submittedPick.game_id);
 				// console.log("GAMEEEEEEE", pickInQuestion);
@@ -320,140 +330,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 			console.log("game untouched", untouchedPicks.length);
 			setPicks([...postedPicks, ...puttedPicks, ...untouchedPicks]);
 			setIsSubmitted([...postedPicks, ...puttedPicks, ...untouchedPicks]);
-		};
-		reviewPicks(picks);
-		// if (isStatSubmitted.length) {
-		// 	const checkForGame = async (pick) => {
-		// 		// leaving comments below in because I can't see where we talked about
-		// 		// this in last code review:
-
-		// 		// needed to POST data returned from this checkForGame, not PUT,
-		// 		// so i seperated function from comparePicks to allow for different fetch methods
-		// 		//
-		// 		// are some variables, like declaring updatedPicks in both functions
-		// 		// a bit redundant?
-		// 		// kept them seperate because each function needs to run independantly
-		// 		// of the other, but both need to be populated simultaneously AND if the
-		// 		// results of either function were sent to the wrong fetch it would
-		// 		// mess up the data...
-		// 		//
-		// 		// you mentioned an insert/update query though...is this a use case
-		// 		// for something like that?
-		// 		let updatedPicks = [];
-		// 		const submissionCheck = isStatSubmitted.some((obj) => obj.game_id === pick.game_id);
-		// 		if (!submissionCheck) {
-		// 			updatedPicks.push(pick);
-		// 		}
-		// 		if (updatedPicks.length) {
-		// 			const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
-		// 				method: "POST",
-		// 				body: JSON.stringify(updatedPicks),
-		// 			});
-		// 			if (postPicksRes) {
-		// 				setIsStatSubmitted(statPicks);
-		// 				// getAllStatPicks();
-		// 			}
-		// 		}
-
-		// 		// START OF WHAT ALLISON CHANGED
-		// 		// console.log("🍇 271, POST of some kind");
-		// 		// setIsStatSubmitted(statPicks);
-
-		// 		// console.log("OTHER PICKS HERE!!!!", otherPicks);
-		// 		// console.log("🍓 NEW STAT PICKS", allStatPicks, theNewStatPicks, thePutStatPicks);
-		// 		// setStatPicks([...otherPicks, ...theNewStatPicks, ...thePutStatPicks]);
-		// 		// filtered all stat picks to not include the user's picks spread with the user's stat picks
-		// 		// result is one less network call
-		// 		// const combinedStatPicks = [
-		// 		// 	...allStatPicks.filter((x) => x.user_id !== userState.id),
-		// 		// 	...otherPicks,
-		// 		// 	...theNewStatPicks,
-		// 		// 	...thePutStatPicks,
-		// 		// ];
-		// 		// setAllStatPicks(combinedStatPicks);
-		// 		// END OF WHAT ALLISON CHANGED
-		// 	};
-
-		// 	// 3rd
-		// 	// any function that you're calling in a foreach or a for of or any loop
-		// 	// where the function contains a network call, NEEDS TO GO AWAY
-		// 	// all functions that contain a network call that are currently being called in a loop need to be passed the full data set,
-		// 	// meaning the array, and handle that, NOT BY looping over the array inside the function and making network calls in that loop
-		// 	// no network calls in any loops.
-
-		// 	// so that means here, you need to call comparePicks(picks), and same thing for checkForGame, and the two other functions
-		// 	// there's 4 functions that need basically the same refactor, and they need to become 2 functions in this pass,
-		// 	// and ultimately 1 function if you really want to dry it up. when i stopped touching things i had left 2 functions but
-		// 	// thats just because i was over it, i wouldve refactored it into one function if it was my code. you should leave it as 2 for now
-		// 	// and do the rest of this work then come back to it.
-		// 	// im going to put notes in comparePicks.
-		// 	// statPicks.forEach(checkForGame);
-		// }
-		// }
-
-		// handling picks from here down
-		// if (isSubmitted.length) {
-		// 	const comparePicks = async (pick) => {
-		// 		let updatedPicks = [];
-		// 		isSubmitted.forEach(function (submittedPick) {
-		// 			if (pick.game_id === submittedPick.game_id) {
-		// 				if (pick.chosen_team !== submittedPick.chosen_team) {
-		// 					updatedPicks.push(pick);
-		// 				}
-		// 			}
-		// 		});
-		// 		if (updatedPicks.length) {
-		// 			const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
-		// 				method: "PUT",
-		// 				body: JSON.stringify(updatedPicks),
-		// 			});
-		// 			if (postPicksRes) {
-		// 				setIsSubmitted(picks);
-		// 				const updatedAllPicks = [
-		// 					...allPicks.filter((x) => x.user_id !== userState.id),
-		// 					...picks,
-		// 				];
-		// 				setAllPicks(updatedAllPicks);
-		// 			}
-		// 		}
-		// 	};
-
-		// 	const checkForGame = async (pick) => {
-		// 		let updatedPicks = [];
-
-		// 		const submissionCheck = isSubmitted.some((obj) => obj.game_id === pick.game_id);
-		// 		if (!submissionCheck) {
-		// 			updatedPicks.push(pick);
-		// 		}
-		// 		if (updatedPicks.length) {
-		// 			const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
-		// 				method: "POST",
-		// 				body: JSON.stringify(updatedPicks),
-		// 			});
-		// 			if (postPicksRes) {
-		// 				setIsSubmitted(picks);
-		// 				const updatedAllPicks = [
-		// 					...allPicks.filter((x) => x.user_id !== userState.id),
-		// 					...picks,
-		// 				];
-		// 				setAllPicks(updatedAllPicks);
-		// 			}
-		// 		}
-		// 	};
-
-		// 	picks.forEach(comparePicks);
-		// 	picks.forEach(checkForGame);
-		// } else {
-		// 	const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
-		// 		method: "POST",
-		// 		body: JSON.stringify(picks),
-		// 	});
-		// 	if (postPicksRes) {
-		// 		setIsSubmitted(picks);
-		// 		const updatedAllPicks = [...allPicks.filter((x) => x.user_id !== userState.id), ...picks];
-		// 		setAllPicks(updatedAllPicks);
-		// 	}
-		// }
+		}
 	};
 
 	return (
