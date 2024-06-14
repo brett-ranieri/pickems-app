@@ -169,6 +169,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 			chosen_team: id,
 			game_id: gameId,
 			week: week,
+			type: "game",
 		};
 
 		const tempPicks = picks?.filter((pick) => pick.game_id !== gameId);
@@ -182,6 +183,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 			game_id: gameId,
 			// this key allows me to hard code the week for now
 			week: 5,
+			type: "stat",
 		};
 
 		const tempStatPicks = statPicks?.filter((pick) => pick.game_id !== gameId);
