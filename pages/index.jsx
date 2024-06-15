@@ -202,137 +202,131 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 		let postedStatPicks = [];
 		let puttedStatPicks = [];
 		//if statement to handle statPicks
-		if (statPicks.length) {
-			statPicks.forEach(function (submittedPick) {
-				console.log(submittedPick.type);
-				const pickInQuestion = isStatSubmitted.find(
-					(pick) => pick.game_id === submittedPick.game_id
-				);
-				if (pickInQuestion) {
-					console.log(pickInQuestion);
-					if (pickInQuestion.chosen_team === submittedPick.chosen_team) {
-						console.log("I'm untouched!");
+
+		const reviewPick = (submittedPick) => {
+			// console.log(submittedPick);
+			const pickInQuestion =
+				submittedPick.type === "stat"
+					? isStatSubmitted.find((pick) => pick.game_id === submittedPick.game_id)
+					: isSubmitted.find((pick) => pick.game_id === submittedPick.game_id);
+			console.log("PIQ", pickInQuestion);
+
+			if (pickInQuestion) {
+				if (pickInQuestion.chosen_team === submittedPick.chosen_team) {
+					if (pickInQuestion.type === "stat") {
+						// console.log("I'm untouched, Stat!");
 						untouchedStatPicks.push(submittedPick);
 					} else {
-						// console.log("I was changed!");
-						updatedStatPicks.push(submittedPick);
+						// console.log("I'm untouched, Game!");
+						untouchedPicks.push(submittedPick);
 					}
 				} else {
-					// console.log("I dont exist");
-					newStatPicks.push(submittedPick);
-				}
-			});
-			console.log("new", newStatPicks.length);
-			console.log("updated", updatedStatPicks.length);
-			console.log("untouched", untouchedStatPicks.length);
-
-			// 	// 3rd
-			// 	// any function that you're calling in a foreach or a for of or any loop
-			// 	// where the function contains a network call, NEEDS TO GO AWAY
-			// 	// all functions that contain a network call that are currently being called in a loop need to be passed the full data set,
-			// 	// meaning the array, and handle that, NOT BY looping over the array inside the function and making network calls in that loop
-			// 	// no network calls in any loops.
-
-			// 	// so that means here, you need to call comparePicks(picks), and same thing for checkForGame, and the two other functions
-			// 	// there's 4 functions that need basically the same refactor, and they need to become 2 functions in this pass,
-			// 	// and ultimately 1 function if you really want to dry it up. when i stopped touching things i had left 2 functions but
-			// 	// thats just because i was over it, i wouldve refactored it into one function if it was my code. you should leave it as 2 for now
-			// 	// and do the rest of this work then come back to it.
-			// 	// im going to put notes in comparePicks.
-
-			// 4th
-			// now you're passing this `picks`, instead of `pick`, so change your variable name
-			// loop over picks, for each pick run your isStatSubmitted code - that function is good
-			// you have another function, checkForGame, that asks the question "is this pick new?"
-			// this function, comparePicks, asks the question "is this pick an update?"
-			// at the moment, you call both functions on each pick...after you stop doing network calls in a loop youll be calling each func for the full array of picks
-			// you need to refactor both of the functions into one function that sorts the picks into three arrays, "picks to update", "new picks", and "else" (picks that are neither)
-			// you need the "else" here so you can recombine that array with the responses from your endpoints at the end of this function
-			// so you can display all picks on the page not just the ones that were updated
-			// instantiate another couple of arrays for those categories, go get the code from checkForGame and do a nice if/if else/else
-			// now that you've done that, updatedPicks has been populated with however many picks need to be sent to the db
-			// your put method is also good, because updatedPicks is now an array of picks, but you've already updated your
-			// put method in the endpoint to handle an array
-			// bring the `post` method up here and do like a `if updatedPicks.length run this put` type of logic for both your "picks to update" and "new picks" arrays
-			if (newStatPicks.length) {
-				// console.log("I'm new");
-				const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
-					method: "POST",
-					body: JSON.stringify(newStatPicks),
-				});
-				postedStatPicks = await postPicksRes.json();
-			}
-			if (updatedStatPicks.length) {
-				// console.log("I'm long");
-				const putPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
-					method: "PUT",
-					body: JSON.stringify(updatedStatPicks),
-				});
-				puttedStatPicks = await putPicksRes.json();
-				// if (postPicksRes) {
-				// 	// 5th
-				// 	// now you need to actually get the responses that your put and post are sending and use them
-				// 	// read the response like: const putResponse = await postPicksRes.json()
-				// 	// console log putResponse and make sure it is what you're expecting (an array of the picks that were updated)
-				// 	// THEN, you need to spread the responses from both calls, plus the other picks that weren't sent to the db into an array
-				// 	// and set that array to state
-				// 	// DO NOT CALL getAllStatPicks here. we're gonna refactor that into a page load function anyway. or gssp. tbd.
-				// 	setIsStatSubmitted(statPicks);
-				// 	// getAllStatPicks();
-				// }
-			}
-			console.log("posted", postedStatPicks.length, postedPicks);
-			console.log("putted", puttedStatPicks.length, puttedPicks);
-			console.log("untouched", untouchedStatPicks.length);
-			setStatPicks([...postedStatPicks, ...puttedStatPicks, ...untouchedStatPicks]);
-			setIsStatSubmitted([...postedStatPicks, ...puttedStatPicks, ...untouchedStatPicks]);
-		}
-		if (picks.length) {
-			picks.forEach(function (submittedPick) {
-				const pickInQuestion = isSubmitted.find((pick) => pick.game_id === submittedPick.game_id);
-				// console.log("GAMEEEEEEE", pickInQuestion);
-				if (pickInQuestion) {
-					if (pickInQuestion.chosen_team === submittedPick.chosen_team) {
-						// console.log("NO CHANGE");
-						// console.log(submittedPick);
-						// console.log(pickInQuestion);
-						untouchedPicks.push(submittedPick);
+					if (pickInQuestion.type === "stat") {
+						// console.log("I'm changed, Stat!");
+						updatedStatPicks.push(submittedPick);
 					} else {
-						// console.log("I've been changed!!");
-						// console.log(submittedPick);
-						// console.log(pickInQuestion);
+						// console.log("I'm changed, Game!");
 						updatedPicks.push(submittedPick);
 					}
+				}
+			} else {
+				if (submittedPick.type === "stat") {
+					// console.log("I dont exist, Stat!");
+					newStatPicks.push(submittedPick);
 				} else {
-					// console.log("new game baby!");
+					// console.log("I dont exist, Game!");
 					newPicks.push(submittedPick);
 				}
-				// console.log("game new", newPicks.length);
-				// console.log("game updated", updatedPicks.length);
-				// console.log("game untouched", untouchedPicks.length);
-			});
-			if (newPicks.length) {
-				// console.log("I'm new");
-				const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
-					method: "POST",
-					body: JSON.stringify(newPicks),
-				});
-				postedPicks = await postPicksRes.json();
 			}
-			if (updatedPicks.length) {
-				// console.log("I'm long");
-				const putPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
-					method: "PUT",
-					body: JSON.stringify(updatedPicks),
-				});
-				puttedPicks = await putPicksRes.json();
-			}
-			console.log("game posted", postedPicks.length, postedPicks);
-			console.log("game putted", puttedPicks.length, puttedPicks);
-			console.log("game untouched", untouchedPicks.length);
-			setPicks([...postedPicks, ...puttedPicks, ...untouchedPicks]);
-			setIsSubmitted([...postedPicks, ...puttedPicks, ...untouchedPicks]);
+		};
+
+		if (statPicks.length) {
+			statPicks.forEach((pick) => reviewPick(pick));
 		}
+		if (picks.length) {
+			picks.forEach((pick) => reviewPick(pick));
+		}
+
+		if (newStatPicks.length) {
+			// console.log("I'm new");
+			const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
+				method: "POST",
+				body: JSON.stringify(newStatPicks),
+			});
+			postedStatPicks = await postPicksRes.json();
+		}
+		if (updatedStatPicks.length) {
+			// console.log("I'm long");
+			const putPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
+				method: "PUT",
+				body: JSON.stringify(updatedStatPicks),
+			});
+			puttedStatPicks = await putPicksRes.json();
+		}
+		console.log("stat posted", postedStatPicks.length, postedPicks);
+		console.log("stat putted", puttedStatPicks.length, puttedPicks);
+		console.log("stat untouched", untouchedStatPicks.length);
+		setStatPicks([...postedStatPicks, ...puttedStatPicks, ...untouchedStatPicks]);
+		setIsStatSubmitted([...postedStatPicks, ...puttedStatPicks, ...untouchedStatPicks]);
+
+		if (newPicks.length) {
+			// console.log("I'm new");
+			const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
+				method: "POST",
+				body: JSON.stringify(newPicks),
+			});
+			postedPicks = await postPicksRes.json();
+		}
+		if (updatedPicks.length) {
+			// console.log("I'm long");
+			const putPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
+				method: "PUT",
+				body: JSON.stringify(updatedPicks),
+			});
+			puttedPicks = await putPicksRes.json();
+		}
+		console.log("game posted", postedPicks.length, postedPicks);
+		console.log("game putted", puttedPicks.length, puttedPicks);
+		console.log("game untouched", untouchedPicks.length);
+		setPicks([...postedPicks, ...puttedPicks, ...untouchedPicks]);
+		setIsSubmitted([...postedPicks, ...puttedPicks, ...untouchedPicks]);
+
+		// 	// 	// 3rd
+		// 	// 	// any function that you're calling in a foreach or a for of or any loop
+		// 	// 	// where the function contains a network call, NEEDS TO GO AWAY
+		// 	// 	// all functions that contain a network call that are currently being called in a loop need to be passed the full data set,
+		// 	// 	// meaning the array, and handle that, NOT BY looping over the array inside the function and making network calls in that loop
+		// 	// 	// no network calls in any loops.
+
+		// 	// 	// so that means here, you need to call comparePicks(picks), and same thing for checkForGame, and the two other functions
+		// 	// 	// there's 4 functions that need basically the same refactor, and they need to become 2 functions in this pass,
+		// 	// 	// and ultimately 1 function if you really want to dry it up. when i stopped touching things i had left 2 functions but
+		// 	// 	// thats just because i was over it, i wouldve refactored it into one function if it was my code. you should leave it as 2 for now
+		// 	// 	// and do the rest of this work then come back to it.
+		// 	// 	// im going to put notes in comparePicks.
+
+		// 	// 4th
+		// 	// now you're passing this `picks`, instead of `pick`, so change your variable name
+		// 	// loop over picks, for each pick run your isStatSubmitted code - that function is good
+		// 	// you have another function, checkForGame, that asks the question "is this pick new?"
+		// 	// this function, comparePicks, asks the question "is this pick an update?"
+		// 	// at the moment, you call both functions on each pick...after you stop doing network calls in a loop youll be calling each func for the full array of picks
+		// 	// you need to refactor both of the functions into one function that sorts the picks into three arrays, "picks to update", "new picks", and "else" (picks that are neither)
+		// 	// you need the "else" here so you can recombine that array with the responses from your endpoints at the end of this function
+		// 	// so you can display all picks on the page not just the ones that were updated
+		// 	// instantiate another couple of arrays for those categories, go get the code from checkForGame and do a nice if/if else/else
+		// 	// now that you've done that, updatedPicks has been populated with however many picks need to be sent to the db
+		// 	// your put method is also good, because updatedPicks is now an array of picks, but you've already updated your
+		// 	// put method in the endpoint to handle an array
+		// 	// bring the `post` method up here and do like a `if updatedPicks.length run this put` type of logic for both your "picks to update" and "new picks" arrays
+
+		// 5th
+		// 	// now you need to actually get the responses that your put and post are sending and use them
+		// 	// read the response like: const putResponse = await postPicksRes.json()
+		// 	// console log putResponse and make sure it is what you're expecting (an array of the picks that were updated)
+		// 	// THEN, you need to spread the responses from both calls, plus the other picks that weren't sent to the db into an array
+		// 	// and set that array to state
+		// 	// DO NOT CALL getAllStatPicks here. we're gonna refactor that into a page load function anyway. or gssp. tbd.
 	};
 
 	return (
