@@ -27,8 +27,6 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	// needed to set to null for initial load
 	const [userState, setUserState] = useState(null);
 
-	console.log(baseUrl);
-
 	const selectUser = (user) => {
 		setUserState(user);
 	};
@@ -52,35 +50,27 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	// 	const gamesRes = await fetch(`${baseUrl}/api/games?sent=true`);
 	// 	const upcomingGames = await gamesRes.json();
 	// 	setGames(upcomingGames);
-	// 	console.log("games ran");
 	// 	const teamsRes = await fetch(`${baseUrl}/api/teams`);
 	// 	const theTeams = await teamsRes.json();
 	// 	setTeams(theTeams);
-	// 	console.log("teams ran");
 	// 	const allPicksRes = await fetch(`${baseUrl}/api/picks`);
 	// 	const theAllPicks = await allPicksRes.json();
 	// 	setAllPicks(theAllPicks);
-	// 	console.log("picks ran");
 	// 	const allStatPicksRes = await fetch(`${baseUrl}/api/stat-picks`);
 	// 	const theAllStatPicks = await allStatPicksRes.json();
 	// 	setAllStatPicks(theAllStatPicks);
-	// 	console.log("stat picks ran");
 
 	// 	const userPicks = theAllPicks.filter((pick) => {
 	// 		return pick.user_id === userState?.id;
 	// 	});
-	// 	console.log(userPicks);
 	// 	if (userPicks.length) {
-	// 		console.log("i have length");
 	// 		setPicks(userPicks);
 	// 		setIsSubmitted(userPicks);
 	// 	}
 	// 	const userStatPicks = theAllStatPicks.filter((pick) => {
 	// 		return pick.user_id === userState?.id;
 	// 	});
-	// 	console.log(userStatPicks);
 	// 	if (userStatPicks.length) {
-	// 		console.log("I also have length");
 	// 		setStatPicks(userStatPicks);
 	// 		setIsStatSubmitted(userStatPicks);
 	// 	}
@@ -102,30 +92,20 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 				allStatPicksRes.json(),
 			]);
 			setGames(upcomingGames);
-			console.log("games set");
 			setTeams(theTeams);
-			console.log("teams set");
 			setAllPicks(theAllPicks);
-			console.log("picks set");
 			setStatPicks(theAllStatPicks);
-			console.log("stat picks set");
-			console.log(theAllPicks);
-			console.log(userState);
 			const userPicks = theAllPicks.filter((pick) => {
 				return pick.user_id === userState?.id;
 			});
-			console.log(userPicks);
 			if (userPicks.length) {
-				console.log("i have length");
 				setPicks(userPicks);
 				setIsSubmitted(userPicks);
 			}
 			const userStatPicks = theAllStatPicks.filter((pick) => {
 				return pick.user_id === userState?.id;
 			});
-			console.log(userStatPicks);
 			if (userStatPicks.length) {
-				console.log("I also have length");
 				setStatPicks(userStatPicks);
 				setIsStatSubmitted(userStatPicks);
 			}
@@ -135,11 +115,6 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	};
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	console.log(picks);
-	console.log("sub", isSubmitted);
-	console.log("stat", statPicks);
-	console.log("stat sub", isStatSubmitted);
 
 	// 6th
 	// these two useeffects are a problem for a number of reasons
@@ -154,6 +129,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	// and conditionally call the fetches you need for user
 	// DONT MAKE UNNECESSARY NETWORK CALLS BE CAREFUL
 
+	////////////////// STILL NEED TO DO ///////////////////////////////
 	// once that works both on local _and_ on vercel in production, move these calls into the gssp
 	// you can have both async await and promise.all in the gssp. its very much the same as up here
 	// theres some examples down there already
@@ -209,7 +185,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 				submittedPick.type === "stat"
 					? isStatSubmitted.find((pick) => pick.game_id === submittedPick.game_id)
 					: isSubmitted.find((pick) => pick.game_id === submittedPick.game_id);
-			console.log("PIQ", pickInQuestion);
+			// console.log("PIQ", pickInQuestion);
 
 			if (pickInQuestion) {
 				if (pickInQuestion.chosen_team === submittedPick.chosen_team) {
@@ -263,8 +239,8 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 			});
 			puttedStatPicks = await putPicksRes.json();
 		}
-		console.log("stat posted", postedStatPicks.length, postedPicks);
-		console.log("stat putted", puttedStatPicks.length, puttedPicks);
+		console.log("stat posted", postedStatPicks.length, postedStatPicks);
+		console.log("stat putted", puttedStatPicks.length, puttedStatPicks);
 		console.log("stat untouched", untouchedStatPicks.length);
 		setStatPicks([...postedStatPicks, ...puttedStatPicks, ...untouchedStatPicks]);
 		setIsStatSubmitted([...postedStatPicks, ...puttedStatPicks, ...untouchedStatPicks]);
