@@ -167,105 +167,70 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	};
 
 	const handleSubmit = async () => {
-		let newPicks = [];
-		let updatedPicks = [];
-		let untouchedPicks = [];
-		let postedPicks = [];
-		let puttedPicks = [];
-		let newStatPicks = [];
-		let updatedStatPicks = [];
-		let untouchedStatPicks = [];
-		let postedStatPicks = [];
-		let puttedStatPicks = [];
-		//if statement to handle statPicks
+		const reviewPicks = (arrayOfPicks) => {
+			let newPicks = [];
+			let updatedPicks = [];
+			let untouchedPicks = [];
 
-		const reviewPick = (submittedPick) => {
-			// console.log(submittedPick);
-			const pickInQuestion =
-				submittedPick.type === "stat"
-					? isStatSubmitted.find((pick) => pick.game_id === submittedPick.game_id)
-					: isSubmitted.find((pick) => pick.game_id === submittedPick.game_id);
-			// console.log("PIQ", pickInQuestion);
+			arrayOfPicks.forEach(function (submittedPick) {
+				const pickInQuestion =
+					submittedPick.type === "stat"
+						? isStatSubmitted.find((pick) => pick.game_id === submittedPick.game_id)
+						: isSubmitted.find((pick) => pick.game_id === submittedPick.game_id);
 
-			if (pickInQuestion) {
-				if (pickInQuestion.chosen_team === submittedPick.chosen_team) {
-					if (pickInQuestion.type === "stat") {
-						// console.log("I'm untouched, Stat!");
-						untouchedStatPicks.push(submittedPick);
-					} else {
-						// console.log("I'm untouched, Game!");
+				if (pickInQuestion) {
+					if (pickInQuestion.chosen_team === submittedPick.chosen_team) {
 						untouchedPicks.push(submittedPick);
-					}
-				} else {
-					if (pickInQuestion.type === "stat") {
-						// console.log("I'm changed, Stat!");
-						updatedStatPicks.push(submittedPick);
 					} else {
-						// console.log("I'm changed, Game!");
 						updatedPicks.push(submittedPick);
 					}
-				}
-			} else {
-				if (submittedPick.type === "stat") {
-					// console.log("I dont exist, Stat!");
-					newStatPicks.push(submittedPick);
 				} else {
-					// console.log("I dont exist, Game!");
 					newPicks.push(submittedPick);
 				}
-			}
+			});
+			return { new: newPicks, updated: updatedPicks, untouched: untouchedPicks };
 		};
 
 		if (statPicks.length) {
-			statPicks.forEach((pick) => reviewPick(pick));
+			const reviewed = reviewPicks(statPicks);
+			if (reviewed.new.length) {
+				const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
+					method: "POST",
+					body: JSON.stringify(reviewed.new),
+				});
+				// is it bad to reassign response to same variable? feels bad...
+				// but has variable access issues if I tried to instantiate array
+				// in statPicks.length if statement and set in this if...
+				reviewed.new = await postPicksRes.json();
+			}
+			if (reviewed.updated.length) {
+				const putPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
+					method: "PUT",
+					body: JSON.stringify(reviewed.updated),
+				});
+				reviewed.updated = await putPicksRes.json();
+			}
+			setIsStatSubmitted([...reviewed.new, ...reviewed.updated, ...reviewed.untouched]);
 		}
+
 		if (picks.length) {
-			picks.forEach((pick) => reviewPick(pick));
+			const reviewed = reviewPicks(picks);
+			if (reviewed.new.length) {
+				const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
+					method: "POST",
+					body: JSON.stringify(reviewed.new),
+				});
+				reviewed.new = await postPicksRes.json();
+			}
+			if (reviewed.updated.length) {
+				const putPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
+					method: "PUT",
+					body: JSON.stringify(reviewed.updated),
+				});
+				reviewed.updated = await putPicksRes.json();
+			}
+			setIsSubmitted([...reviewed.new, ...reviewed.updated, ...reviewed.untouched]);
 		}
-
-		if (newStatPicks.length) {
-			// console.log("I'm new");
-			const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
-				method: "POST",
-				body: JSON.stringify(newStatPicks),
-			});
-			postedStatPicks = await postPicksRes.json();
-		}
-		if (updatedStatPicks.length) {
-			// console.log("I'm long");
-			const putPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
-				method: "PUT",
-				body: JSON.stringify(updatedStatPicks),
-			});
-			puttedStatPicks = await putPicksRes.json();
-		}
-		console.log("stat posted", postedStatPicks.length, postedStatPicks);
-		console.log("stat putted", puttedStatPicks.length, puttedStatPicks);
-		console.log("stat untouched", untouchedStatPicks.length);
-		setStatPicks([...postedStatPicks, ...puttedStatPicks, ...untouchedStatPicks]);
-		setIsStatSubmitted([...postedStatPicks, ...puttedStatPicks, ...untouchedStatPicks]);
-
-		if (newPicks.length) {
-			// console.log("I'm new");
-			const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
-				method: "POST",
-				body: JSON.stringify(newPicks),
-			});
-			postedPicks = await postPicksRes.json();
-		}
-		if (updatedPicks.length) {
-			// console.log("I'm long");
-			const putPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
-				method: "PUT",
-				body: JSON.stringify(updatedPicks),
-			});
-			puttedPicks = await putPicksRes.json();
-		}
-		console.log("game posted", postedPicks.length, postedPicks);
-		console.log("game putted", puttedPicks.length, puttedPicks);
-		console.log("game untouched", untouchedPicks.length);
-		setPicks([...postedPicks, ...puttedPicks, ...untouchedPicks]);
-		setIsSubmitted([...postedPicks, ...puttedPicks, ...untouchedPicks]);
 
 		// 	// 	// 3rd
 		// 	// 	// any function that you're calling in a foreach or a for of or any loop
