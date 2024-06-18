@@ -26,6 +26,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	const [isStatSubmitted, setIsStatSubmitted] = useState([]);
 	// needed to set to null for initial load
 	const [userState, setUserState] = useState(null);
+	const [submissionMessage, setSubmissionMessage] = useState(null);
 
 	const selectUser = (user) => {
 		setUserState(user);
@@ -222,6 +223,34 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 		}
 	};
 
+	const errorHandling = (cacheArray, databaseArray) => {
+		console.log("picks", cacheArray);
+		console.log("db", databaseArray);
+		const result = cacheArray.filter(function (obj) {
+			return databaseArray.some(function (obj2) {
+				return obj.game_id === obj2.game_id && obj.chosen_team !== obj2.chosen_team;
+			});
+		});
+		console.log(result);
+		if (result.length) {
+			console.log(false);
+			setSubmissionMessage("false");
+		} else {
+			console.log(true);
+			setSubmissionMessage("true");
+		}
+	};
+
+	useEffect(() => {
+		console.log("effected");
+		setTimeout(function () {
+			console.log("timed");
+			if (submissionMessage) {
+				setSubmissionMessage(null);
+			}
+		}, 3000);
+	}, [submissionMessage]);
+
 	return (
 		<>
 			{!userState ? (
@@ -239,6 +268,12 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 				<div className='bg-football-super-close bg-cover'>
 					{/*ultimately turn this into a true Navbar */}
 					<div className='bg-lime-800 flex flex-row justify-end p-1 sticky top-0'>
+						<button
+							className='bg-amber-500 hover:bg-amber-200 hover:text-black text-white font-bold py-2 px-4 rounded m-2'
+							onClick={() => errorHandling(picks, isSubmitted)}
+						>
+							TEST COMPARE
+						</button>
 						<button
 							className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded m-2 '
 							onClick={() => handleViewChange()}
@@ -375,6 +410,11 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 						<p className='text-sm text-lime-300 ml-10 mb-8 mt-2 pb-8'>
 							* If successfully submitted, picks will appear below in the "Pick History" section.
 						</p>
+						{submissionMessage === "true" ? (
+							<div>TRUE</div>
+						) : submissionMessage === "false" ? (
+							<div>FALSE</div>
+						) : null}
 					</div>
 					<div>
 						<PickView
