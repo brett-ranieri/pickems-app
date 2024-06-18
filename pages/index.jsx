@@ -116,23 +116,12 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	// 6th
-	// these two useeffects are a problem for a number of reasons
-	// on page load, you're kicking off 4 simultaneous network calls that are not awaiting each other and are not contained in a promise
-	// your db cant handle that. we had to do both because something was unhappy with one of them and something was unhappy with the other
-	// i dont remember the specifics but it was like a dumb vercel thing or something
-	// you should write both. for async/await everything you have in all the network calls above needs to move into one function
-	// and be under one async and happen consecutively, like call an endpoint, read its response, set that to state, then call the next one
-	// for promise.all...here's my code for this
-	// https://github.com/brett-ranieri/pickems-app/blob/6f7fdf0d0dfdf5fe53b59d2c6f949c7898da3749/pages/index.jsx#L92
-	// make one of these work to fetch initial data, up here. one function, called by the useeffect (or useeffects). try to get all the network calls into one function
-	// and conditionally call the fetches you need for user
-	// DONT MAKE UNNECESSARY NETWORK CALLS BE CAREFUL
-
 	////////////////// STILL NEED TO DO ///////////////////////////////
 	// once that works both on local _and_ on vercel in production, move these calls into the gssp
 	// you can have both async await and promise.all in the gssp. its very much the same as up here
 	// theres some examples down there already
+	/////////////////////////////////////////////////////////////////////
+
 	useEffect(() => {
 		if (userState) {
 			getData();
@@ -199,7 +188,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 					body: JSON.stringify(reviewed.new),
 				});
 				// is it bad to reassign response to same variable? feels bad...
-				// but has variable access issues if I tried to instantiate array
+				// but having variable access issues if I tried to instantiate array
 				// in statPicks.length if statement and set in this if...
 				reviewed.new = await postPicksRes.json();
 			}
@@ -231,43 +220,6 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 			}
 			setIsSubmitted([...reviewed.new, ...reviewed.updated, ...reviewed.untouched]);
 		}
-
-		// 	// 	// 3rd
-		// 	// 	// any function that you're calling in a foreach or a for of or any loop
-		// 	// 	// where the function contains a network call, NEEDS TO GO AWAY
-		// 	// 	// all functions that contain a network call that are currently being called in a loop need to be passed the full data set,
-		// 	// 	// meaning the array, and handle that, NOT BY looping over the array inside the function and making network calls in that loop
-		// 	// 	// no network calls in any loops.
-
-		// 	// 	// so that means here, you need to call comparePicks(picks), and same thing for checkForGame, and the two other functions
-		// 	// 	// there's 4 functions that need basically the same refactor, and they need to become 2 functions in this pass,
-		// 	// 	// and ultimately 1 function if you really want to dry it up. when i stopped touching things i had left 2 functions but
-		// 	// 	// thats just because i was over it, i wouldve refactored it into one function if it was my code. you should leave it as 2 for now
-		// 	// 	// and do the rest of this work then come back to it.
-		// 	// 	// im going to put notes in comparePicks.
-
-		// 	// 4th
-		// 	// now you're passing this `picks`, instead of `pick`, so change your variable name
-		// 	// loop over picks, for each pick run your isStatSubmitted code - that function is good
-		// 	// you have another function, checkForGame, that asks the question "is this pick new?"
-		// 	// this function, comparePicks, asks the question "is this pick an update?"
-		// 	// at the moment, you call both functions on each pick...after you stop doing network calls in a loop youll be calling each func for the full array of picks
-		// 	// you need to refactor both of the functions into one function that sorts the picks into three arrays, "picks to update", "new picks", and "else" (picks that are neither)
-		// 	// you need the "else" here so you can recombine that array with the responses from your endpoints at the end of this function
-		// 	// so you can display all picks on the page not just the ones that were updated
-		// 	// instantiate another couple of arrays for those categories, go get the code from checkForGame and do a nice if/if else/else
-		// 	// now that you've done that, updatedPicks has been populated with however many picks need to be sent to the db
-		// 	// your put method is also good, because updatedPicks is now an array of picks, but you've already updated your
-		// 	// put method in the endpoint to handle an array
-		// 	// bring the `post` method up here and do like a `if updatedPicks.length run this put` type of logic for both your "picks to update" and "new picks" arrays
-
-		// 5th
-		// 	// now you need to actually get the responses that your put and post are sending and use them
-		// 	// read the response like: const putResponse = await postPicksRes.json()
-		// 	// console log putResponse and make sure it is what you're expecting (an array of the picks that were updated)
-		// 	// THEN, you need to spread the responses from both calls, plus the other picks that weren't sent to the db into an array
-		// 	// and set that array to state
-		// 	// DO NOT CALL getAllStatPicks here. we're gonna refactor that into a page load function anyway. or gssp. tbd.
 	};
 
 	return (
