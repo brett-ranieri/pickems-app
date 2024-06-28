@@ -157,6 +157,9 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	};
 
 	const handleSubmit = async () => {
+		let arrayOfSubmittedPicks = [];
+		let arrayOfSubmittedStatPicks = [];
+
 		const reviewPicks = (arrayOfPicks) => {
 			let newPicks = [];
 			let updatedPicks = [];
@@ -200,7 +203,22 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 				});
 				reviewed.updated = await putPicksRes.json();
 			}
-			setIsStatSubmitted([...reviewed.new, ...reviewed.updated, ...reviewed.untouched]);
+			arrayOfSubmittedStatPicks = [
+				...reviewed.new,
+				...reviewed.updated,
+				...reviewed.untouched,
+				//adding extra object with wrong chosen_team for testing
+				// {
+				// 	user_id: 3,
+				// 	chosen_team: "2",
+				// 	// passes if you make new game_id
+				// 	game_id: "9101-99",
+				// 	week: 5,
+				// 	winner: null,
+				// 	type: "stat",
+				// },
+			];
+			setIsStatSubmitted(arrayOfSubmittedStatPicks);
 		}
 
 		if (picks.length) {
@@ -219,8 +237,39 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 				});
 				reviewed.updated = await putPicksRes.json();
 			}
-			setIsSubmitted([...reviewed.new, ...reviewed.updated, ...reviewed.untouched]);
+			arrayOfSubmittedPicks = [
+				...reviewed.new,
+				...reviewed.updated,
+				...reviewed.untouched,
+				//for testing
+				//adding additional object to array that has diff chosen_team
+				// {
+				// 	user_id: 3,
+				// 	chosen_team: "8",
+				// 	// passes if you make new game_id
+				// 	game_id: "401547378-99",
+				// 	week: 5,
+				// 	type: "game",
+				// },
+			];
+			setIsSubmitted(arrayOfSubmittedPicks);
 		}
+
+		const pickReview = errorHandling(picks, arrayOfSubmittedPicks);
+		const statReview = errorHandling(statPicks, arrayOfSubmittedStatPicks);
+
+		if (pickReview.length || statReview.length) {
+			alertSetting("false");
+		} else {
+			alertSetting("true");
+		}
+	};
+
+	const alertSetting = (results) => {
+		setSubmissionMessage(results);
+		setTimeout(function () {
+			setSubmissionMessage(null);
+		}, 3000);
 	};
 
 	const errorHandling = (cacheArray, databaseArray) => {
@@ -232,24 +281,8 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 			});
 		});
 		console.log(result);
-		if (result.length) {
-			console.log(false);
-			setSubmissionMessage("false");
-		} else {
-			console.log(true);
-			setSubmissionMessage("true");
-		}
+		return result;
 	};
-
-	useEffect(() => {
-		console.log("effected");
-		setTimeout(function () {
-			console.log("timed");
-			if (submissionMessage) {
-				setSubmissionMessage(null);
-			}
-		}, 3000);
-	}, [submissionMessage]);
 
 	return (
 		<>
