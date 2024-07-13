@@ -102,6 +102,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 			if (userPicks.length) {
 				setPicks(userPicks);
 				setIsSubmitted(userPicks);
+				console.log(userPicks);
 			}
 			const userStatPicks = theAllStatPicks.filter((pick) => {
 				return pick.user_id === userState?.id;
@@ -246,15 +247,15 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 				// {
 				// 	user_id: 3,
 				// 	chosen_team: "8",
-				// 	// passes if you make new game_id
-				// 	game_id: "401547378-99",
+				// 	// passes if you make new game_id by adding -99 to end of string
+				// 	game_id: "401547378",
 				// 	week: 5,
 				// 	type: "game",
 				// },
 			];
 			setIsSubmitted(arrayOfSubmittedPicks);
 		}
-
+		console.log(arrayOfSubmittedPicks);
 		const pickReview = errorHandling(picks, arrayOfSubmittedPicks);
 		const statReview = errorHandling(statPicks, arrayOfSubmittedStatPicks);
 
@@ -273,6 +274,11 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	};
 
 	const errorHandling = (cacheArray, databaseArray) => {
+		// checking that response from database matches picks entered locally
+		// but only works one way!
+		// if an additional pick is added to arrayOfSubmittedPicks error is
+		// caught, but if arrayOfSubmittedPicks doesn't include
+		// (like if you comment out ...reviewed.untouched) error is NOT caught
 		console.log("picks", cacheArray);
 		console.log("db", databaseArray);
 		const result = cacheArray.filter(function (obj) {
