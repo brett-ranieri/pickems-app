@@ -462,32 +462,32 @@ export async function getServerSideProps() {
 
 		console.log("in gssp:", baseUrl);
 		////////////////// PRODUCTION: async/await method ///////////////////////////////
-		// const gamesRes = await fetch(`${baseUrl}/api/games?sent=true`);
-		// const upcomingGames = await gamesRes.json();
+		const gamesRes = await fetch(`${baseUrl}/api/games?sent=true`);
+		const upcomingGames = await gamesRes.json();
 
-		// const teamsRes = await fetch(`${baseUrl}/api/teams`);
-		// const theTeams = await teamsRes.json();
+		const teamsRes = await fetch(`${baseUrl}/api/teams`);
+		const theTeams = await teamsRes.json();
 
-		// const allPicksRes = await fetch(`${baseUrl}/api/picks`);
-		// const theAllPicks = await allPicksRes.json();
+		const allPicksRes = await fetch(`${baseUrl}/api/picks`);
+		const theAllPicks = await allPicksRes.json();
 
-		// const allStatPicksRes = await fetch(`${baseUrl}/api/stat-picks`);
-		// const theAllStatPicks = await allStatPicksRes.json();
+		const allStatPicksRes = await fetch(`${baseUrl}/api/stat-picks`);
+		const theAllStatPicks = await allStatPicksRes.json();
 		//////////////////////////////////////////////////////////////////////
 
 		/////////////////// DEV: promise all method /////////////////////////////////////
-		const [gamesRes, teamsRes, allPicksRes, allStatPicksRes] = await Promise.all([
-			fetch(`${baseUrl}/api/games?sent=true`),
-			fetch(`${baseUrl}/api/teams`),
-			fetch(`${baseUrl}/api/picks`),
-			fetch(`${baseUrl}/api/stat-picks`),
-		]);
-		const [upcomingGames, theTeams, theAllPicks, theAllStatPicks] = await Promise.all([
-			gamesRes.json(),
-			teamsRes.json(),
-			allPicksRes.json(),
-			allStatPicksRes.json(),
-		]);
+		// const [gamesRes, teamsRes, allPicksRes, allStatPicksRes] = await Promise.all([
+		// 	fetch(`${baseUrl}/api/games?sent=true`),
+		// 	fetch(`${baseUrl}/api/teams`),
+		// 	fetch(`${baseUrl}/api/picks`),
+		// 	fetch(`${baseUrl}/api/stat-picks`),
+		// ]);
+		// const [upcomingGames, theTeams, theAllPicks, theAllStatPicks] = await Promise.all([
+		// 	gamesRes.json(),
+		// 	teamsRes.json(),
+		// 	allPicksRes.json(),
+		// 	allStatPicksRes.json(),
+		// ]);
 		///////////////////////////////////////////////////////////////////////////////////
 
 		return {
