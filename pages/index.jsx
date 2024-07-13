@@ -362,6 +362,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 								/>
 							</div>
 						))}
+						{/* section below is for regular stats, not superbowlStats */}
 						{/* <div>
 							<p className='text-xl text-lime-300 font-bold ml-8 m-2 underline'>Stat Picks:</p>
 							{stats.map((stat) => (
@@ -431,28 +432,33 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 						</div>
 						{isSubmitted.length ? (
 							<button
-								className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded mb-2 ml-8'
+								className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded mb-2 ml-8 mb-8'
 								type='submit'
 								onClick={() => handleSubmit()}
 							>
-								Submit
+								Update
 							</button>
 						) : (
 							<button
-								className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded mb-2 ml-8'
+								className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded mb-2 ml-8 mb-8'
 								type='submit'
 								onClick={() => handleSubmit()}
 							>
 								Submit
 							</button>
 						)}
-						<p className='text-sm text-lime-300 ml-10 mb-8 mt-2 pb-8'>
-							* If successfully submitted, picks will appear below in the "Pick History" section.
-						</p>
 						{submissionMessage === "true" ? (
-							<div>TRUE</div>
+							<div>
+								<p className='text-lg text-lime-300 ml-10 mb-8 pb-8'>
+									Picks have successfully been submitted!
+								</p>
+							</div>
 						) : submissionMessage === "false" ? (
-							<div>FALSE</div>
+							<div>
+								<p className='text-lg text-white font-bold ml-10 mb-8 pb-8'>
+									Uh oh! Something went wrong...try submitting again.
+								</p>
+							</div>
 						) : null}
 					</div>
 					<div>
