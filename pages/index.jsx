@@ -14,7 +14,7 @@ import { PickView } from "../components/PickView";
 import stats from "../constants/stats";
 import superbowlStats from "../constants/superbowl-stats";
 
-export default function Home({ upcomingGames, allTeams, baseUrl }) {
+export default function Home({ upcomingGames, allTeams, totalPicks, totalStatPicks, baseUrl }) {
 	const [teams, setTeams] = useState([]);
 	const [games, setGames] = useState([]);
 	const [allPicks, setAllPicks] = useState([]);
@@ -26,8 +26,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	const [isStatSubmitted, setIsStatSubmitted] = useState([]);
 	// needed to set to null for initial load
 	const [userState, setUserState] = useState(null);
-
-	console.log(baseUrl);
+	const [submissionMessage, setSubmissionMessage] = useState(null);
 
 	const selectUser = (user) => {
 		setUserState(user);
@@ -47,119 +46,36 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 
 	const remaingTeams = [{ id: "25" }, { id: "12" }];
 
-	///////////////////////////// PROD: Async/Await Option of fetch /////////////////////////////////////
-	const getData = async () => {
-		const gamesRes = await fetch(`${baseUrl}/api/games?sent=true`);
-		const upcomingGames = await gamesRes.json();
+	const setData = async () => {
+		console.log("games:", upcomingGames);
 		setGames(upcomingGames);
-		console.log("games ran");
-		const teamsRes = await fetch(`${baseUrl}/api/teams`);
-		const theTeams = await teamsRes.json();
-		setTeams(theTeams);
-		console.log("teams ran");
-		const allPicksRes = await fetch(`${baseUrl}/api/picks`);
-		const theAllPicks = await allPicksRes.json();
-		setAllPicks(theAllPicks);
-		console.log("picks ran");
-		const allStatPicksRes = await fetch(`${baseUrl}/api/stat-picks`);
-		const theAllStatPicks = await allStatPicksRes.json();
-		setAllStatPicks(theAllStatPicks);
-		console.log("stat picks ran");
-
-		const userPicks = theAllPicks.filter((pick) => {
+		console.log("teams:", allTeams);
+		setTeams(allTeams);
+		console.log("picks:", totalPicks);
+		setAllPicks(totalPicks);
+		console.log("statPicks:", totalStatPicks);
+		setAllStatPicks(totalStatPicks);
+		const userPicks = totalPicks.filter((pick) => {
 			return pick.user_id === userState?.id;
 		});
-		console.log(userPicks);
 		if (userPicks.length) {
-			console.log("i have length");
+			console.log(userPicks);
 			setPicks(userPicks);
 			setIsSubmitted(userPicks);
 		}
-		const userStatPicks = theAllStatPicks.filter((pick) => {
+		const userStatPicks = totalStatPicks.filter((pick) => {
 			return pick.user_id === userState?.id;
 		});
-		console.log(userStatPicks);
 		if (userStatPicks.length) {
-			console.log("I also have length");
+			console.log(userStatPicks);
 			setStatPicks(userStatPicks);
 			setIsStatSubmitted(userStatPicks);
 		}
 	};
 
-	////////////////////////////// DEV: Promise.all Option of fetch //////////////////////////////////
-	// const getData = async () => {
-	// 	try {
-	// 		const [gamesRes, teamsRes, allPicksRes, allStatPicksRes] = await Promise.all([
-	// 			fetch(`${baseUrl}/api/games?sent=true`),
-	// 			fetch(`${baseUrl}/api/teams`),
-	// 			fetch(`${baseUrl}/api/picks`),
-	// 			fetch(`${baseUrl}/api/stat-picks`),
-	// 		]);
-	// 		const [upcomingGames, theTeams, theAllPicks, theAllStatPicks] = await Promise.all([
-	// 			gamesRes.json(),
-	// 			teamsRes.json(),
-	// 			allPicksRes.json(),
-	// 			allStatPicksRes.json(),
-	// 		]);
-	// 		setGames(upcomingGames);
-	// 		console.log("games set");
-	// 		setTeams(theTeams);
-	// 		console.log("teams set");
-	// 		setAllPicks(theAllPicks);
-	// 		console.log("picks set");
-	// 		setStatPicks(theAllStatPicks);
-	// 		console.log("stat picks set");
-	// 		console.log(theAllPicks);
-	// 		console.log(userState);
-	// 		const userPicks = theAllPicks.filter((pick) => {
-	// 			return pick.user_id === userState?.id;
-	// 		});
-	// 		console.log(userPicks);
-	// 		if (userPicks.length) {
-	// 			console.log("i have length");
-	// 			setPicks(userPicks);
-	// 			setIsSubmitted(userPicks);
-	// 		}
-	// 		const userStatPicks = theAllStatPicks.filter((pick) => {
-	// 			return pick.user_id === userState?.id;
-	// 		});
-	// 		console.log(userStatPicks);
-	// 		if (userStatPicks.length) {
-	// 			console.log("I also have length");
-	// 			setStatPicks(userStatPicks);
-	// 			setIsStatSubmitted(userStatPicks);
-	// 		}
-	// 	} catch (error) {
-	// 		console.log(error);
-	// 	}
-	// };
-
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	console.log(picks);
-	console.log("sub", isSubmitted);
-	console.log("stat", statPicks);
-	console.log("stat sub", isStatSubmitted);
-
-	// 6th
-	// these two useeffects are a problem for a number of reasons
-	// on page load, you're kicking off 4 simultaneous network calls that are not awaiting each other and are not contained in a promise
-	// your db cant handle that. we had to do both because something was unhappy with one of them and something was unhappy with the other
-	// i dont remember the specifics but it was like a dumb vercel thing or something
-	// you should write both. for async/await everything you have in all the network calls above needs to move into one function
-	// and be under one async and happen consecutively, like call an endpoint, read its response, set that to state, then call the next one
-	// for promise.all...here's my code for this
-	// https://github.com/brett-ranieri/pickems-app/blob/6f7fdf0d0dfdf5fe53b59d2c6f949c7898da3749/pages/index.jsx#L92
-	// make one of these work to fetch initial data, up here. one function, called by the useeffect (or useeffects). try to get all the network calls into one function
-	// and conditionally call the fetches you need for user
-	// DONT MAKE UNNECESSARY NETWORK CALLS BE CAREFUL
-
-	// once that works both on local _and_ on vercel in production, move these calls into the gssp
-	// you can have both async await and promise.all in the gssp. its very much the same as up here
-	// theres some examples down there already
 	useEffect(() => {
 		if (userState) {
-			getData();
+			setData();
 		}
 	}, [userState]);
 
@@ -169,6 +85,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 			chosen_team: id,
 			game_id: gameId,
 			week: week,
+			type: "game",
 		};
 
 		const tempPicks = picks?.filter((pick) => pick.game_id !== gameId);
@@ -182,6 +99,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 			game_id: gameId,
 			// this key allows me to hard code the week for now
 			week: 5,
+			type: "stat",
 		};
 
 		const tempStatPicks = statPicks?.filter((pick) => pick.game_id !== gameId);
@@ -189,205 +107,136 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 	};
 
 	const handleSubmit = async () => {
-		//if statement to handle statPicks
+		let arrayOfSubmittedPicks = [];
+		let arrayOfSubmittedStatPicks = [];
+
+		const reviewPicks = (arrayOfPicks) => {
+			let newPicks = [];
+			let updatedPicks = [];
+			let untouchedPicks = [];
+
+			arrayOfPicks.forEach(function (submittedPick) {
+				const pickInQuestion =
+					submittedPick.type === "stat"
+						? isStatSubmitted.find((pick) => pick.game_id === submittedPick.game_id)
+						: isSubmitted.find((pick) => pick.game_id === submittedPick.game_id);
+
+				if (pickInQuestion) {
+					if (pickInQuestion.chosen_team === submittedPick.chosen_team) {
+						untouchedPicks.push(submittedPick);
+					} else {
+						updatedPicks.push(submittedPick);
+					}
+				} else {
+					newPicks.push(submittedPick);
+				}
+			});
+			return { new: newPicks, updated: updatedPicks, untouched: untouchedPicks };
+		};
+
 		if (statPicks.length) {
-			if (isStatSubmitted.length) {
-				const comparePicks = async (pick) => {
-					// 4th
-					// now you're passing this `picks`, instead of `pick`, so change your variable name
-					// loop over picks, for each pick run your isStatSubmitted code - that function is good
-					// you have another function, checkForGame, that asks the question "is this pick new?"
-					// this function, comparePicks, asks the question "is this pick an update?"
-					// at the moment, you call both functions on each pick...after you stop doing network calls in a loop youll be calling each func for the full array of picks
-					// you need to refactor both of the functions into one function that sorts the picks into three arrays, "picks to update", "new picks", and "else" (picks that are neither)
-					// you need the "else" here so you can recombine that array with the responses from your endpoints at the end of this function
-					// so you can display all picks on the page not just the ones that were updated
-					// instantiate another couple of arrays for those categories, go get the code from checkForGame and do a nice if/if else/else
-					// now that you've done that, updatedPicks has been populated with however many picks need to be sent to the db
-					// your put method is also good, because updatedPicks is now an array of picks, but you've already updated your
-					// put method in the endpoint to handle an array
-					// bring the `post` method up here and do like a `if updatedPicks.length run this put` type of logic for both your "picks to update" and "new picks" arrays
-
-					let updatedPicks = [];
-					isStatSubmitted.forEach(function (submittedPick) {
-						if (pick.game_id === submittedPick.game_id) {
-							if (pick.chosen_team !== submittedPick.chosen_team) {
-								console.log("different");
-								updatedPicks.push(pick);
-							}
-						}
-					});
-					if (updatedPicks.length) {
-						const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
-							method: "PUT",
-							body: JSON.stringify(updatedPicks),
-						});
-						if (postPicksRes) {
-							// 5th
-							// now you need to actually get the responses that your put and post are sending and use them
-							// read the response like: const putResponse = await postPicksRes.json()
-							// console log putResponse and make sure it is what you're expecting (an array of the picks that were updated)
-							// THEN, you need to spread the responses from both calls, plus the other picks that weren't sent to the db into an array
-							// and set that array to state
-							// DO NOT CALL getAllStatPicks here. we're gonna refactor that into a page load function anyway. or gssp. tbd.
-							setIsStatSubmitted(statPicks);
-							getAllStatPicks();
-						}
-					}
-				};
-
-				const checkForGame = async (pick) => {
-					// leaving comments below in because I can't see where we talked about
-					// this in last code review:
-
-					// needed to POST data returned from this checkForGame, not PUT,
-					// so i seperated function from comparePicks to allow for different fetch methods
-					//
-					// are some variables, like declaring updatedPicks in both functions
-					// a bit redundant?
-					// kept them seperate because each function needs to run independantly
-					// of the other, but both need to be populated simultaneously AND if the
-					// results of either function were sent to the wrong fetch it would
-					// mess up the data...
-					//
-					// you mentioned an insert/update query though...is this a use case
-					// for something like that?
-					let updatedPicks = [];
-					const submissionCheck = isStatSubmitted.some((obj) => obj.game_id === pick.game_id);
-					if (!submissionCheck) {
-						updatedPicks.push(pick);
-					}
-					if (updatedPicks.length) {
-						const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
-							method: "POST",
-							body: JSON.stringify(updatedPicks),
-						});
-						if (postPicksRes) {
-							setIsStatSubmitted(statPicks);
-							getAllStatPicks();
-						}
-					}
-
-					// START OF WHAT ALLISON CHANGED
-					// console.log("🍇 271, POST of some kind");
-					// setIsStatSubmitted(statPicks);
-
-					// console.log("OTHER PICKS HERE!!!!", otherPicks);
-					// console.log("🍓 NEW STAT PICKS", allStatPicks, theNewStatPicks, thePutStatPicks);
-					// setStatPicks([...otherPicks, ...theNewStatPicks, ...thePutStatPicks]);
-					// filtered all stat picks to not include the user's picks spread with the user's stat picks
-					// result is one less network call
-					// const combinedStatPicks = [
-					// 	...allStatPicks.filter((x) => x.user_id !== userState.id),
-					// 	...otherPicks,
-					// 	...theNewStatPicks,
-					// 	...thePutStatPicks,
-					// ];
-					// setAllStatPicks(combinedStatPicks);
-					// END OF WHAT ALLISON CHANGED
-				};
-
-				// 3rd
-				// any function that you're calling in a foreach or a for of or any loop
-				// where the function contains a network call, NEEDS TO GO AWAY
-				// all functions that contain a network call that are currently being called in a loop need to be passed the full data set,
-				// meaning the array, and handle that, NOT BY looping over the array inside the function and making network calls in that loop
-				// no network calls in any loops.
-
-				// so that means here, you need to call comparePicks(picks), and same thing for checkForGame, and the two other functions
-				// there's 4 functions that need basically the same refactor, and they need to become 2 functions in this pass,
-				// and ultimately 1 function if you really want to dry it up. when i stopped touching things i had left 2 functions but
-				// thats just because i was over it, i wouldve refactored it into one function if it was my code. you should leave it as 2 for now
-				// and do the rest of this work then come back to it.
-				// im going to put notes in comparePicks.
-				statPicks.forEach(comparePicks);
-				statPicks.forEach(checkForGame);
-			} else {
+			const reviewed = reviewPicks(statPicks);
+			if (reviewed.new.length) {
 				const postPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
 					method: "POST",
-					body: JSON.stringify(statPicks),
+					body: JSON.stringify(reviewed.new),
 				});
-				if (postPicksRes) {
-					setIsStatSubmitted(statPicks);
-					const theStatPicks = await postPicksRes.json();
-					console.log("🍓 ALL STAT PICKS", allStatPicks, theStatPicks);
-					setStatPicks(theStatPicks);
-					// filtered all stat picks to not include the user's picks spread with the user's stat picks
-					// result is one less network call
-					const combinedStatPicks = [
-						...allStatPicks.filter((x) => x.user_id !== userState.id),
-						...theStatPicks,
-					];
-					setAllStatPicks(combinedStatPicks);
-					// END OF WHAT ALLISON CHANGED
-					// getAllStatPicks();
-				}
+				// is it bad to reassign response to same variable? feels bad...
+				// but having variable access issues if I tried to instantiate array
+				// in statPicks.length if statement and set in this if...
+				reviewed.new = await postPicksRes.json();
 			}
+			if (reviewed.updated.length) {
+				const putPicksRes = await fetch(`${baseUrl}/api/submit-stat-picks`, {
+					method: "PUT",
+					body: JSON.stringify(reviewed.updated),
+				});
+				reviewed.updated = await putPicksRes.json();
+			}
+			arrayOfSubmittedStatPicks = [
+				...reviewed.new,
+				...reviewed.updated,
+				...reviewed.untouched,
+				//adding extra object with wrong chosen_team for testing
+				// {
+				// 	user_id: 3,
+				// 	chosen_team: "2",
+				// 	// passes if you make new game_id
+				// 	game_id: "9101-99",
+				// 	week: 5,
+				// 	winner: null,
+				// 	type: "stat",
+				// },
+			];
+			setIsStatSubmitted(arrayOfSubmittedStatPicks);
 		}
 
-		// handling picks from here down
-		if (isSubmitted.length) {
-			const comparePicks = async (pick) => {
-				let updatedPicks = [];
-				isSubmitted.forEach(function (submittedPick) {
-					if (pick.game_id === submittedPick.game_id) {
-						if (pick.chosen_team !== submittedPick.chosen_team) {
-							updatedPicks.push(pick);
-						}
-					}
+		if (picks.length) {
+			const reviewed = reviewPicks(picks);
+			if (reviewed.new.length) {
+				const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
+					method: "POST",
+					body: JSON.stringify(reviewed.new),
 				});
-				if (updatedPicks.length) {
-					const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
-						method: "PUT",
-						body: JSON.stringify(updatedPicks),
-					});
-					if (postPicksRes) {
-						setIsSubmitted(picks);
-						const updatedAllPicks = [
-							...allPicks.filter((x) => x.user_id !== userState.id),
-							...picks,
-						];
-						setAllPicks(updatedAllPicks);
-					}
-				}
-			};
+				reviewed.new = await postPicksRes.json();
+			}
+			if (reviewed.updated.length) {
+				const putPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
+					method: "PUT",
+					body: JSON.stringify(reviewed.updated),
+				});
+				reviewed.updated = await putPicksRes.json();
+			}
+			arrayOfSubmittedPicks = [
+				...reviewed.new,
+				...reviewed.updated,
+				...reviewed.untouched,
+				//for testing
+				//adding additional object to array that has diff chosen_team
+				// {
+				// 	user_id: 3,
+				// 	chosen_team: "8",
+				// 	// passes if you make new game_id by adding -99 to end of string
+				// 	game_id: "401547378",
+				// 	week: 5,
+				// 	type: "game",
+				// },
+			];
+			setIsSubmitted(arrayOfSubmittedPicks);
+		}
+		console.log(arrayOfSubmittedPicks);
+		const pickReview = errorHandling(picks, arrayOfSubmittedPicks);
+		const statReview = errorHandling(statPicks, arrayOfSubmittedStatPicks);
 
-			const checkForGame = async (pick) => {
-				let updatedPicks = [];
-
-				const submissionCheck = isSubmitted.some((obj) => obj.game_id === pick.game_id);
-				if (!submissionCheck) {
-					updatedPicks.push(pick);
-				}
-				if (updatedPicks.length) {
-					const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
-						method: "POST",
-						body: JSON.stringify(updatedPicks),
-					});
-					if (postPicksRes) {
-						setIsSubmitted(picks);
-						const updatedAllPicks = [
-							...allPicks.filter((x) => x.user_id !== userState.id),
-							...picks,
-						];
-						setAllPicks(updatedAllPicks);
-					}
-				}
-			};
-
-			picks.forEach(comparePicks);
-			picks.forEach(checkForGame);
+		if (pickReview.length || statReview.length) {
+			alertSetting("false");
 		} else {
-			const postPicksRes = await fetch(`${baseUrl}/api/submit-picks`, {
-				method: "POST",
-				body: JSON.stringify(picks),
-			});
-			if (postPicksRes) {
-				setIsSubmitted(picks);
-				const updatedAllPicks = [...allPicks.filter((x) => x.user_id !== userState.id), ...picks];
-				setAllPicks(updatedAllPicks);
-			}
+			alertSetting("true");
 		}
+	};
+
+	const alertSetting = (results) => {
+		setSubmissionMessage(results);
+		setTimeout(function () {
+			setSubmissionMessage(null);
+		}, 3000);
+	};
+
+	const errorHandling = (cacheArray, databaseArray) => {
+		// checking that response from database matches picks entered locally
+		// but only works one way!
+		// if an additional pick is added to arrayOfSubmittedPicks error is
+		// caught, but if arrayOfSubmittedPicks doesn't include
+		// (like if you comment out ...reviewed.untouched) error is NOT caught
+		console.log("picks", cacheArray);
+		console.log("db", databaseArray);
+		const result = cacheArray.filter(function (obj) {
+			return databaseArray.some(function (obj2) {
+				return obj.game_id === obj2.game_id && obj.chosen_team !== obj2.chosen_team;
+			});
+		});
+		console.log(result);
+		return result;
 	};
 
 	return (
@@ -407,6 +256,12 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 				<div className='bg-football-super-close bg-cover'>
 					{/*ultimately turn this into a true Navbar */}
 					<div className='bg-lime-800 flex flex-row justify-end p-1 sticky top-0'>
+						<button
+							className='bg-amber-500 hover:bg-amber-200 hover:text-black text-white font-bold py-2 px-4 rounded m-2'
+							onClick={() => errorHandling(picks, isSubmitted)}
+						>
+							TEST COMPARE
+						</button>
 						<button
 							className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded m-2 '
 							onClick={() => handleViewChange()}
@@ -456,6 +311,7 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 								/>
 							</div>
 						))}
+						{/* section below is for regular stats, not superbowlStats */}
 						{/* <div>
 							<p className='text-xl text-lime-300 font-bold ml-8 m-2 underline'>Stat Picks:</p>
 							{stats.map((stat) => (
@@ -525,29 +381,39 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 						</div>
 						{isSubmitted.length ? (
 							<button
-								className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded mb-2 ml-8'
+								className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded mb-2 ml-8 mb-8'
 								type='submit'
 								onClick={() => handleSubmit()}
 							>
-								Submit
+								Update
 							</button>
 						) : (
 							<button
-								className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded mb-2 ml-8'
+								className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded mb-2 ml-8 mb-8'
 								type='submit'
 								onClick={() => handleSubmit()}
 							>
 								Submit
 							</button>
 						)}
-						<p className='text-sm text-lime-300 ml-10 mb-8 mt-2 pb-8'>
-							* If successfully submitted, picks will appear below in the "Pick History" section.
-						</p>
+						{submissionMessage === "true" ? (
+							<div>
+								<p className='text-lg text-lime-300 ml-10 mb-8 pb-8'>
+									Picks have successfully been submitted!
+								</p>
+							</div>
+						) : submissionMessage === "false" ? (
+							<div>
+								<p className='text-lg text-white font-bold ml-10 mb-8 pb-8'>
+									Uh oh! Something went wrong...try submitting again.
+								</p>
+							</div>
+						) : null}
 					</div>
 					<div>
 						<PickView
-							userPicks={picks}
-							userStatPicks={statPicks}
+							userPicks={isSubmitted}
+							userStatPicks={isStatSubmitted}
 							user={userState}
 							teams={teams}
 						/>
@@ -594,16 +460,46 @@ export async function getServerSideProps() {
 		//   }
 		// const teams = await teamsResults.json();
 
-		// console.log(baseUrl);
+		console.log("in gssp:", baseUrl);
+		////////////////// PRODUCTION: async/await method ///////////////////////////////
+		const gamesRes = await fetch(`${baseUrl}/api/games?sent=true`);
+		const upcomingGames = await gamesRes.json();
+
+		const teamsRes = await fetch(`${baseUrl}/api/teams`);
+		const theTeams = await teamsRes.json();
+
+		const allPicksRes = await fetch(`${baseUrl}/api/picks`);
+		const theAllPicks = await allPicksRes.json();
+
+		const allStatPicksRes = await fetch(`${baseUrl}/api/stat-picks`);
+		const theAllStatPicks = await allStatPicksRes.json();
+		//////////////////////////////////////////////////////////////////////
+
+		/////////////////// DEV: promise all method /////////////////////////////////////
+		// const [gamesRes, teamsRes, allPicksRes, allStatPicksRes] = await Promise.all([
+		// 	fetch(`${baseUrl}/api/games?sent=true`),
+		// 	fetch(`${baseUrl}/api/teams`),
+		// 	fetch(`${baseUrl}/api/picks`),
+		// 	fetch(`${baseUrl}/api/stat-picks`),
+		// ]);
+		// const [upcomingGames, theTeams, theAllPicks, theAllStatPicks] = await Promise.all([
+		// 	gamesRes.json(),
+		// 	teamsRes.json(),
+		// 	allPicksRes.json(),
+		// 	allStatPicksRes.json(),
+		// ]);
+		///////////////////////////////////////////////////////////////////////////////////
 
 		return {
 			props: {
-				// upcomingGames: upcomingGames,
-				// allTeams: teams,
+				upcomingGames: upcomingGames,
+				allTeams: theTeams,
+				totalPicks: theAllPicks,
+				totalStatPicks: theAllStatPicks,
 				baseUrl: baseUrl,
 			},
 		};
 	} catch (error) {
-		// console.log(error);
+		console.log(error);
 	}
 }
