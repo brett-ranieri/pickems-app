@@ -14,7 +14,7 @@ import { PickView } from "../components/PickView";
 import stats from "../constants/stats";
 import superbowlStats from "../constants/superbowl-stats";
 
-export default function Home({ upcomingGames, allTeams, baseUrl }) {
+export default function Home({ upcomingGames, allTeams, totalPicks, totalStatPicks, baseUrl }) {
 	const [teams, setTeams] = useState([]);
 	const [games, setGames] = useState([]);
 	const [allPicks, setAllPicks] = useState([]);
@@ -46,87 +46,36 @@ export default function Home({ upcomingGames, allTeams, baseUrl }) {
 
 	const remaingTeams = [{ id: "25" }, { id: "12" }];
 
-	///////////////////////////// PROD: Async/Await Option of fetch /////////////////////////////////////
-	// const getData = async () => {
-	// 	const gamesRes = await fetch(`${baseUrl}/api/games?sent=true`);
-	// 	const upcomingGames = await gamesRes.json();
-	// 	setGames(upcomingGames);
-	// 	const teamsRes = await fetch(`${baseUrl}/api/teams`);
-	// 	const theTeams = await teamsRes.json();
-	// 	setTeams(theTeams);
-	// 	const allPicksRes = await fetch(`${baseUrl}/api/picks`);
-	// 	const theAllPicks = await allPicksRes.json();
-	// 	setAllPicks(theAllPicks);
-	// 	const allStatPicksRes = await fetch(`${baseUrl}/api/stat-picks`);
-	// 	const theAllStatPicks = await allStatPicksRes.json();
-	// 	setAllStatPicks(theAllStatPicks);
-
-	// 	const userPicks = theAllPicks.filter((pick) => {
-	// 		return pick.user_id === userState?.id;
-	// 	});
-	// 	if (userPicks.length) {
-	// 		setPicks(userPicks);
-	// 		setIsSubmitted(userPicks);
-	// 	}
-	// 	const userStatPicks = theAllStatPicks.filter((pick) => {
-	// 		return pick.user_id === userState?.id;
-	// 	});
-	// 	if (userStatPicks.length) {
-	// 		setStatPicks(userStatPicks);
-	// 		setIsStatSubmitted(userStatPicks);
-	// 	}
-	// };
-
-	////////////////////////////// DEV: Promise.all Option of fetch //////////////////////////////////
-	const getData = async () => {
-		try {
-			const [gamesRes, teamsRes, allPicksRes, allStatPicksRes] = await Promise.all([
-				fetch(`${baseUrl}/api/games?sent=true`),
-				fetch(`${baseUrl}/api/teams`),
-				fetch(`${baseUrl}/api/picks`),
-				fetch(`${baseUrl}/api/stat-picks`),
-			]);
-			const [upcomingGames, theTeams, theAllPicks, theAllStatPicks] = await Promise.all([
-				gamesRes.json(),
-				teamsRes.json(),
-				allPicksRes.json(),
-				allStatPicksRes.json(),
-			]);
-			setGames(upcomingGames);
-			setTeams(theTeams);
-			setAllPicks(theAllPicks);
-			setStatPicks(theAllStatPicks);
-			const userPicks = theAllPicks.filter((pick) => {
-				return pick.user_id === userState?.id;
-			});
-			if (userPicks.length) {
-				setPicks(userPicks);
-				setIsSubmitted(userPicks);
-				console.log(userPicks);
-			}
-			const userStatPicks = theAllStatPicks.filter((pick) => {
-				return pick.user_id === userState?.id;
-			});
-			if (userStatPicks.length) {
-				setStatPicks(userStatPicks);
-				setIsStatSubmitted(userStatPicks);
-			}
-		} catch (error) {
-			console.log(error);
+	const setData = async () => {
+		console.log("games:", upcomingGames);
+		setGames(upcomingGames);
+		console.log("teams:", allTeams);
+		setTeams(allTeams);
+		console.log("picks:", totalPicks);
+		setAllPicks(totalPicks);
+		console.log("statPicks:", totalStatPicks);
+		setAllStatPicks(totalStatPicks);
+		const userPicks = totalPicks.filter((pick) => {
+			return pick.user_id === userState?.id;
+		});
+		if (userPicks.length) {
+			console.log(userPicks);
+			setPicks(userPicks);
+			setIsSubmitted(userPicks);
+		}
+		const userStatPicks = totalStatPicks.filter((pick) => {
+			return pick.user_id === userState?.id;
+		});
+		if (userStatPicks.length) {
+			console.log(userStatPicks);
+			setStatPicks(userStatPicks);
+			setIsStatSubmitted(userStatPicks);
 		}
 	};
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	////////////////// STILL NEED TO DO ///////////////////////////////
-	// once that works both on local _and_ on vercel in production, move these calls into the gssp
-	// you can have both async await and promise.all in the gssp. its very much the same as up here
-	// theres some examples down there already
-	/////////////////////////////////////////////////////////////////////
-
 	useEffect(() => {
 		if (userState) {
-			getData();
+			setData();
 		}
 	}, [userState]);
 
@@ -511,16 +460,46 @@ export async function getServerSideProps() {
 		//   }
 		// const teams = await teamsResults.json();
 
-		// console.log(baseUrl);
+		console.log("in gssp:", baseUrl);
+		////////////////// PRODUCTION: async/await method ///////////////////////////////
+		// const gamesRes = await fetch(`${baseUrl}/api/games?sent=true`);
+		// const upcomingGames = await gamesRes.json();
+
+		// const teamsRes = await fetch(`${baseUrl}/api/teams`);
+		// const theTeams = await teamsRes.json();
+
+		// const allPicksRes = await fetch(`${baseUrl}/api/picks`);
+		// const theAllPicks = await allPicksRes.json();
+
+		// const allStatPicksRes = await fetch(`${baseUrl}/api/stat-picks`);
+		// const theAllStatPicks = await allStatPicksRes.json();
+		//////////////////////////////////////////////////////////////////////
+
+		/////////////////// DEV: promise all method /////////////////////////////////////
+		const [gamesRes, teamsRes, allPicksRes, allStatPicksRes] = await Promise.all([
+			fetch(`${baseUrl}/api/games?sent=true`),
+			fetch(`${baseUrl}/api/teams`),
+			fetch(`${baseUrl}/api/picks`),
+			fetch(`${baseUrl}/api/stat-picks`),
+		]);
+		const [upcomingGames, theTeams, theAllPicks, theAllStatPicks] = await Promise.all([
+			gamesRes.json(),
+			teamsRes.json(),
+			allPicksRes.json(),
+			allStatPicksRes.json(),
+		]);
+		///////////////////////////////////////////////////////////////////////////////////
 
 		return {
 			props: {
-				// upcomingGames: upcomingGames,
-				// allTeams: teams,
+				upcomingGames: upcomingGames,
+				allTeams: theTeams,
+				totalPicks: theAllPicks,
+				totalStatPicks: theAllStatPicks,
 				baseUrl: baseUrl,
 			},
 		};
 	} catch (error) {
-		// console.log(error);
+		console.log(error);
 	}
 }
