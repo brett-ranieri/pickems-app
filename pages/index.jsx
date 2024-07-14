@@ -153,21 +153,7 @@ export default function Home({ upcomingGames, allTeams, totalPicks, totalStatPic
 				});
 				reviewed.updated = await putPicksRes.json();
 			}
-			arrayOfSubmittedStatPicks = [
-				...reviewed.new,
-				...reviewed.updated,
-				...reviewed.untouched,
-				//adding extra object with wrong chosen_team for testing
-				// {
-				// 	user_id: 3,
-				// 	chosen_team: "2",
-				// 	// passes if you make new game_id
-				// 	game_id: "9101-99",
-				// 	week: 5,
-				// 	winner: null,
-				// 	type: "stat",
-				// },
-			];
+			arrayOfSubmittedStatPicks = [...reviewed.new, ...reviewed.updated, ...reviewed.untouched];
 			setIsStatSubmitted(arrayOfSubmittedStatPicks);
 		}
 
@@ -187,21 +173,7 @@ export default function Home({ upcomingGames, allTeams, totalPicks, totalStatPic
 				});
 				reviewed.updated = await putPicksRes.json();
 			}
-			arrayOfSubmittedPicks = [
-				...reviewed.new,
-				...reviewed.updated,
-				...reviewed.untouched,
-				//for testing
-				//adding additional object to array that has diff chosen_team
-				// {
-				// 	user_id: 3,
-				// 	chosen_team: "8",
-				// 	// passes if you make new game_id by adding -99 to end of string
-				// 	game_id: "401547378",
-				// 	week: 5,
-				// 	type: "game",
-				// },
-			];
+			arrayOfSubmittedPicks = [...reviewed.new, ...reviewed.updated, ...reviewed.untouched];
 			setIsSubmitted(arrayOfSubmittedPicks);
 		}
 		console.log(arrayOfSubmittedPicks);
@@ -223,11 +195,6 @@ export default function Home({ upcomingGames, allTeams, totalPicks, totalStatPic
 	};
 
 	const errorHandling = (cacheArray, databaseArray) => {
-		// checking that response from database matches picks entered locally
-		// but only works one way!
-		// if an additional pick is added to arrayOfSubmittedPicks error is
-		// caught, but if arrayOfSubmittedPicks doesn't include
-		// (like if you comment out ...reviewed.untouched) error is NOT caught
 		console.log("picks", cacheArray);
 		console.log("db", databaseArray);
 		const result = cacheArray.filter(function (obj) {
