@@ -18,7 +18,6 @@ export default function Home({ upcomingGames, allTeams, totalPicks, totalStatPic
 	const [statPicks, setStatPicks] = useState([]);
 	const [isSubmitted, setIsSubmitted] = useState([]);
 	const [isStatSubmitted, setIsStatSubmitted] = useState([]);
-	// needed to set to null for initial load
 	const [userState, setUserState] = useState(null);
 	const [submissionMessage, setSubmissionMessage] = useState(null);
 
@@ -196,8 +195,6 @@ export default function Home({ upcomingGames, allTeams, totalPicks, totalStatPic
 				<div>
 					<UserDropdown
 						users={users}
-						// need to pass the user to selectUser otherwise it just retuns
-						// undefined when function is called.
 						selectUser={(user) => selectUser(user)}
 						setUserState={setUserState}
 					/>
