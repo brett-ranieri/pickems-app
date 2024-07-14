@@ -41,19 +41,14 @@ export default function Home({ upcomingGames, allTeams, totalPicks, totalStatPic
 	const remaingTeams = [{ id: "25" }, { id: "12" }];
 
 	const setData = async () => {
-		console.log("games:", upcomingGames);
 		setGames(upcomingGames);
-		console.log("teams:", allTeams);
 		setTeams(allTeams);
-		console.log("picks:", totalPicks);
 		setAllPicks(totalPicks);
-		console.log("statPicks:", totalStatPicks);
 		setAllStatPicks(totalStatPicks);
 		const userPicks = totalPicks.filter((pick) => {
 			return pick.user_id === userState?.id;
 		});
 		if (userPicks.length) {
-			console.log(userPicks);
 			setPicks(userPicks);
 			setIsSubmitted(userPicks);
 		}
@@ -61,7 +56,6 @@ export default function Home({ upcomingGames, allTeams, totalPicks, totalStatPic
 			return pick.user_id === userState?.id;
 		});
 		if (userStatPicks.length) {
-			console.log(userStatPicks);
 			setStatPicks(userStatPicks);
 			setIsStatSubmitted(userStatPicks);
 		}
@@ -91,7 +85,7 @@ export default function Home({ upcomingGames, allTeams, totalPicks, totalStatPic
 			user_id: userState.id,
 			chosen_team: id,
 			game_id: gameId,
-			// this key allows me to hard code the week for now
+			// this comment is a reminder to refactor hardcoded week
 			week: 5,
 			type: "stat",
 		};
@@ -170,7 +164,6 @@ export default function Home({ upcomingGames, allTeams, totalPicks, totalStatPic
 			arrayOfSubmittedPicks = [...reviewed.new, ...reviewed.updated, ...reviewed.untouched];
 			setIsSubmitted(arrayOfSubmittedPicks);
 		}
-		console.log(arrayOfSubmittedPicks);
 		const pickReview = errorHandling(picks, arrayOfSubmittedPicks);
 		const statReview = errorHandling(statPicks, arrayOfSubmittedStatPicks);
 
@@ -189,14 +182,11 @@ export default function Home({ upcomingGames, allTeams, totalPicks, totalStatPic
 	};
 
 	const errorHandling = (cacheArray, databaseArray) => {
-		console.log("picks", cacheArray);
-		console.log("db", databaseArray);
 		const result = cacheArray.filter(function (obj) {
 			return databaseArray.some(function (obj2) {
 				return obj.game_id === obj2.game_id && obj.chosen_team !== obj2.chosen_team;
 			});
 		});
-		console.log(result);
 		return result;
 	};
 
@@ -206,7 +196,6 @@ export default function Home({ upcomingGames, allTeams, totalPicks, totalStatPic
 				<div>
 					<UserDropdown
 						users={users}
-						// handleUserChange={() => handleUserChange()}
 						// need to pass the user to selectUser otherwise it just retuns
 						// undefined when function is called.
 						selectUser={(user) => selectUser(user)}
@@ -215,14 +204,7 @@ export default function Home({ upcomingGames, allTeams, totalPicks, totalStatPic
 				</div>
 			) : view ? (
 				<div className='bg-football-super-close bg-cover'>
-					{/*ultimately turn this into a true Navbar */}
 					<div className='bg-lime-800 flex flex-row justify-end p-1 sticky top-0'>
-						<button
-							className='bg-amber-500 hover:bg-amber-200 hover:text-black text-white font-bold py-2 px-4 rounded m-2'
-							onClick={() => errorHandling(picks, isSubmitted)}
-						>
-							TEST COMPARE
-						</button>
 						<button
 							className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded m-2 '
 							onClick={() => handleViewChange()}
