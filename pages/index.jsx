@@ -3,12 +3,6 @@ import { TeamCard } from "../components/TeamCard";
 import { ScoreView } from "../components/ScoreView";
 import users from "../constants/users";
 import { UserDropdown } from "../components/UserDropdown";
-// IMPORTANT TO REMEMBER
-// you have to import baseUrl, then go down to gssp and return from gssp as a prop
-// then you have to read it on the client side, in your component, as a prop, NOT directly from this import
-// if you read it directly from this import, it will work on local, but it will break on vercel
-// because, on vercel, the baseUrl is an environment variable and so it can't be read by the client side
-// directly without being first passed through a server side function
 import baseUrl from "../constants/baseUrl";
 import { PickView } from "../components/PickView";
 import stats from "../constants/stats";
@@ -24,7 +18,6 @@ export default function Home({ upcomingGames, allTeams, totalPicks, totalStatPic
 	const [statPicks, setStatPicks] = useState([]);
 	const [isSubmitted, setIsSubmitted] = useState([]);
 	const [isStatSubmitted, setIsStatSubmitted] = useState([]);
-	// needed to set to null for initial load
 	const [userState, setUserState] = useState(null);
 	const [submissionMessage, setSubmissionMessage] = useState(null);
 
@@ -47,19 +40,14 @@ export default function Home({ upcomingGames, allTeams, totalPicks, totalStatPic
 	const remaingTeams = [{ id: "25" }, { id: "12" }];
 
 	const setData = async () => {
-		console.log("games:", upcomingGames);
 		setGames(upcomingGames);
-		console.log("teams:", allTeams);
 		setTeams(allTeams);
-		console.log("picks:", totalPicks);
 		setAllPicks(totalPicks);
-		console.log("statPicks:", totalStatPicks);
 		setAllStatPicks(totalStatPicks);
 		const userPicks = totalPicks.filter((pick) => {
 			return pick.user_id === userState?.id;
 		});
 		if (userPicks.length) {
-			console.log(userPicks);
 			setPicks(userPicks);
 			setIsSubmitted(userPicks);
 		}
@@ -67,7 +55,6 @@ export default function Home({ upcomingGames, allTeams, totalPicks, totalStatPic
 			return pick.user_id === userState?.id;
 		});
 		if (userStatPicks.length) {
-			console.log(userStatPicks);
 			setStatPicks(userStatPicks);
 			setIsStatSubmitted(userStatPicks);
 		}
@@ -97,7 +84,7 @@ export default function Home({ upcomingGames, allTeams, totalPicks, totalStatPic
 			user_id: userState.id,
 			chosen_team: id,
 			game_id: gameId,
-			// this key allows me to hard code the week for now
+			// this comment is a reminder to refactor hardcoded week
 			week: 5,
 			type: "stat",
 		};
@@ -153,21 +140,7 @@ export default function Home({ upcomingGames, allTeams, totalPicks, totalStatPic
 				});
 				reviewed.updated = await putPicksRes.json();
 			}
-			arrayOfSubmittedStatPicks = [
-				...reviewed.new,
-				...reviewed.updated,
-				...reviewed.untouched,
-				//adding extra object with wrong chosen_team for testing
-				// {
-				// 	user_id: 3,
-				// 	chosen_team: "2",
-				// 	// passes if you make new game_id
-				// 	game_id: "9101-99",
-				// 	week: 5,
-				// 	winner: null,
-				// 	type: "stat",
-				// },
-			];
+			arrayOfSubmittedStatPicks = [...reviewed.new, ...reviewed.updated, ...reviewed.untouched];
 			setIsStatSubmitted(arrayOfSubmittedStatPicks);
 		}
 
@@ -187,24 +160,9 @@ export default function Home({ upcomingGames, allTeams, totalPicks, totalStatPic
 				});
 				reviewed.updated = await putPicksRes.json();
 			}
-			arrayOfSubmittedPicks = [
-				...reviewed.new,
-				...reviewed.updated,
-				...reviewed.untouched,
-				//for testing
-				//adding additional object to array that has diff chosen_team
-				// {
-				// 	user_id: 3,
-				// 	chosen_team: "8",
-				// 	// passes if you make new game_id by adding -99 to end of string
-				// 	game_id: "401547378",
-				// 	week: 5,
-				// 	type: "game",
-				// },
-			];
+			arrayOfSubmittedPicks = [...reviewed.new, ...reviewed.updated, ...reviewed.untouched];
 			setIsSubmitted(arrayOfSubmittedPicks);
 		}
-		console.log(arrayOfSubmittedPicks);
 		const pickReview = errorHandling(picks, arrayOfSubmittedPicks);
 		const statReview = errorHandling(statPicks, arrayOfSubmittedStatPicks);
 
@@ -223,19 +181,11 @@ export default function Home({ upcomingGames, allTeams, totalPicks, totalStatPic
 	};
 
 	const errorHandling = (cacheArray, databaseArray) => {
-		// checking that response from database matches picks entered locally
-		// but only works one way!
-		// if an additional pick is added to arrayOfSubmittedPicks error is
-		// caught, but if arrayOfSubmittedPicks doesn't include
-		// (like if you comment out ...reviewed.untouched) error is NOT caught
-		console.log("picks", cacheArray);
-		console.log("db", databaseArray);
 		const result = cacheArray.filter(function (obj) {
 			return databaseArray.some(function (obj2) {
 				return obj.game_id === obj2.game_id && obj.chosen_team !== obj2.chosen_team;
 			});
 		});
-		console.log(result);
 		return result;
 	};
 
@@ -245,23 +195,13 @@ export default function Home({ upcomingGames, allTeams, totalPicks, totalStatPic
 				<div>
 					<UserDropdown
 						users={users}
-						// handleUserChange={() => handleUserChange()}
-						// need to pass the user to selectUser otherwise it just retuns
-						// undefined when function is called.
 						selectUser={(user) => selectUser(user)}
 						setUserState={setUserState}
 					/>
 				</div>
 			) : view ? (
 				<div className='bg-football-super-close bg-cover'>
-					{/*ultimately turn this into a true Navbar */}
 					<div className='bg-lime-800 flex flex-row justify-end p-1 sticky top-0'>
-						<button
-							className='bg-amber-500 hover:bg-amber-200 hover:text-black text-white font-bold py-2 px-4 rounded m-2'
-							onClick={() => errorHandling(picks, isSubmitted)}
-						>
-							TEST COMPARE
-						</button>
 						<button
 							className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded m-2 '
 							onClick={() => handleViewChange()}
@@ -437,30 +377,8 @@ export default function Home({ upcomingGames, allTeams, totalPicks, totalStatPic
 	);
 }
 
-// look up "getServerSideProps next docs" to learn more about this function if you want
 export async function getServerSideProps() {
 	try {
-		// moved the fetches for these two pieces of data down here
-		// now when you hit the page it grabs this data before even trying to load the UI
-		// so by the time react does anything and tries to render the component, it already has games and teams
-		// being passed in as props
-
-		// games fetch WITH query param
-		// const gamesResults = await fetch(`${baseUrl}/api/games?sent=true`);
-		// if (!gamesResults.ok) {
-		// 	const errObj = await gamesResults.json()
-		// 	// console.log(errObj)
-		//   }
-		// const upcomingGames = await gamesResults.json();
-
-		// const teamsResults = await fetch(`${baseUrl}/api/teams`);
-		// if (!teamsResults.ok) {
-		// 	const errObj = await teamsResults.json()
-		// 	// console.log(errObj)
-		//   }
-		// const teams = await teamsResults.json();
-
-		console.log("in gssp:", baseUrl);
 		////////////////// PRODUCTION: async/await method ///////////////////////////////
 		const gamesRes = await fetch(`${baseUrl}/api/games?sent=true`);
 		const upcomingGames = await gamesRes.json();
