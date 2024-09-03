@@ -18,7 +18,6 @@ export const UserDropdown = ({ users, selectUser, setUserState }) => {
 						className='h-72 bg-gradient-to-r from-gray-100 to-gray-400'
 						src='/nfl-1-logo-png-transparent.png'
 					/>
-					<p className='text-4xl font-bold mt-4 mb-4'>SUPER BOWL</p>
 					<p className='text-4xl font-bold mt-4 mb-4'>Pick'ems</p>
 				</div>
 				<div className='flex flex-col justify-center items-center text-center bg-gradient-to-r from-amber-300 to-amber-500 w-3/5 rounded-2xl'>

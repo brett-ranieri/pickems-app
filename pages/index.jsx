@@ -27,6 +27,10 @@ export default function Home({ upcomingGames, allTeams, totalPicks, totalStatPic
 
 	const logout = () => {
 		setUserState(null);
+		//temporarily added reload to deal with bug of picks array
+		//not resetting properly on logout when switching to another
+		//user. NEED better fix.
+		location.reload();
 	};
 
 	const handleViewChange = () => {
@@ -216,16 +220,18 @@ export default function Home({ upcomingGames, allTeams, totalPicks, totalStatPic
 						</button>
 					</div>
 					<div className='bg-lime-300 bg-opacity-80 m-4 p-1 rounded'>
-						<h1 className='text-3xl text-lime-800 font-bold m-2'>Welcome {userState.name}!</h1>
+						<h1 className='text-3xl text-lime-800 font-bold m-2'>Welcome back {userState.name}!</h1>
 						<p className='text-black m-2 ml-4'>
-							It's the Super Bowl baby!!
+							Thanks for stopping by and submitting your picks for this week's games!
 							<br />
 							<br />
-							Lots of stat categories for this week so it is still anyone's game.
+							Remember, click on the team you think will win the game. When you're happy with your
+							picks, click submit! Once submitted, you can update your picks.
 							<br />
 							<br />
-							Remember, click on the team you think will win the game/stat category. When you're
-							happy with your picks, click submit!
+							We are running off the honor system here because I haven't written any date/time
+							related code yet. Do the right thing and make sure you get your picks in BEFORE each
+							game starts!
 						</p>
 					</div>
 
