@@ -274,7 +274,7 @@ export default function Home({ upcomingGames, allTeams, totalPicks, totalStatPic
 								</div>
 							))}
 						</div> */}
-						<div>
+						{/* <div>
 							<p className='text-xl text-lime-300 font-bold ml-8 m-2 underline'>Stat Picks:</p>
 							{superbowlStats.map((stat) => (
 								<div
@@ -295,9 +295,9 @@ export default function Home({ upcomingGames, allTeams, totalPicks, totalStatPic
 									</div>
 								</div>
 							))}
-						</div>
+						</div> */}
 						<div className='m-2 mr-8 ml-8 mb-4'>
-							{userState.id === 10 ? (
+							{/* {userState.id === 10 ? (
 								<div>
 									<p className='text-lg text-white font-bold m-2'>
 										WAIT! <span classname='underline'>HOW</span> are you {userState.name}?
@@ -307,17 +307,15 @@ export default function Home({ upcomingGames, allTeams, totalPicks, totalStatPic
 										hands...Here's hoping this week's picks are better than your last ones!
 									</p>
 								</div>
-							) : (
-								<div>
-									<p className='text-lg text-white font-bold m-2'>
-										WAIT! Are you {userState.name}?
-									</p>
-									<p className='text-sm text-lime-300 m-2'>
-										If not, logout to go back to the menu and be sure to select the right user in
-										the dropdown.
-									</p>
-								</div>
-							)}
+							) : ( */}
+							<div>
+								<p className='text-lg text-white font-bold m-2'>WAIT! Are you {userState.name}?</p>
+								<p className='text-sm text-lime-300 m-2'>
+									If not, logout to go back to the menu and be sure to select the right user in the
+									dropdown.
+								</p>
+							</div>
+							{/* )} */}
 						</div>
 						{isSubmitted.length ? (
 							<button

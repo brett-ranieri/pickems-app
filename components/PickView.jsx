@@ -15,7 +15,7 @@ export const PickView = ({ userPicks, userStatPicks, user, teams }) => {
 
 	return (
 		<>
-			<div className='bg-lime-300 bg-opacity-80 m-4 p-1 pb-6 rounded'>
+			{/* <div className='bg-lime-300 bg-opacity-80 m-4 p-1 pb-6 rounded'>
 				<h1 className='text-2xl text-lime-800 font-bold m-2 underline'>
 					{user.name}'s Superbowl Picks:
 				</h1>
@@ -57,13 +57,11 @@ export const PickView = ({ userPicks, userStatPicks, user, teams }) => {
 						<p className='text-md text-black m-2'>No stat picks have been saved yet.</p>
 					</div>
 				)}
-			</div>
+			</div> */}
 			<div className='bg-lime-300 bg-opacity-70 m-4 p-1 rounded'>
-				<h1 className='text-2xl text-lime-800 font-bold m-2 underline'>
-					{user.name}'s previous Picks:
-				</h1>
+				<h1 className='text-2xl text-lime-800 font-bold m-2 underline'>{user.name}'s Picks:</h1>
 
-				<h3 className='text-lg text-lime-900 font-bold m-2'>Conference Championship Weekend:</h3>
+				{/* <h3 className='text-lg text-lime-900 font-bold m-2'>Conference Championship Weekend:</h3>
 				{week3Picks.length ? (
 					<div className='flex flex-col justify-around items-center 6'>
 						{week3Picks?.map((pick) => (
@@ -100,9 +98,9 @@ export const PickView = ({ userPicks, userStatPicks, user, teams }) => {
 					<div className='flex flex-col justify-around items-center 6'>
 						<p className='text-md text-black m-2'>No stat picks have been saved yet.</p>
 					</div>
-				)}
+				)} */}
 
-				<h3 className='text-lg text-lime-900 font-bold m-2'>Divisonal Championship Weekend:</h3>
+				{/* <h3 className='text-lg text-lime-900 font-bold m-2'>Divisonal Championship Weekend:</h3>
 				{week2Picks.length ? (
 					<div className='flex flex-col justify-around items-center 6'>
 						{week2Picks?.map((pick) => (
@@ -118,8 +116,9 @@ export const PickView = ({ userPicks, userStatPicks, user, teams }) => {
 					<div className='flex flex-col justify-around items-center 6'>
 						<p className='text-md text-black m-2'>No picks have been saved yet.</p>
 					</div>
-				)}
-				<h3 className='text-lg text-lime-900 font-bold m-2 mt-4'>Super Wildcard Weekend:</h3>
+				)} */}
+
+				<h3 className='text-lg text-lime-900 font-bold m-2 mt-4'>Week 1:</h3>
 				{week1Picks.length ? (
 					<div className='flex flex-col justify-around items-center mb-6 6'>
 						{week1Picks?.map((pick) => (

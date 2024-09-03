@@ -11,9 +11,7 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 	let allStatScores = [];
 	let allOverallScores = [];
 
-
 	const getGames = async () => {
-
 		const results = await fetch(`${baseUrl}/api/games`);
 		const upcomingGames = await results.json();
 		setGames(upcomingGames);
@@ -38,7 +36,6 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 	users.forEach(getUserScore);
 
 	const calcStatScore = async (user) => {
-
 		let statScore = 0;
 		const userPicks = allStatPicks.filter((pick) => {
 			return pick.user_id === user.id;
@@ -74,7 +71,6 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 		// getAllPicks();
 	}, []);
 
-
 	//sort scores in descending order
 	allGameScores.sort((a, b) => parseInt(b.score) - parseInt(a.score));
 	allStatScores.sort((a, b) => parseInt(b.score) - parseInt(a.score));
@@ -97,7 +93,7 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 					Logout
 				</button>
 			</div>
-			<div className='bg-lime-300 bg-opacity-70 m-4 p-1 rounded'>
+			{/* <div className='bg-lime-300 bg-opacity-70 m-4 p-1 rounded'>
 				<p className='text-3xl text-lime-800 font-black underline m-4'>Overall Scores:</p>
 				<div className='mb-6'>
 					{allOverallScores.map((score) => (
@@ -112,7 +108,7 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 						</div>
 					))}
 				</div>
-			</div>
+			</div> */}
 			<div className='bg-lime-300 bg-opacity-70 m-4 p-1 rounded'>
 				<p className='text-3xl text-lime-800 font-black underline m-4'>Game Scores:</p>
 				<div className='mb-6'>
@@ -129,7 +125,7 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 					))}
 				</div>
 			</div>
-			<div className='bg-lime-300 bg-opacity-70 m-4 p-1 rounded'>
+			{/* <div className='bg-lime-300 bg-opacity-70 m-4 p-1 rounded'>
 				<p className='text-3xl text-lime-800 font-black underline m-4'>Stat Scores:</p>
 				<div className='mb-6'>
 					{allStatScores.map((score) => (
@@ -144,8 +140,8 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 						</div>
 					))}
 				</div>
-			</div>
-			<div className='bg-lime-300 bg-opacity-70 m-4 p-1 rounded'>
+			</div> */}
+			{/* <div className='bg-lime-300 bg-opacity-70 m-4 p-1 rounded'>
 				<p className='text-3xl text-lime-800 font-black underline m-4'>
 					Conference Championship Stat Results:
 				</p>
@@ -165,7 +161,7 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 						<li>Cheifs - 319</li>
 					</ul>
 				</div>
-			</div>
+			</div> */}
 			<div className='mt-80'>.</div>
 		</div>
 	);
