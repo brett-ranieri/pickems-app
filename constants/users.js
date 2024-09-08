@@ -4,6 +4,7 @@ const users = [
 	{ id: 12, name: "Brandon" },
 	{ id: 3, name: "Brett" },
 	{ id: 4, name: "Dave" },
+	{ id: 14, name: "Frank" },
 	{ id: 5, name: "Hannah" },
 	{ id: 6, name: "Ian" },
 	{ id: 7, name: "Kyle" },
