@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { TeamCard } from "../components/TeamCard";
 import { ScoreView } from "../components/ScoreView";
+import { WeekView } from "../components/WeekView";
 import users from "../constants/users";
 import { UserDropdown } from "../components/UserDropdown";
 import baseUrl from "../constants/baseUrl";
@@ -13,7 +14,7 @@ export default function Home({ upcomingGames, allTeams, totalPicks, totalStatPic
 	const [games, setGames] = useState([]);
 	const [allPicks, setAllPicks] = useState([]);
 	const [allStatPicks, setAllStatPicks] = useState([]);
-	const [view, setView] = useState(true);
+	const [view, setView] = useState("wager");
 	const [picks, setPicks] = useState([]);
 	const [statPicks, setStatPicks] = useState([]);
 	const [isSubmitted, setIsSubmitted] = useState([]);
@@ -33,12 +34,14 @@ export default function Home({ upcomingGames, allTeams, totalPicks, totalStatPic
 		location.reload();
 	};
 
-	const handleViewChange = () => {
-		if (view === true) {
-			setView(false);
-		} else {
-			setView(true);
-		}
+	const handleViewChange = (newView) => {
+		console.log(newView);
+		setView(newView);
+		// if (view === true) {
+		// 	setView(false);
+		// } else {
+		// 	setView(true);
+		// }
 	};
 
 	const remaingTeams = [{ id: "25" }, { id: "12" }];
@@ -203,14 +206,20 @@ export default function Home({ upcomingGames, allTeams, totalPicks, totalStatPic
 						setUserState={setUserState}
 					/>
 				</div>
-			) : view ? (
+			) : view === "wager" ? (
 				<div className='bg-football-super-close bg-cover'>
 					<div className='bg-lime-800 flex flex-row justify-end p-1 sticky top-0'>
 						<button
 							className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded m-2 '
-							onClick={() => handleViewChange()}
+							onClick={() => handleViewChange("score")}
 						>
 							Scores
+						</button>
+						<button
+							className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded m-2 '
+							onClick={() => handleViewChange("week")}
+						>
+							This Week
 						</button>
 						<button
 							className='bg-amber-500 hover:bg-amber-200 hover:text-black text-white font-bold py-2 px-4 rounded m-2'
@@ -365,18 +374,27 @@ export default function Home({ upcomingGames, allTeams, totalPicks, totalStatPic
 					{/* temp add to provide space at bottom of page */}
 					<div className='mt-8'>.</div>
 				</div>
-			) : (
+			) : view === "score" ? (
 				<div>
 					<ScoreView
 						allPicks={allPicks}
 						allStatPicks={allStatPicks}
 						user={userState}
 						logout={() => logout()}
-						handleViewChange={() => handleViewChange()}
+						handleViewChange={(newView) => handleViewChange(newView)}
 						baseUrl={baseUrl}
 					/>
 				</div>
-			)}
+			) : view === "week" ? (
+				<WeekView
+					allPicks={allPicks}
+					allStatPicks={allStatPicks}
+					user={userState}
+					logout={() => logout()}
+					handleViewChange={(newView) => handleViewChange(newView)}
+					baseUrl={baseUrl}
+				/>
+			) : null}
 		</>
 	);
 }
