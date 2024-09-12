@@ -389,6 +389,7 @@ export default function Home({ upcomingGames, allTeams, totalPicks, totalStatPic
 				<WeekView
 					allPicks={allPicks}
 					allStatPicks={allStatPicks}
+					upcomingGames={upcomingGames}
 					user={userState}
 					logout={() => logout()}
 					handleViewChange={(newView) => handleViewChange(newView)}
