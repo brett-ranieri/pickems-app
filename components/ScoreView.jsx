@@ -82,9 +82,15 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 			<div className='bg-lime-800 flex flex-row justify-end p-1'>
 				<button
 					className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded m-2 '
-					onClick={() => handleViewChange()}
+					onClick={() => handleViewChange("wager")}
 				>
-					Picks
+					Submit Picks
+				</button>
+				<button
+					className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded m-2 '
+					onClick={() => handleViewChange("week")}
+				>
+					This Week
 				</button>
 				<button
 					className='bg-amber-500 hover:bg-amber-200 hover:text-black text-white font-bold py-2 px-4 rounded m-2'

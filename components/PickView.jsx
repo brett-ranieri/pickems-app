@@ -100,7 +100,7 @@ export const PickView = ({ userPicks, userStatPicks, user, teams }) => {
 					</div>
 				)} */}
 
-				{/* <h3 className='text-lg text-lime-900 font-bold m-2'>Divisonal Championship Weekend:</h3>
+				<h3 className='text-lg text-lime-900 font-bold m-2'>Week 2:</h3>
 				{week2Picks.length ? (
 					<div className='flex flex-col justify-around items-center 6'>
 						{week2Picks?.map((pick) => (
@@ -116,7 +116,7 @@ export const PickView = ({ userPicks, userStatPicks, user, teams }) => {
 					<div className='flex flex-col justify-around items-center 6'>
 						<p className='text-md text-black m-2'>No picks have been saved yet.</p>
 					</div>
-				)} */}
+				)}
 
 				<h3 className='text-lg text-lime-900 font-bold m-2 mt-4'>Week 1:</h3>
 				{week1Picks.length ? (
