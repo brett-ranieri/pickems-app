@@ -5,6 +5,7 @@ import stat_results from "../constants/stats-results";
 
 export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewChange, logout }) => {
 	const [games, setGames] = useState([]);
+	const [formattedGames, setFormattedGames] = useState([]);
 	// const [picks, setPicks] = useState([]);
 	// const [allPicks, setAllPicks] = useState([]);
 	let allGameScores = [];
@@ -15,6 +16,38 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 		const results = await fetch(`${baseUrl}/api/games`);
 		const upcomingGames = await results.json();
 		setGames(upcomingGames);
+	};
+
+	const sortGames = (games) => {
+		let extrudedGames = [];
+		function checkWeek(game) {
+			if (!extrudedGames.filter((e) => e.week === game.week).length) {
+				let weekToPush = { week: game.week, games: [] };
+				extrudedGames.push(weekToPush);
+			}
+		}
+		games.forEach(checkWeek);
+		extrudedGames.sort((a, b) => parseInt(a.week) - parseInt(b.week));
+		////////////////// BELOW NEEDS TO BE REFACTORED ////////////////////////////
+		// function loadWeek(extrudedGames) {
+		// 	// need weird i parameters because week 4 is skipped and week 5 is super bowl
+		// 	for (let i = 1; i < extrudedGames.length + 2; i++) {
+		// 		let week = extrudedGames.find((e) => e.week === i);
+		// 		if (week?.week === undefined) {
+		// 			// is there a way to stop a specific "lap" of a loop and move on to next?
+		// 			// should I just leave this if statement blank to handle this case with no
+		// 			// action?
+		// 		} else {
+		// 			const gamesToPush = games.filter((e) => e.week === week?.week);
+
+		// 			let index = i - 1;
+		// 			extrudedGames[index]?.games.push(gamesToPush);
+		// 		}
+		// 	}
+		// }
+		// loadWeek(extrudedGames);
+		console.log("EXT", extrudedGames);
+		setFormattedGames(extrudedGames);
 	};
 
 	// re-factored all previous functions to all run in a loop
@@ -70,6 +103,12 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 		getGames();
 		// getAllPicks();
 	}, []);
+
+	useEffect(() => {
+		sortGames(games);
+	}, [games]);
+
+	console.log("here", formattedGames);
 
 	//sort scores in descending order
 	allGameScores.sort((a, b) => parseInt(b.score) - parseInt(a.score));
