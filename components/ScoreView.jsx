@@ -28,24 +28,23 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 		}
 		games.forEach(checkWeek);
 		extrudedGames.sort((a, b) => parseInt(a.week) - parseInt(b.week));
-		////////////////// BELOW NEEDS TO BE REFACTORED ////////////////////////////
-		// function loadWeek(extrudedGames) {
-		// 	// need weird i parameters because week 4 is skipped and week 5 is super bowl
-		// 	for (let i = 1; i < extrudedGames.length + 2; i++) {
-		// 		let week = extrudedGames.find((e) => e.week === i);
-		// 		if (week?.week === undefined) {
-		// 			// is there a way to stop a specific "lap" of a loop and move on to next?
-		// 			// should I just leave this if statement blank to handle this case with no
-		// 			// action?
-		// 		} else {
-		// 			const gamesToPush = games.filter((e) => e.week === week?.week);
 
-		// 			let index = i - 1;
-		// 			extrudedGames[index]?.games.push(gamesToPush);
-		// 		}
-		// 	}
-		// }
-		// loadWeek(extrudedGames);
+		function loadWeek(extrudedGames) {
+			// need weird i parameters because week 4 is skipped and week 5 is super bowl
+			for (let i = 1; i < extrudedGames.length + 1; i++) {
+				let week = extrudedGames.find((e) => e.week === i);
+				if (week?.week === undefined) {
+					// is there a way to stop a specific "lap" of a loop and move on to next?
+					// should I just leave this if statement blank to handle this case with no
+					// action?
+				} else {
+					const gamesToPush = games.filter((e) => e.week === week?.week);
+					let index = i - 1;
+					extrudedGames[index]?.games.push(gamesToPush);
+				}
+			}
+		}
+		loadWeek(extrudedGames);
 		console.log("EXT", extrudedGames);
 		setFormattedGames(extrudedGames);
 	};
