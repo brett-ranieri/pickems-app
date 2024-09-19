@@ -6,12 +6,16 @@ import stat_results from "../constants/stats-results";
 export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewChange, logout }) => {
 	const [games, setGames] = useState([]);
 	const [formattedGames, setFormattedGames] = useState([]);
+	const [formattedPicks, setFormattedPicks] = useState([]);
+	const [scoringBreakdown, setScoringBreakdown] = useState([]);
+	const [totalScores, setTotalScores] = useState([]);
 	// const [picks, setPicks] = useState([]);
 	// const [allPicks, setAllPicks] = useState([]);
 	let allGameScores = [];
 	let allStatScores = [];
 	let allOverallScores = [];
 
+	//////////////////////// get and sort all games ///////////////////////////////////
 	const getGames = async () => {
 		const results = await fetch(`${baseUrl}/api/games`);
 		const upcomingGames = await results.json();
@@ -30,7 +34,6 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 		extrudedGames.sort((a, b) => parseInt(a.week) - parseInt(b.week));
 
 		function loadWeek(extrudedGames) {
-			// need weird i parameters because week 4 is skipped and week 5 is super bowl
 			for (let i = 1; i < extrudedGames.length + 1; i++) {
 				let week = extrudedGames.find((e) => e.week === i);
 				if (week?.week === undefined) {
@@ -45,59 +48,113 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 			}
 		}
 		loadWeek(extrudedGames);
-		console.log("EXT", extrudedGames);
 		setFormattedGames(extrudedGames);
 	};
+	/////////////////////////////////////////////////////////////////////////////
 
-	// re-factored all previous functions to all run in a loop
-	const getUserScore = async (user) => {
-		let score = 0;
-		const userPicks = allPicks.filter((pick) => {
-			return pick.user_id === user.id;
-		});
-		const checkForWinner = (pick) => {
-			if (pick.winner === pick.chosen_team) {
-				score++;
+	// brought out of scoreAndFormatPicks to make accesible to more functions
+	// get array of weeks that will need to be mapped for picks
+	const weeksToMap = formattedGames.map(function (game) {
+		return game.week;
+	});
+	console.log(weeksToMap);
+
+	//////////////////// score and format all user picks //////////////////////////
+
+	const scoreAndFormatPicks = (users) => {
+		// will be populated by the a forEach loop of users calling calculateScore()
+		let restructuredPicks = [];
+		let allTotalScores = [];
+		function calculateScore(user) {
+			const picksToScore = allPicks.filter((e) => e.user_id === user.id);
+			console.log(picksToScore);
+			const statPicksToScore = allStatPicks.filter((e) => e.user_id === user.id);
+
+			// written to be used multiple times in different ways
+			// doesn't always receive week property when called, and conditionally
+			// adds properties to object based on week property
+			function doTheMaths(picks, statPicks, week) {
+				let gameScore = 0;
+				let statScore = 0;
+				picks.map(function (pick) {
+					if (pick.chosen_team === pick.winner) {
+						gameScore++;
+					}
+				});
+
+				//////////////// need to comment out until statPicks table is cleared /////////////////////////
+				// hate that this feels pretty damp and redundant, must be a better
+				// way to be able to calculate two scores seperately. currently can only
+				// think of options that involve restructuring data...
+				// example: make all stat picks ids start with 99- and then write logic
+				// if (pick.id.includes("99-"))
+				// statPicks.map(function (statPick) {
+				// 	if (statPick.chosen_team === statPick.winner) {
+				// 		statScore++;
+				// 	}
+				// });
+				/////////////////////////////////////////////////////////////////////////////////////////////////
+
+				if (!week) {
+					console.log("nope");
+				}
+
+				const scoresToPush = {
+					// only return user id if no week
+					...(!week && { user_id: user.id }),
+					// conditionally add the week key/value pair IF the week property is passed
+					...(week && { week: week }),
+					name: user.name,
+					gameScore: gameScore,
+					statScore: statScore,
+					totalScore: gameScore + statScore,
+				};
+				return scoresToPush;
 			}
-		};
-		if (userPicks.length) {
-			userPicks.forEach(checkForWinner);
-		}
-		allGameScores.push({ user: user.id, name: user.name, score: score });
-	};
-	users.forEach(getUserScore);
 
-	const calcStatScore = async (user) => {
-		let statScore = 0;
-		const userPicks = allStatPicks.filter((pick) => {
-			return pick.user_id === user.id;
-		});
-		const checkForWinner = (pick) => {
-			if (pick.winner === pick.chosen_team) {
-				statScore++;
+			// populate totalScores
+			function getOverall() {
+				const forTotalScore = doTheMaths(picksToScore, statPicksToScore);
+				// forTotalScore receives id prop but not week from doTheMaths
+				allTotalScores.push(forTotalScore);
 			}
-		};
-		if (userPicks.length) {
-			userPicks.forEach(checkForWinner);
+			getOverall();
+
+			// populate scoresByWeek
+			function calcAndFormatByWeek(picks, statPicks) {
+				let weekPicksToPush = { user_id: user.id, allPicks: [], allStatPicks: [], scores: [] };
+				weeksToMap.map(function (week) {
+					// week property conditionally passed by doTheMaths is used here to filter picks
+					const eachGameWeek = picks.filter((e) => e.week === week);
+					const eachStatWeek = statPicks.filter((e) => e.week === week);
+					const thisWeek = doTheMaths(eachGameWeek, eachStatWeek, week);
+					weekPicksToPush.scores.push(thisWeek);
+					weekPicksToPush.allPicks.push({ week: week, picks: eachGameWeek });
+					weekPicksToPush.allStatPicks.push({ week: week, statPicks: eachStatWeek });
+				});
+				restructuredPicks.push(weekPicksToPush);
+			}
+			calcAndFormatByWeek(picksToScore, statPicksToScore);
 		}
-		allStatScores.push({ user: user.id, name: user.name, score: statScore });
+		users.forEach(calculateScore);
+		// setScoringBreakdown(totalScores);
+		setFormattedPicks(restructuredPicks);
+		setTotalScores(allTotalScores);
 	};
-	users.forEach(calcStatScore);
 
-	const calcOverallScore = async (user) => {
-		const userGameScore = allGameScores.find((score) => {
-			return score.user === user.id;
-		});
+	useEffect(() => {
+		scoreAndFormatPicks(users);
+	}, [formattedGames]);
 
-		const userStatScore = allStatScores.find((score) => {
-			return score.user === user.id;
-		});
-		const userOverallScore = userGameScore.score + userStatScore.score;
+	useEffect(() => {
+		console.log("**************************", formattedPicks);
+	}, [formattedPicks]);
 
-		allOverallScores.push({ user: user.id, name: user.name, score: userOverallScore });
-	};
-	users.forEach(calcOverallScore);
+	useEffect(() => {
+		console.log("++++++++++++++++++++++++++", totalScores);
+	}, [totalScores]);
 
+	///////////////////////////////////////////////////////////////////////////////
 	useEffect(() => {
 		getGames();
 		// getAllPicks();
@@ -106,15 +163,64 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 	useEffect(() => {
 		sortGames(games);
 	}, [games]);
+	/////////////////////////////////////////START: OLD CODE////////////////////////////////////////////////////////
+	// re-factored all previous functions to all run in a loop
+	// const getUserScore = async (user) => {
+	// 	let score = 0;
+	// 	const userPicks = allPicks.filter((pick) => {
+	// 		return pick.user_id === user.id;
+	// 	});
+	// 	const checkForWinner = (pick) => {
+	// 		if (pick.winner === pick.chosen_team) {
+	// 			score++;
+	// 		}
+	// 	};
+	// 	if (userPicks.length) {
+	// 		userPicks.forEach(checkForWinner);
+	// 	}
+	// 	allGameScores.push({ user: user.id, name: user.name, score: score });
+	// };
+	// users.forEach(getUserScore);
 
-	console.log("here", formattedGames);
+	// const calcStatScore = async (user) => {
+	// 	let statScore = 0;
+	// 	const userPicks = allStatPicks.filter((pick) => {
+	// 		return pick.user_id === user.id;
+	// 	});
+	// 	const checkForWinner = (pick) => {
+	// 		if (pick.winner === pick.chosen_team) {
+	// 			statScore++;
+	// 		}
+	// 	};
+	// 	if (userPicks.length) {
+	// 		userPicks.forEach(checkForWinner);
+	// 	}
+	// 	allStatScores.push({ user: user.id, name: user.name, score: statScore });
+	// };
+	// users.forEach(calcStatScore);
 
-	//sort scores in descending order
-	allGameScores.sort((a, b) => parseInt(b.score) - parseInt(a.score));
-	allStatScores.sort((a, b) => parseInt(b.score) - parseInt(a.score));
-	allOverallScores.sort((a, b) => parseInt(b.score) - parseInt(a.score));
-	// console.log(allOverallScores);
+	// const calcOverallScore = async (user) => {
+	// 	const userGameScore = allGameScores.find((score) => {
+	// 		return score.user === user.id;
+	// 	});
 
+	// 	const userStatScore = allStatScores.find((score) => {
+	// 		return score.user === user.id;
+	// 	});
+	// 	const userOverallScore = userGameScore.score + userStatScore.score;
+
+	// 	allOverallScores.push({ user: user.id, name: user.name, score: userOverallScore });
+	// };
+	// users.forEach(calcOverallScore);
+
+	// console.log("here", formattedGames);
+
+	// //sort scores in descending order
+	// allGameScores.sort((a, b) => parseInt(b.score) - parseInt(a.score));
+	// allStatScores.sort((a, b) => parseInt(b.score) - parseInt(a.score));
+	// allOverallScores.sort((a, b) => parseInt(b.score) - parseInt(a.score));
+	// // console.log(allOverallScores);
+	/////////////////////////////////////////////////END: Old Code/////////////////////////////////////////////////////////////
 	return (
 		<div className='bg-side-line bg-cover'>
 			<div className='bg-lime-800 flex flex-row justify-end p-1'>
