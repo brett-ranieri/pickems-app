@@ -163,6 +163,9 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 	useEffect(() => {
 		sortGames(games);
 	}, [games]);
+
+	totalScores.sort((a, b) => parseInt(b.totalScore) - parseInt(a.totalScore));
+
 	/////////////////////////////////////////START: OLD CODE////////////////////////////////////////////////////////
 	// re-factored all previous functions to all run in a loop
 	// const getUserScore = async (user) => {
@@ -260,11 +263,11 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 				</div>
 			</div> */}
 			<div className='bg-lime-300 bg-opacity-70 m-4 p-1 rounded'>
-				<p className='text-3xl text-lime-800 font-black underline m-4'>Game Scores:</p>
+				<p className='text-3xl text-lime-800 font-black underline m-4'>Overall Scores:</p>
 				<div className='mb-6'>
-					{allGameScores.map((score) => (
+					{totalScores.map((score) => (
 						<div
-							key={score.user}
+							key={score.user_id}
 							className='text-lg'
 						>
 							<ScoreCard
