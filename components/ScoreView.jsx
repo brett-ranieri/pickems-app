@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ScoreCard } from "../components/ScoreCard";
+import { ScoreWeekView } from "./ScoreWeekView";
 import users from "../constants/users";
 import stat_results from "../constants/stats-results";
 
@@ -9,11 +10,12 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 	const [formattedPicks, setFormattedPicks] = useState([]);
 	const [scoringBreakdown, setScoringBreakdown] = useState([]);
 	const [totalScores, setTotalScores] = useState([]);
+	const [selectedWeek, setSelectedWeek] = useState(null);
 	// const [picks, setPicks] = useState([]);
 	// const [allPicks, setAllPicks] = useState([]);
-	let allGameScores = [];
-	let allStatScores = [];
-	let allOverallScores = [];
+	// let allGameScores = [];
+	// let allStatScores = [];
+	// let allOverallScores = [];
 
 	//////////////////////// get and sort all games ///////////////////////////////////
 	const getGames = async () => {
@@ -57,7 +59,7 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 	const weeksToMap = formattedGames.map(function (game) {
 		return game.week;
 	});
-	console.log(weeksToMap);
+	// console.log(weeksToMap);
 
 	//////////////////// score and format all user picks //////////////////////////
 
@@ -95,15 +97,13 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 				// });
 				/////////////////////////////////////////////////////////////////////////////////////////////////
 
-				if (!week) {
-					console.log("nope");
-				}
-
 				const scoresToPush = {
-					// only return user id if no week
-					...(!week && { user_id: user.id }),
+					// below used to only return user id if no week, but might not need anymore
+					// ...(!week && { user_id: user.id }),
 					// conditionally add the week key/value pair IF the week property is passed
 					...(week && { week: week }),
+					// had to add user_id to scores so I had a unique key for map in ScoreWeekView
+					user_id: user.id,
 					name: user.name,
 					gameScore: gameScore,
 					statScore: statScore,
@@ -146,13 +146,13 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 		scoreAndFormatPicks(users);
 	}, [formattedGames]);
 
-	useEffect(() => {
-		console.log("**************************", formattedPicks);
-	}, [formattedPicks]);
+	// useEffect(() => {
+	// 	console.log("**************************", formattedPicks);
+	// }, [formattedPicks]);
 
-	useEffect(() => {
-		console.log("++++++++++++++++++++++++++", totalScores);
-	}, [totalScores]);
+	// useEffect(() => {
+	// 	console.log("++++++++++++++++++++++++++", totalScores);
+	// }, [totalScores]);
 
 	///////////////////////////////////////////////////////////////////////////////
 	useEffect(() => {
@@ -165,6 +165,16 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 	}, [games]);
 
 	totalScores.sort((a, b) => parseInt(b.totalScore) - parseInt(a.totalScore));
+
+	/////////////////////// week selection /////////////////////////////////////////
+	const handleWeekSelection = (week) => {
+		if (!week) {
+			setSelectedWeek(null);
+		} else {
+			setSelectedWeek(week);
+		}
+	};
+	//////////////////////////////////////////////////////////////////////////////////////////
 
 	/////////////////////////////////////////START: OLD CODE////////////////////////////////////////////////////////
 	// re-factored all previous functions to all run in a loop
@@ -246,76 +256,55 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 					Logout
 				</button>
 			</div>
-			{/* <div className='bg-lime-300 bg-opacity-70 m-4 p-1 rounded'>
-				<p className='text-3xl text-lime-800 font-black underline m-4'>Overall Scores:</p>
-				<div className='mb-6'>
-					{allOverallScores.map((score) => (
-						<div
-							key={score.user}
-							className='text-lg'
-						>
-							<ScoreCard
-								score={score}
-								user={user}
-							/>
-						</div>
-					))}
-				</div>
-			</div> */}
-			<div className='bg-lime-300 bg-opacity-70 m-4 p-1 rounded'>
-				<p className='text-3xl text-lime-800 font-black underline m-4'>Overall Scores:</p>
-				<div className='mb-6'>
-					{totalScores.map((score) => (
-						<div
-							key={score.user_id}
-							className='text-lg'
-						>
-							<ScoreCard
-								score={score}
-								user={user}
-							/>
-						</div>
-					))}
-				</div>
+
+			<div>
+				<button
+					className='bg-amber-500 hover:bg-amber-200 hover:text-black text-white font-bold py-2 px-4 rounded m-2'
+					onClick={() => handleWeekSelection(null)}
+				>
+					Overall Scores
+				</button>
+				{weeksToMap.map((week) => (
+					<button
+						key={week}
+						className='bg-amber-500 hover:bg-amber-200 hover:text-black text-white font-bold py-2 px-4 rounded m-2'
+						onClick={() => handleWeekSelection(week)}
+					>
+						Week {week} Scores
+					</button>
+				))}
 			</div>
-			{/* <div className='bg-lime-300 bg-opacity-70 m-4 p-1 rounded'>
-				<p className='text-3xl text-lime-800 font-black underline m-4'>Stat Scores:</p>
-				<div className='mb-6'>
-					{allStatScores.map((score) => (
-						<div
-							key={score.user}
-							className='text-lg'
-						>
-							<ScoreCard
-								score={score}
-								user={user}
-							/>
+
+			{selectedWeek ? (
+				<div>
+					<ScoreWeekView
+						user={user}
+						formattedPicks={formattedPicks}
+						week={selectedWeek}
+					/>
+				</div>
+			) : (
+				<>
+					<div className='bg-lime-300 bg-opacity-70 m-4 p-1 rounded'>
+						<p className='text-3xl text-lime-800 font-black underline m-4'>Overall Scores:</p>
+						<div className='mb-6'>
+							{totalScores.map((score) => (
+								<div
+									key={score.user_id}
+									className='text-lg'
+								>
+									<ScoreCard
+										score={score}
+										user={user}
+									/>
+								</div>
+							))}
 						</div>
-					))}
-				</div>
-			</div> */}
-			{/* <div className='bg-lime-300 bg-opacity-70 m-4 p-1 rounded'>
-				<p className='text-3xl text-lime-800 font-black underline m-4'>
-					Conference Championship Stat Results:
-				</p>
-				<div className='flex flex-col justify-around text-center font-bold pt-2 pb-2 mb-6'>
-					<h3 className='text-2xl mb-2'>Total Points:</h3>
-					<ul className='mb-2'>
-						<li>49ers - 34</li>
-						<li>Lions - 31</li>
-						<li>Chiefs - 17</li>
-						<li>Ravens - 10</li>
-					</ul>
-					<h3 className='text-2xl mb-2'>Total Yards:</h3>
-					<ul className='mb-2'>
-						<li>Lions - 442</li>
-						<li>49ers - 413</li>
-						<li>Ravens - 336</li>
-						<li>Cheifs - 319</li>
-					</ul>
-				</div>
-			</div> */}
-			<div className='mt-80'>.</div>
+					</div>
+
+					<div className='mt-80'>.</div>
+				</>
+			)}
 		</div>
 	);
 };
