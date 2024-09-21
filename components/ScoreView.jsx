@@ -40,6 +40,12 @@ export const ScoreView = ({
 				</button>
 				<button
 					className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded m-2 '
+					onClick={() => handleViewChange("picks")}
+				>
+					My Picks
+				</button>
+				<button
+					className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded m-2 '
 					onClick={() => handleViewChange("week")}
 				>
 					This Week

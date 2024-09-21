@@ -350,6 +350,12 @@ export default function Home({
 					<div className='bg-lime-800 flex flex-row justify-end p-1 sticky top-0'>
 						<button
 							className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded m-2 '
+							onClick={() => handleViewChange("picks")}
+						>
+							My Picks
+						</button>
+						<button
+							className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded m-2 '
 							onClick={() => handleViewChange("score")}
 						>
 							Scores
@@ -502,14 +508,6 @@ export default function Home({
 							</div>
 						) : null}
 					</div>
-					<div>
-						<PickView
-							userPicks={isSubmitted}
-							userStatPicks={isStatSubmitted}
-							user={userState}
-							teams={teams}
-						/>
-					</div>
 					{/* temp add to provide space at bottom of page */}
 					<div className='mt-8'>.</div>
 				</div>
@@ -537,6 +535,17 @@ export default function Home({
 					logout={() => logout()}
 					handleViewChange={(newView) => handleViewChange(newView)}
 					baseUrl={baseUrl}
+				/>
+			) : view === "picks" ? (
+				<PickView
+					user={userState}
+					logout={() => logout()}
+					handleViewChange={(newView) => handleViewChange(newView)}
+					weeksToMap={weeksToMap}
+					teams={teams}
+					totalScores={totalScores}
+					formattedPicks={formattedPicks}
+					scoreAndFormatPicks={() => scoreAndFormatPicks()}
 				/>
 			) : null}
 		</>
