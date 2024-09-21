@@ -69,7 +69,7 @@ export const ScoreView = ({ baseUrl, allPicks, allStatPicks, user, handleViewCha
 		let allTotalScores = [];
 		function calculateScore(user) {
 			const picksToScore = allPicks.filter((e) => e.user_id === user.id);
-			console.log(picksToScore);
+			// console.log(picksToScore);
 			const statPicksToScore = allStatPicks.filter((e) => e.user_id === user.id);
 
 			// written to be used multiple times in different ways
