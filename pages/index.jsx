@@ -332,6 +332,7 @@ export default function Home({
 		setFormattedPicks(restructuredPicks);
 		setTotalScores(allTotalScores);
 	};
+	console.log(weeksToMap);
 
 	///////////////////////////// end score and formatting ////////////////////////////////
 
@@ -523,6 +524,7 @@ export default function Home({
 						weeksToMap={weeksToMap}
 						totalScores={totalScores}
 						formattedPicks={formattedPicks}
+						formattedGames={formattedGames}
 						scoreAndFormatPicks={() => scoreAndFormatPicks()}
 					/>
 				</div>

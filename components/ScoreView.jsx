@@ -9,6 +9,7 @@ export const ScoreView = ({
 	weeksToMap,
 	totalScores,
 	formattedPicks,
+	formattedGames,
 	scoreAndFormatPicks,
 }) => {
 	const [selectedWeek, setSelectedWeek] = useState(null);
@@ -81,6 +82,7 @@ export const ScoreView = ({
 					<ScoreWeekView
 						user={user}
 						formattedPicks={formattedPicks}
+						formattedGames={formattedGames}
 						week={selectedWeek}
 					/>
 				</div>
