@@ -31,17 +31,22 @@ export default async function populateGames(req, res) {
 			games.push(game);
 		});
 
-		games.forEach(async function (game) {
-			results = await client.query(
-				`insert into public.games(id, week, home_team, home_id, away_team, away_id, date) values('${game.id}', '${game.week}', '${game.homeTeam}', '${game.homeId}', '${game.awayTeam}', '${game.awayId}', '${game.date}') returning *`
-			);
-		});
+		console.log(games);
 
+		// games.forEach(async function (game) {
+
+		let sql = games.map(
+			(game) =>
+				`(${game.id}, ${game.week}, ${game.homeTeam}, ${game.homeId}, ${game.awayTeam}, ${game.awayId}, ${game.date})`
+		);
+		console.log("sql", sql);
+		results = await client.query(
+			`insert into public.games(id, week, home_team, home_id, away_team, away_id, date) values ` +
+				sql
+		);
 		res.json(results);
 		console.log("completed");
-		// console.log(results);
-
-		console.log("Games: ", games);
+		console.log("results", results);
 	} catch (err) {
 		console.log(err);
 	}

@@ -57,16 +57,17 @@ export default async function populateWinners(req, res) {
 		});
 
 		winners.forEach(async function (winner) {
-			console.log(winner);
-			console.log(winner[0].id);
+			// console.log(winner);
+			// console.log(winner[0].id);
 			results = await client.query(
 				// `insert into public.games(winner) values('${game.id}') where id = '${winner.id}' returning *`
 				`update public.games set winner = '${winner[0].winner}' where id = '${winner[0].id}' returning *`
 			);
-			// console.log(results);
+			console.log("loop", results);
 		});
 
 		res.json(results);
+		console.log("rows", results);
 		console.log("completed");
 		// console.log(results);
 
