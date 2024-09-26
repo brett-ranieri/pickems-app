@@ -6,6 +6,7 @@ import users from "../constants/users";
 import { UserDropdown } from "../components/UserDropdown";
 import baseUrl from "../constants/baseUrl";
 import { PickView } from "../components/PickView";
+import { AdminView } from "../components/AdminView";
 import stats from "../constants/stats";
 import superbowlStats from "../constants/superbowl-stats";
 
@@ -367,6 +368,15 @@ export default function Home({
 						>
 							This Week
 						</button>
+						{userState?.id === 3 ? (
+							<button
+								className='bg-amber-900 hover:bg-amber-700 text-gray-50 font-bold py-2 px-4 rounded m-2 '
+								onClick={() => handleViewChange("admin")}
+							>
+								Admin
+							</button>
+						) : null}
+
 						<button
 							className='bg-amber-500 hover:bg-amber-200 hover:text-black text-white font-bold py-2 px-4 rounded m-2'
 							onClick={() => logout()}
@@ -549,6 +559,8 @@ export default function Home({
 					formattedPicks={formattedPicks}
 					scoreAndFormatPicks={() => scoreAndFormatPicks()}
 				/>
+			) : view === "admin" ? (
+				<AdminView handleViewChange={(newView) => handleViewChange(newView)} />
 			) : null}
 		</>
 	);
