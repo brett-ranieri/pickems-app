@@ -57,12 +57,12 @@ export const PickView = ({
 				>
 					Scores
 				</button>
-				<button
+				{/* <button
 					className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded m-2 '
 					onClick={() => handleViewChange("week")}
 				>
 					This Week
-				</button>
+				</button> */}
 				<button
 					className='bg-amber-900 hover:bg-amber-500 hover:text-black text-white font-bold py-2 px-4 rounded m-2'
 					onClick={() => logout()}
