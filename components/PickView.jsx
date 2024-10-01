@@ -8,6 +8,7 @@ export const PickView = ({
 	handleViewChange,
 	logout,
 	weeksToMap,
+	weeksHighToLow,
 	totalScores,
 	teams,
 	formattedPicks,
@@ -40,8 +41,7 @@ export const PickView = ({
 		}
 	};
 	//////////////////////////////////////////////////////////////////////////////////////////
-	const weekHightoLow = [...weeksToMap].sort((a, b) => b - a);
-	console.log(weekHightoLow);
+
 	return (
 		<div className='bg-side-line bg-cover'>
 			<div className='bg-lime-800 flex flex-row justify-end p-1'>
@@ -72,7 +72,7 @@ export const PickView = ({
 			</div>
 
 			<div className='overflow-x-scroll w-full flex gap-x-3 bg-amber-900'>
-				{weekHightoLow.map((week) => (
+				{weeksHighToLow.map((week) => (
 					<button
 						key={week}
 						className='bg-amber-500 hover:bg-amber-300 hover:text-black text-white font-bold py-2 px-4 rounded m-2 shrink-0 snap-end'

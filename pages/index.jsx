@@ -332,7 +332,9 @@ export default function Home({
 		setFormattedPicks(restructuredPicks);
 		setTotalScores(allTotalScores);
 	};
-	console.log(weeksToMap);
+	console.log("before sort", weeksToMap);
+	const weeksHighToLow = [...weeksToMap].sort((a, b) => b - a);
+	console.log("after sort", weeksHighToLow);
 
 	///////////////////////////// end score and formatting ////////////////////////////////
 
@@ -522,6 +524,7 @@ export default function Home({
 						handleViewChange={(newView) => handleViewChange(newView)}
 						baseUrl={baseUrl}
 						weeksToMap={weeksToMap}
+						weeksHighToLow={weeksHighToLow}
 						totalScores={totalScores}
 						formattedPicks={formattedPicks}
 						formattedGames={formattedGames}
@@ -544,6 +547,7 @@ export default function Home({
 					logout={() => logout()}
 					handleViewChange={(newView) => handleViewChange(newView)}
 					weeksToMap={weeksToMap}
+					weeksHighToLow={weeksHighToLow}
 					teams={teams}
 					totalScores={totalScores}
 					formattedPicks={formattedPicks}
