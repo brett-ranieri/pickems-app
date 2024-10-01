@@ -368,7 +368,7 @@ export default function Home({
 							This Week
 						</button> */}
 						<button
-							className='bg-amber-500 hover:bg-amber-200 hover:text-black text-white font-bold py-2 px-4 rounded m-2'
+							className='bg-amber-900 hover:bg-amber-500 hover:text-black text-white font-bold py-2 px-4 rounded m-2'
 							onClick={() => logout()}
 						>
 							Logout
