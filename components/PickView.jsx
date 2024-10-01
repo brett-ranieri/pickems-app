@@ -40,7 +40,8 @@ export const PickView = ({
 		}
 	};
 	//////////////////////////////////////////////////////////////////////////////////////////
-
+	const weekHightoLow = [...weeksToMap].sort((a, b) => b - a);
+	console.log(weekHightoLow);
 	return (
 		<div className='bg-side-line bg-cover'>
 			<div className='bg-lime-800 flex flex-row justify-end p-1'>
@@ -63,18 +64,18 @@ export const PickView = ({
 					This Week
 				</button>
 				<button
-					className='bg-amber-500 hover:bg-amber-200 hover:text-black text-white font-bold py-2 px-4 rounded m-2'
+					className='bg-amber-900 hover:bg-amber-500 hover:text-black text-white font-bold py-2 px-4 rounded m-2'
 					onClick={() => logout()}
 				>
 					Logout
 				</button>
 			</div>
 
-			<div>
-				{weeksToMap.map((week) => (
+			<div className='overflow-x-scroll w-full flex gap-x-3 bg-amber-900'>
+				{weekHightoLow.map((week) => (
 					<button
 						key={week}
-						className='bg-amber-500 hover:bg-amber-200 hover:text-black text-white font-bold py-2 px-4 rounded m-2'
+						className='bg-amber-500 hover:bg-amber-300 hover:text-black text-white font-bold py-2 px-4 rounded m-2 shrink-0 snap-end'
 						onClick={() => handleWeekSelection(week)}
 					>
 						Week {week}
