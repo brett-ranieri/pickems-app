@@ -20,7 +20,7 @@ export const PickWeekView = ({ user, week, teams, formattedPicks }) => {
 		<>
 			<div className='bg-lime-300 bg-opacity-70 m-4 p-1 rounded'>
 				<p className='text-3xl text-lime-800 font-black underline m-4'>Week {week} Picks:</p>
-				{!picksToMap.length ? (
+				{!picksToMap?.length ? (
 					<p className='text-lg m-4'>No picks submitted for this week</p>
 				) : (
 					<div className='flex flex-col justify-around items-center mb-6'>
