@@ -7,6 +7,7 @@ export const ScoreView = ({
 	handleViewChange,
 	logout,
 	weeksToMap,
+	weeksHighToLow,
 	totalScores,
 	formattedPicks,
 	formattedGames,
@@ -45,34 +46,34 @@ export const ScoreView = ({
 				>
 					My Picks
 				</button>
-				<button
+				{/* <button
 					className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded m-2 '
 					onClick={() => handleViewChange("week")}
 				>
 					This Week
-				</button>
+				</button> */}
 				<button
-					className='bg-amber-500 hover:bg-amber-200 hover:text-black text-white font-bold py-2 px-4 rounded m-2'
+					className='bg-amber-900 hover:bg-amber-500 hover:text-black text-white font-bold py-2 px-4 rounded m-2'
 					onClick={() => logout()}
 				>
 					Logout
 				</button>
 			</div>
 
-			<div>
+			<div className='overflow-x-scroll w-full flex gap-x-3 bg-amber-900'>
 				<button
-					className='bg-amber-500 hover:bg-amber-200 hover:text-black text-white font-bold py-2 px-4 rounded m-2'
+					className='bg-amber-500 hover:bg-amber-200 hover:text-black text-white font-bold py-2 px-4 rounded m-2 shrink-0 snap-end'
 					onClick={() => handleWeekSelection(null)}
 				>
-					Overall Scores
+					Overall
 				</button>
-				{weeksToMap.map((week) => (
+				{weeksHighToLow.map((week) => (
 					<button
 						key={week}
-						className='bg-amber-500 hover:bg-amber-200 hover:text-black text-white font-bold py-2 px-4 rounded m-2'
+						className='bg-amber-500 hover:bg-amber-200 hover:text-black text-white font-bold py-2 px-4 rounded m-2 shrink-0 snap-end'
 						onClick={() => handleWeekSelection(week)}
 					>
-						Week {week} Scores
+						Week {week}
 					</button>
 				))}
 			</div>

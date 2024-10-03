@@ -6,8 +6,8 @@ import users from "../constants/users";
 import { UserDropdown } from "../components/UserDropdown";
 import baseUrl from "../constants/baseUrl";
 import { PickView } from "../components/PickView";
-import stats from "../constants/stats";
-import superbowlStats from "../constants/superbowl-stats";
+// import stats from "../constants/stats";
+// import superbowlStats from "../constants/superbowl-stats";
 
 export default function Home({
 	upcomingGames,
@@ -46,16 +46,8 @@ export default function Home({
 	};
 
 	const handleViewChange = (newView) => {
-		console.log(newView);
 		setView(newView);
-		// if (view === true) {
-		// 	setView(false);
-		// } else {
-		// 	setView(true);
-		// }
 	};
-
-	const remaingTeams = [{ id: "25" }, { id: "12" }];
 
 	const setData = async () => {
 		setGames(upcomingGames);
@@ -98,19 +90,19 @@ export default function Home({
 		setPicks([...tempPicks, pick]);
 	};
 
-	const statClicked = async (id, gameId, week) => {
-		const pick = {
-			user_id: userState.id,
-			chosen_team: id,
-			game_id: gameId,
-			// this comment is a reminder to refactor hardcoded week
-			week: 5,
-			type: "stat",
-		};
+	// const statClicked = async (id, gameId, week) => {
+	// 	const pick = {
+	// 		user_id: userState.id,
+	// 		chosen_team: id,
+	// 		game_id: gameId,
+	// 		// this comment is a reminder to refactor hardcoded week
+	// 		week: 5,
+	// 		type: "stat",
+	// 	};
 
-		const tempStatPicks = statPicks?.filter((pick) => pick.game_id !== gameId);
-		setStatPicks([...tempStatPicks, pick]);
-	};
+	// 	const tempStatPicks = statPicks?.filter((pick) => pick.game_id !== gameId);
+	// 	setStatPicks([...tempStatPicks, pick]);
+	// };
 
 	const handleSubmit = async () => {
 		let arrayOfSubmittedPicks = [];
@@ -211,7 +203,6 @@ export default function Home({
 	////////////////////////////// sort and format games ////////////////////////////////
 
 	const sortGames = () => {
-		console.log("games running");
 		let extrudedGames = [];
 		function checkWeek(game) {
 			if (!extrudedGames.filter((e) => e.week === game.week).length) {
@@ -243,14 +234,11 @@ export default function Home({
 
 	useEffect(() => {
 		sortGames();
-		console.log("all games exists");
 	}, [allGames]);
-	console.log("formatted", formattedGames);
 
 	const weeksToMap = formattedGames.map(function (game) {
 		return game.week;
 	});
-	console.log(weeksToMap);
 
 	//////////////////// score and format all user picks //////////////////////////
 
@@ -332,10 +320,12 @@ export default function Home({
 		setFormattedPicks(restructuredPicks);
 		setTotalScores(allTotalScores);
 	};
-	console.log(weeksToMap);
+
+	const weeksHighToLow = [...weeksToMap].sort((a, b) => b - a);
 
 	///////////////////////////// end score and formatting ////////////////////////////////
 
+	console.log(games);
 	return (
 		<>
 			{!userState ? (
@@ -361,14 +351,14 @@ export default function Home({
 						>
 							Scores
 						</button>
-						<button
+						{/* <button
 							className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded m-2 '
 							onClick={() => handleViewChange("week")}
 						>
 							This Week
-						</button>
+						</button> */}
 						<button
-							className='bg-amber-500 hover:bg-amber-200 hover:text-black text-white font-bold py-2 px-4 rounded m-2'
+							className='bg-amber-900 hover:bg-amber-500 hover:text-black text-white font-bold py-2 px-4 rounded m-2'
 							onClick={() => logout()}
 						>
 							Logout
@@ -412,63 +402,7 @@ export default function Home({
 								/>
 							</div>
 						))}
-						{/* section below is for regular stats, not superbowlStats */}
-						{/* <div>
-							<p className='text-xl text-lime-300 font-bold ml-8 m-2 underline'>Stat Picks:</p>
-							{stats.map((stat) => (
-								<div
-									key={stat.id}
-									className='flex flex-col justify-around m-2'
-								>
-									<p className='text-lg text-lime-300 font-bold ml-8 m-2'>{stat.name}</p>
-									<div className='flex flex-col justify-center items-center m-2 mx-12'>
-										{remaingTeams.map((team) => (
-											<TeamCard
-												key={team.id}
-												team={teams?.find((t) => t.id === team.id)}
-												clicked={statClicked}
-												game={stat}
-												picks={statPicks}
-											/>
-										))}
-									</div>
-								</div>
-							))}
-						</div> */}
-						{/* <div>
-							<p className='text-xl text-lime-300 font-bold ml-8 m-2 underline'>Stat Picks:</p>
-							{superbowlStats.map((stat) => (
-								<div
-									key={stat.id}
-									className='flex flex-col justify-around m-2'
-								>
-									<p className='text-lg text-lime-300 font-bold ml-8 m-2'>{stat.name}</p>
-									<div className='flex flex-col justify-center items-center m-2 mx-12'>
-										{remaingTeams.map((team) => (
-											<TeamCard
-												key={team.id}
-												team={teams?.find((t) => t.id === team.id)}
-												clicked={statClicked}
-												game={stat}
-												picks={statPicks}
-											/>
-										))}
-									</div>
-								</div>
-							))}
-						</div> */}
 						<div className='m-2 mr-8 ml-8 mb-4'>
-							{/* {userState.id === 10 ? (
-								<div>
-									<p className='text-lg text-white font-bold m-2'>
-										WAIT! <span classname='underline'>HOW</span> are you {userState.name}?
-									</p>
-									<p className='text-sm text-white m-2'>
-										It's been about two weeks since we last saw you and those voluptuous
-										hands...Here's hoping this week's picks are better than your last ones!
-									</p>
-								</div>
-							) : ( */}
 							<div>
 								<p className='text-lg text-white font-bold m-2'>WAIT! Are you {userState.name}?</p>
 								<p className='text-sm text-lime-300 m-2'>
@@ -478,7 +412,7 @@ export default function Home({
 							</div>
 							{/* )} */}
 						</div>
-						{isSubmitted.length ? (
+						{/* {isSubmitted.length ? (
 							<button
 								className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded mb-2 ml-8 mb-8'
 								type='submit'
@@ -486,15 +420,15 @@ export default function Home({
 							>
 								Update
 							</button>
-						) : (
-							<button
-								className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded mb-2 ml-8 mb-8'
-								type='submit'
-								onClick={() => handleSubmit()}
-							>
-								Submit
-							</button>
-						)}
+						) : ( */}
+						<button
+							className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded mb-2 ml-8 mb-8'
+							type='submit'
+							onClick={() => handleSubmit()}
+						>
+							Submit
+						</button>
+						{/* )} */}
 						{submissionMessage === "true" ? (
 							<div>
 								<p className='text-lg text-lime-300 ml-10 mb-8 pb-8'>
@@ -522,6 +456,7 @@ export default function Home({
 						handleViewChange={(newView) => handleViewChange(newView)}
 						baseUrl={baseUrl}
 						weeksToMap={weeksToMap}
+						weeksHighToLow={weeksHighToLow}
 						totalScores={totalScores}
 						formattedPicks={formattedPicks}
 						formattedGames={formattedGames}
@@ -540,14 +475,13 @@ export default function Home({
 				/>
 			) : view === "picks" ? (
 				<PickView
-					user={userState}
 					logout={() => logout()}
 					handleViewChange={(newView) => handleViewChange(newView)}
 					weeksToMap={weeksToMap}
+					weeksHighToLow={weeksHighToLow}
 					teams={teams}
 					totalScores={totalScores}
-					formattedPicks={formattedPicks}
-					scoreAndFormatPicks={() => scoreAndFormatPicks()}
+					isSubmitted={isSubmitted}
 				/>
 			) : null}
 		</>
