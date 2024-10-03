@@ -6,8 +6,8 @@ import users from "../constants/users";
 import { UserDropdown } from "../components/UserDropdown";
 import baseUrl from "../constants/baseUrl";
 import { PickView } from "../components/PickView";
-import stats from "../constants/stats";
-import superbowlStats from "../constants/superbowl-stats";
+// import stats from "../constants/stats";
+// import superbowlStats from "../constants/superbowl-stats";
 
 export default function Home({
 	upcomingGames,
@@ -325,6 +325,7 @@ export default function Home({
 
 	///////////////////////////// end score and formatting ////////////////////////////////
 
+	console.log("Submitted", isSubmitted);
 	return (
 		<>
 			{!userState ? (
@@ -411,7 +412,7 @@ export default function Home({
 							</div>
 							{/* )} */}
 						</div>
-						{isSubmitted.length ? (
+						{/* {isSubmitted.length ? (
 							<button
 								className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded mb-2 ml-8 mb-8'
 								type='submit'
@@ -419,15 +420,15 @@ export default function Home({
 							>
 								Update
 							</button>
-						) : (
-							<button
-								className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded mb-2 ml-8 mb-8'
-								type='submit'
-								onClick={() => handleSubmit()}
-							>
-								Submit
-							</button>
-						)}
+						) : ( */}
+						<button
+							className='bg-lime-300 hover:bg-lime-400 text-lime-800 font-bold py-2 px-4 rounded mb-2 ml-8 mb-8'
+							type='submit'
+							onClick={() => handleSubmit()}
+						>
+							Submit
+						</button>
+						{/* )} */}
 						{submissionMessage === "true" ? (
 							<div>
 								<p className='text-lg text-lime-300 ml-10 mb-8 pb-8'>
