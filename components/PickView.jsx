@@ -1,25 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { ScoreCard } from "../components/ScoreCard";
-import { ScoreWeekView } from "./ScoreWeekView";
 import { PickWeekView } from "./PickWeekView";
 
 export const PickView = ({
-	user,
 	handleViewChange,
 	logout,
 	weeksToMap,
 	weeksHighToLow,
-	// totalScores,
 	teams,
 	isSubmitted,
-	// formattedPicks,
-	// scoreAndFormatPicks,
 }) => {
 	const [selectedWeek, setSelectedWeek] = useState(null);
-
-	// useEffect(() => {
-	// 	scoreAndFormatPicks();
-	// }, []);
 
 	useEffect(() => {
 		let firstWeek = weeksToMap[0];
@@ -27,7 +17,6 @@ export const PickView = ({
 		for (const week of weeksToMap) {
 			if (week >= firstWeek) {
 				highestWeek = week;
-				// console.log(highestWeek);
 			}
 		}
 		setSelectedWeek(highestWeek);
@@ -83,24 +72,11 @@ export const PickView = ({
 					</button>
 				))}
 			</div>
-
-			{/* {selectedWeek ? ( */}
 			<PickWeekView
-				user={user}
 				teams={teams}
-				// formattedPicks={formattedPicks}
 				isSubmitted={isSubmitted}
 				week={selectedWeek}
 			/>
-			{/* // ) : (
-			// 	<>
-			// 		<div className='bg-lime-300 bg-opacity-70 m-4 p-1 rounded'>
-			// 			<p className='text-3xl text-lime-800 font-black underline m-4'></p>
-			// 		</div>
-
-			// 		<div className='mt-80'>.</div>
-			// 	</>
-			// )} */}
 		</div>
 	);
 };

@@ -325,7 +325,7 @@ export default function Home({
 
 	///////////////////////////// end score and formatting ////////////////////////////////
 
-	console.log("Submitted", isSubmitted);
+	console.log(games);
 	return (
 		<>
 			{!userState ? (
@@ -475,7 +475,6 @@ export default function Home({
 				/>
 			) : view === "picks" ? (
 				<PickView
-					user={userState}
 					logout={() => logout()}
 					handleViewChange={(newView) => handleViewChange(newView)}
 					weeksToMap={weeksToMap}
@@ -483,8 +482,6 @@ export default function Home({
 					teams={teams}
 					totalScores={totalScores}
 					isSubmitted={isSubmitted}
-					formattedPicks={formattedPicks}
-					scoreAndFormatPicks={() => scoreAndFormatPicks()}
 				/>
 			) : null}
 		</>

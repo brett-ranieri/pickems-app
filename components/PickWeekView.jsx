@@ -1,11 +1,7 @@
-import React, { useEffect, useState } from "react";
 import { TeamCard } from "./TeamCard";
 
-export const PickWeekView = ({ user, week, teams, formattedPicks, isSubmitted }) => {
+export const PickWeekView = ({ teams, isSubmitted, week }) => {
 	const picksForThisWeek = isSubmitted.filter((pick) => pick.week === week);
-	console.log("NUP:", picksForThisWeek);
-
-	// const thisUsersPicks = formattedPicks.filter((e) => e.user_id === user.id);
 
 	return (
 		<>
