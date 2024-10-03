@@ -1,30 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { TeamCard } from "./TeamCard";
 
-export const PickWeekView = ({ user, week, teams, formattedPicks }) => {
-	const thisUsersPicks = formattedPicks.filter((e) => e.user_id === user.id);
+export const PickWeekView = ({ user, week, teams, formattedPicks, isSubmitted }) => {
+	const picksForThisWeek = isSubmitted.filter((pick) => pick.week === week);
+	console.log("NUP:", picksForThisWeek);
 
-	let thisWeeksPicks = [];
-	function findThisWeeksPicks() {
-		thisUsersPicks.map(function (pick) {
-			const picksToFilter = pick.allPicks;
-			const pickToPush = picksToFilter.filter((e) => e.week === week);
-			thisWeeksPicks.push(pickToPush[0]);
-		});
-	}
-	findThisWeeksPicks();
-
-	const picksToMap = thisWeeksPicks[0]?.picks;
+	// const thisUsersPicks = formattedPicks.filter((e) => e.user_id === user.id);
 
 	return (
 		<>
 			<div className='bg-lime-300 bg-opacity-70 m-4 p-1 rounded'>
 				<p className='text-3xl text-lime-800 font-black underline m-4'>Week {week} Picks:</p>
-				{!picksToMap?.length ? (
+				{!picksForThisWeek?.length ? (
 					<p className='text-lg m-4'>No picks submitted for this week</p>
 				) : (
 					<div className='flex flex-col justify-around items-center mb-6'>
-						{picksToMap?.map((pick) => (
+						{picksForThisWeek?.map((pick) => (
 							<div
 								key={pick.game_id}
 								className='text-lg'

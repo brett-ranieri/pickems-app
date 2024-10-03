@@ -482,6 +482,7 @@ export default function Home({
 					weeksHighToLow={weeksHighToLow}
 					teams={teams}
 					totalScores={totalScores}
+					isSubmitted={isSubmitted}
 					formattedPicks={formattedPicks}
 					scoreAndFormatPicks={() => scoreAndFormatPicks()}
 				/>

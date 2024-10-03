@@ -9,16 +9,17 @@ export const PickView = ({
 	logout,
 	weeksToMap,
 	weeksHighToLow,
-	totalScores,
+	// totalScores,
 	teams,
-	formattedPicks,
-	scoreAndFormatPicks,
+	isSubmitted,
+	// formattedPicks,
+	// scoreAndFormatPicks,
 }) => {
 	const [selectedWeek, setSelectedWeek] = useState(null);
 
-	useEffect(() => {
-		scoreAndFormatPicks();
-	}, []);
+	// useEffect(() => {
+	// 	scoreAndFormatPicks();
+	// }, []);
 
 	useEffect(() => {
 		let firstWeek = weeksToMap[0];
@@ -26,7 +27,7 @@ export const PickView = ({
 		for (const week of weeksToMap) {
 			if (week >= firstWeek) {
 				highestWeek = week;
-				console.log(highestWeek);
+				// console.log(highestWeek);
 			}
 		}
 		setSelectedWeek(highestWeek);
@@ -87,7 +88,8 @@ export const PickView = ({
 			<PickWeekView
 				user={user}
 				teams={teams}
-				formattedPicks={formattedPicks}
+				// formattedPicks={formattedPicks}
+				isSubmitted={isSubmitted}
 				week={selectedWeek}
 			/>
 			{/* // ) : (
